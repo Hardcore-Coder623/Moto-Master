@@ -1,33 +1,45 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#06152f">
-    <meta name="robots" content="index, follow">
 
-    <meta name="description"
-        content="Moto Master is a professional motor winding design and calculation platform for engineers, designers and technicians.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta property="og:title"
-        content="Moto Master | Winding Design & Calculation Platform">
+<meta name="theme-color" content="#06152f">
+<meta name="robots" content="index, follow">
 
-    <meta property="og:description"
-        content="Professional winding design, calculation and engineering reports in one platform.">
+<meta name="description"
+    content="Moto Master is a professional motor winding design and calculation platform for engineers, designers and technicians.">
 
-    <meta property="og:type" content="website">
+<meta property="og:title"
+    content="Moto Master | Winding Design & Calculation Platform">
 
-    <title>Moto Master | Winding Design & Calculation Software</title>
+<meta property="og:description"
+    content="Professional winding design, calculation and engineering reports in one platform.">
 
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='css/landing.css') }}">
+<meta property="og:type" content="website">
+
+<title>Moto Master | Winding Design & Calculation Software</title>
+
+<link rel="stylesheet"
+    href="{{ url_for('static', filename='css/landing.css') }}">
+
+
 </head>
 
 <body>
 
-    {% include 'landing/navbar.html' %}
+<!-- ================= NAVBAR ================= -->
+
+{% include 'landing/navbar.html' %}
+
+
+<!-- ================= LANDING PAGE ================= -->
+
+<div id="landingPage">
 
     <main>
 
@@ -49,7 +61,19 @@
 
     {% include 'landing/footer.html' %}
 
-    <script src="{{ url_for('static', filename='js/landing.js') }}"></script>
+</div>
+
+
+<!-- ================= AUTH ================= -->
+
+{% include 'landing/login.html' %}
+
+{% include 'landing/register.html' %}
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script src="{{ url_for('static', filename='js/landing.js') }}"></script>
 
 </body>
 

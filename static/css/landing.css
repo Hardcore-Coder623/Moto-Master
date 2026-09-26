@@ -2254,3 +2254,342 @@ body.auth-modal-open {
         max-height: calc(100vh - 24px);
     }
 }
+
+
+/* =========================================================
+   AUTH CARD ONLY
+   Landing page remains completely unchanged
+========================================================= */
+
+.auth-modal {
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    z-index: 99999;
+
+    display: none;
+
+    width: 420px;
+    max-width: calc(100vw - 30px);
+
+    margin: 0;
+    padding: 0;
+
+    /* NO BACKGROUND */
+    background: none;
+
+    /* NO OVERLAY */
+    backdrop-filter: none;
+
+    /* NO BORDER */
+    border: none;
+
+    /* NO SHADOW ON WRAPPER */
+    box-shadow: none;
+}
+
+
+/* Show only the auth card */
+
+.auth-modal.active {
+    display: block;
+}
+
+
+/* =========================================================
+   ACTUAL WHITE AUTH CARD
+========================================================= */
+
+.auth-modal-card {
+    position: relative;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 34px;
+
+    background: #ffffff;
+
+    border: 1px solid #dbe5f0;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 20px 55px rgba(6, 21, 47, 0.25);
+}
+
+
+/* =========================================================
+   TOP BRAND ACCENT
+========================================================= */
+
+.auth-modal-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 4px;
+
+    background: #2563eb;
+
+    border-radius: 16px 16px 0 0;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.auth-close {
+    position: absolute;
+
+    top: 13px;
+    right: 13px;
+
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid #dbe5f0;
+
+    border-radius: 50%;
+
+    background: #f8fafc;
+
+    color: #334155;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+.auth-close:hover {
+    background: #06152f;
+    border-color: #06152f;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.auth-brand {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-bottom: 24px;
+}
+
+
+.auth-brand .brand-mark {
+    width: 44px;
+    height: 44px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    background: #06152f;
+
+    color: #ffffff;
+
+    font-weight: 700;
+}
+
+
+.auth-brand h2 {
+    margin: 0;
+
+    color: #06152f;
+
+    font-size: 24px;
+}
+
+
+.auth-brand h2 strong {
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.auth-modal-card h3 {
+    margin: 0 0 7px;
+
+    color: #06152f;
+
+    font-size: 26px;
+}
+
+
+/* =========================================================
+   SUBTITLE
+========================================================= */
+
+.auth-subtitle {
+    margin: 0 0 24px;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.auth-modal-card .form-group {
+    margin-bottom: 16px;
+}
+
+
+.auth-modal-card label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #1e293b;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+
+.auth-modal-card input {
+    display: block;
+
+    width: 100%;
+    height: 45px;
+
+    box-sizing: border-box;
+
+    padding: 10px 13px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    background: #f8fafc;
+
+    color: #0f172a;
+
+    font-size: 14px;
+
+    outline: none;
+}
+
+
+.auth-modal-card input:focus {
+    background: #ffffff;
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =========================================================
+   AUTH BUTTON
+========================================================= */
+
+.auth-button {
+    width: 100%;
+    height: 45px;
+
+    margin-top: 7px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #06152f;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.auth-button:hover {
+    background: #0c2b55;
+}
+
+
+/* =========================================================
+   LOGIN / REGISTER SWITCH
+========================================================= */
+
+.auth-switch {
+    margin: 20px 0 0;
+
+    text-align: center;
+
+    color: #64748b;
+
+    font-size: 13px;
+}
+
+
+.auth-switch a {
+    color: #2563eb;
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.auth-switch a:hover {
+    color: #06152f;
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .auth-modal {
+        width: calc(100vw - 24px);
+        max-width: 420px;
+    }
+
+    .auth-modal-card {
+        padding: 30px 21px;
+    }
+
+}
+

@@ -1,7 +1,9 @@
+
 /* =========================================================
-   MOTO MASTER — LANDING PAGE CONTROLLER
-   Flask Authentication + Session Integration
+   MOTO MASTER - LANDING PAGE JAVASCRIPT
 ========================================================= */
+
+"use strict";
 
 
 /* =========================================================
@@ -10,396 +12,528 @@
 
 const CONFIG = Object.freeze({
 
-    LOGIN_URL: "/login",
+    LOGIN_API: "/api/auth/login",
 
-    REGISTER_URL: "/register",
+    REGISTER_API: "/api/auth/register",
 
-    DASHBOARD_URL: "/dashboard",
-
-    API_BASE_URL: ""
+    DASHBOARD_URL: "/dashboard"
 
 });
 
 
 /* =========================================================
-   GLOBAL ELEMENTS
+   DOM READY
 ========================================================= */
 
-const navbar =
-    document.getElementById("navbar");
+document.addEventListener("DOMContentLoaded", () => {
 
-const menuToggle =
-    document.getElementById("menuToggle");
+    initMobileMenu();
 
-const toast =
-    document.getElementById("toast");
+    initScrollReveal();
 
-const year =
-    document.getElementById("currentYear");
+    initNavbarScroll();
+
+    initFooterYear();
+
+    initPricing();
+
+    initAuthModals();
+
+});
 
 
 /* =========================================================
-   TOAST
+   MOBILE MENU
 ========================================================= */
 
-let toastTimer;
+function initMobileMenu() {
 
-function showToast(message) {
+    const menuToggle = document.getElementById("menuToggle");
 
-    if (!toast) return;
+    const navLinks = document.querySelector(".nav-links");
 
-    toast.innerHTML = message;
-
-    toast.classList.add("show");
-
-    clearTimeout(toastTimer);
-
-    toastTimer = setTimeout(() => {
-
-        toast.classList.remove("show");
-
-    }, 3200);
-}
+    if (!menuToggle || !navLinks) {
+        return;
+    }
 
 
-/* =========================================================
-   MOBILE NAVIGATION
-========================================================= */
+    menuToggle.addEventListener("click", () => {
 
-if (menuToggle) {
-
-    menuToggle.addEventListener(
-        "click",
-        () => {
-
-            const open =
-                navbar.classList.toggle(
-                    "nav-mobile-open"
-                );
-
-            menuToggle.textContent =
-                open ? "✕" : "☰";
-
-            menuToggle.setAttribute(
-                "aria-label",
-                open
-                    ? "Close menu"
-                    : "Open menu"
-            );
-
-            menuToggle.setAttribute(
-                "aria-expanded",
-                String(open)
-            );
-
-        }
-    );
-
-}
-
-
-document
-    .querySelectorAll(
-        ".nav-links a, .nav-actions a"
-    )
-    .forEach(link => {
-
-        link.addEventListener(
-            "click",
-            () => {
-
-                navbar.classList.remove(
-                    "nav-mobile-open"
-                );
-
-                if (menuToggle) {
-
-                    menuToggle.textContent =
-                        "☰";
-
-                    menuToggle.setAttribute(
-                        "aria-label",
-                        "Open menu"
-                    );
-
-                    menuToggle.setAttribute(
-                        "aria-expanded",
-                        "false"
-                    );
-                }
-
-            }
-        );
+        navLinks.classList.toggle("active");
 
     });
+
+
+    navLinks.querySelectorAll("a").forEach(link => {
+
+        link.addEventListener("click", () => {
+
+            navLinks.classList.remove("active");
+
+        });
+
+    });
+
+}
 
 
 /* =========================================================
    SCROLL REVEAL
 ========================================================= */
 
-const revealElements =
-    document.querySelectorAll(
-        ".reveal"
+function initScrollReveal() {
+
+    const revealElements = document.querySelectorAll(
+        ".reveal, .feature-card, .workflow-step, .pricing-card"
     );
 
-
-if ("IntersectionObserver" in window) {
-
-    const revealObserver =
-        new IntersectionObserver(
-            entries => {
-
-                entries.forEach(entry => {
-
-                    if (
-                        entry.isIntersecting
-                    ) {
-
-                        entry.target.classList.add(
-                            "visible"
-                        );
-
-                        revealObserver.unobserve(
-                            entry.target
-                        );
-
-                    }
-
-                });
-
-            },
-            {
-                threshold: 0.12
-            }
-        );
-
-
-    revealElements.forEach(
-        element =>
-            revealObserver.observe(element)
-    );
-
-} else {
-
-    revealElements.forEach(
-        element =>
-            element.classList.add("visible")
-    );
-
-}
-
-
-/* =========================================================
-   NAVBAR STATE
-========================================================= */
-
-function updateNavbar() {
-
-    if (!navbar) return;
-
-    navbar.classList.toggle(
-        "scrolled",
-        window.scrollY > 20
-    );
-
-}
-
-
-updateNavbar();
-
-window.addEventListener(
-    "scroll",
-    updateNavbar,
-    {
-        passive: true
+    if (!revealElements.length) {
+        return;
     }
-);
 
 
-/* =========================================================
-   PLAN SELECTION
-========================================================= */
+    const observer = new IntersectionObserver(
 
-const planButtons =
-    document.querySelectorAll(
-        ".plan-btn"
-    );
+        entries => {
 
+            entries.forEach(entry => {
 
-planButtons.forEach(button => {
+                if (entry.isIntersecting) {
 
-    button.addEventListener(
-        "click",
-        () => {
+                    entry.target.classList.add("visible");
 
-            const plan = {
+                    observer.unobserve(entry.target);
 
-                id: button.dataset.plan,
+                }
 
-                name: button.dataset.planName,
+            });
 
-                amount:
-                    Number(
-                        button.dataset.amount
-                    ),
+        },
 
-                days:
-                    Number(
-                        button.dataset.days
-                    )
-
-            };
-
-
-            /*
-             * Browser stores selected plan.
-             *
-             * Backend must independently
-             * validate the plan and amount
-             * before creating Razorpay order.
-             */
-
-            sessionStorage.setItem(
-                "motoMasterSelectedPlan",
-                JSON.stringify(plan)
-            );
-
-
-            const registerUrl =
-                `${CONFIG.REGISTER_URL}?plan=${encodeURIComponent(plan.id)}`;
-
-
-            showToast(
-                `<strong>${plan.name} plan selected.</strong> Redirecting to secure registration...`
-            );
-
-
-            button.disabled = true;
-
-
-            setTimeout(() => {
-
-                window.location.href =
-                    registerUrl;
-
-            }, 450);
-
+        {
+            threshold: 0.12
         }
+
     );
 
-});
 
+    revealElements.forEach(element => {
 
-/* =========================================================
-   GET STARTED / START DESIGNING
-========================================================= */
-
-document
-    .querySelectorAll(
-        'a[href="#pricing"]'
-    )
-    .forEach(link => {
-
-        link.addEventListener(
-            "click",
-            () => {
-
-                setTimeout(() => {
-
-                    const firstPlan =
-                        document.querySelector(
-                            ".plan-btn"
-                        );
-
-                    if (firstPlan) {
-
-                        firstPlan.focus({
-                            preventScroll: true
-                        });
-
-                    }
-
-                }, 500);
-
-            }
-        );
+        observer.observe(element);
 
     });
+
+}
+
+
+/* =========================================================
+   NAVBAR SCROLL EFFECT
+========================================================= */
+
+function initNavbarScroll() {
+
+    const navbar = document.getElementById("navbar");
+
+    if (!navbar) {
+        return;
+    }
+
+
+    function updateNavbar() {
+
+        if (window.scrollY > 30) {
+
+            navbar.classList.add("scrolled");
+
+        } else {
+
+            navbar.classList.remove("scrolled");
+
+        }
+
+    }
+
+
+    window.addEventListener(
+        "scroll",
+        updateNavbar,
+        { passive: true }
+    );
+
+
+    updateNavbar();
+
+}
 
 
 /* =========================================================
    FOOTER YEAR
 ========================================================= */
 
-if (year) {
+function initFooterYear() {
 
-    year.textContent =
-        new Date().getFullYear();
+    const yearElement = document.getElementById("currentYear");
+
+    if (!yearElement) {
+        return;
+    }
+
+
+    yearElement.textContent = new Date().getFullYear();
 
 }
 
 
 /* =========================================================
-   PREVENT EMPTY INTERNAL LINKS
+   PRICING
 ========================================================= */
 
-document
-    .querySelectorAll(
-        'a[href="#"]'
-    )
-    .forEach(link => {
+function initPricing() {
 
-        link.addEventListener(
-            "click",
-            event => {
+    const pricingButtons = document.querySelectorAll(
+        ".pricing-card button, " +
+        ".pricing-card .btn, " +
+        "[data-plan]"
+    );
 
-                event.preventDefault();
+
+    if (!pricingButtons.length) {
+        return;
+    }
+
+
+    pricingButtons.forEach(button => {
+
+        button.addEventListener("click", event => {
+
+            const planElement =
+                event.currentTarget.closest("[data-plan]");
+
+
+            let plan = null;
+
+
+            if (planElement) {
+
+                plan =
+                    planElement.dataset.plan ||
+                    planElement.getAttribute("data-plan");
 
             }
+
+
+            if (!plan) {
+
+                plan =
+                    event.currentTarget.dataset.plan ||
+                    null;
+
+            }
+
+
+            if (plan) {
+
+                sessionStorage.setItem(
+                    "selectedPlan",
+                    plan
+                );
+
+            }
+
+
+            openRegisterModal();
+
+        });
+
+    });
+
+}
+
+
+/* =========================================================
+   AUTH MODALS
+========================================================= */
+
+function initAuthModals() {
+
+    const loginModal =
+        document.getElementById("loginModal");
+
+    const registerModal =
+        document.getElementById("registerModal");
+
+
+    const navLogin =
+        document.getElementById("navLogin");
+
+    const navRegister =
+        document.getElementById("navRegister");
+
+
+    const closeLogin =
+        document.getElementById("closeLogin");
+
+    const closeRegister =
+        document.getElementById("closeRegister");
+
+
+    const showRegister =
+        document.getElementById("showRegister");
+
+    const showLogin =
+        document.getElementById("showLogin");
+
+
+    const loginForm =
+        document.getElementById("loginForm");
+
+    const registerForm =
+        document.getElementById("registerForm");
+
+
+    if (!loginModal || !registerModal) {
+        return;
+    }
+
+
+    /* -----------------------------------------------------
+       INITIAL STATE
+    ----------------------------------------------------- */
+
+    loginModal.classList.remove("active");
+    registerModal.classList.remove("active");
+
+    loginModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    registerModal.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+
+    /* -----------------------------------------------------
+       NAVBAR LOGIN
+    ----------------------------------------------------- */
+
+    if (navLogin) {
+
+        navLogin.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            openLoginModal();
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------------
+       NAVBAR REGISTER
+    ----------------------------------------------------- */
+
+    if (navRegister) {
+
+        navRegister.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            openRegisterModal();
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------------
+       CLOSE LOGIN
+    ----------------------------------------------------- */
+
+    if (closeLogin) {
+
+        closeLogin.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            closeLoginModal();
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------------
+       CLOSE REGISTER
+    ----------------------------------------------------- */
+
+    if (closeRegister) {
+
+        closeRegister.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            closeRegisterModal();
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------------
+       LOGIN → REGISTER
+    ----------------------------------------------------- */
+
+    if (showRegister) {
+
+        showRegister.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            closeLoginModal();
+
+            openRegisterModal();
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------------
+       REGISTER → LOGIN
+    ----------------------------------------------------- */
+
+    if (showLogin) {
+
+        showLogin.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            closeRegisterModal();
+
+            openLoginModal();
+
+        });
+
+    }
+
+
+    /* -----------------------------------------------------
+       LOGIN FORM
+    ----------------------------------------------------- */
+
+    if (loginForm) {
+
+        loginForm.addEventListener(
+            "submit",
+            handleLogin
         );
+
+    }
+
+
+    /* -----------------------------------------------------
+       REGISTER FORM
+    ----------------------------------------------------- */
+
+    if (registerForm) {
+
+        registerForm.addEventListener(
+            "submit",
+            handleRegister
+        );
+
+    }
+
+
+    /* -----------------------------------------------------
+       CLICK OUTSIDE CARD
+    ----------------------------------------------------- */
+
+    loginModal.addEventListener("click", event => {
+
+        if (event.target === loginModal) {
+
+            closeLoginModal();
+
+        }
 
     });
 
 
+    registerModal.addEventListener("click", event => {
+
+        if (event.target === registerModal) {
+
+            closeRegisterModal();
+
+        }
+
+    });
+
+
+    /* -----------------------------------------------------
+       ESCAPE KEY
+    ----------------------------------------------------- */
+
+    document.addEventListener("keydown", event => {
+
+        if (event.key !== "Escape") {
+            return;
+        }
+
+
+        if (loginModal.classList.contains("active")) {
+
+            closeLoginModal();
+
+        }
+
+
+        if (registerModal.classList.contains("active")) {
+
+            closeRegisterModal();
+
+        }
+
+    });
+
+}
+
+
 /* =========================================================
-   LOGIN MODAL
-========================================================= */
-
-const loginModal =
-    document.getElementById(
-        "loginModal"
-    );
-
-const openLoginBtn =
-    document.getElementById(
-        "openLogin"
-    );
-
-const closeLoginBtn =
-    document.getElementById(
-        "closeLogin"
-    );
-
-const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
-
-
-/* =========================================================
-   OPEN LOGIN
+   OPEN LOGIN MODAL
 ========================================================= */
 
 function openLoginModal() {
 
-    if (!loginModal) return;
+    const loginModal =
+        document.getElementById("loginModal");
+
+    const registerModal =
+        document.getElementById("registerModal");
 
 
-    loginModal.classList.add(
-        "active"
-    );
+    if (!loginModal) {
+        return;
+    }
 
+
+    if (registerModal) {
+
+        registerModal.classList.remove("active");
+
+        registerModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
+
+
+    loginModal.classList.add("active");
 
     loginModal.setAttribute(
         "aria-hidden",
@@ -407,351 +541,46 @@ function openLoginModal() {
     );
 
 
-    document.body.classList.add(
-        "auth-modal-open"
-    );
+    const loginInput =
+        document.getElementById("login");
 
 
-    setTimeout(() => {
+    if (loginInput) {
 
-        document
-            .getElementById("loginEmail")
-            ?.focus();
+        setTimeout(() => {
 
-    }, 200);
+            loginInput.focus();
+
+        }, 50);
+
+    }
 
 }
 
 
 /* =========================================================
-   CLOSE LOGIN
+   CLOSE LOGIN MODAL
 ========================================================= */
 
 function closeLoginModal() {
 
-    if (!loginModal) return;
+    const loginModal =
+        document.getElementById("loginModal");
 
 
-    loginModal.classList.remove(
-        "active"
-    );
+    if (!loginModal) {
+        return;
+    }
 
+
+    loginModal.classList.remove("active");
 
     loginModal.setAttribute(
         "aria-hidden",
         "true"
     );
 
-
-    document.body.classList.remove(
-        "auth-modal-open"
-    );
-
 }
-
-
-/* =========================================================
-   LOGIN OPEN BUTTON
-========================================================= */
-
-openLoginBtn?.addEventListener(
-    "click",
-    openLoginModal
-);
-
-
-/* =========================================================
-   LOGIN CLOSE BUTTON
-========================================================= */
-
-closeLoginBtn?.addEventListener(
-    "click",
-    closeLoginModal
-);
-
-
-/* =========================================================
-   LOGIN CLICK OUTSIDE
-========================================================= */
-
-loginModal?.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            loginModal
-        ) {
-
-            closeLoginModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   LOGIN ESCAPE
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape" &&
-            loginModal?.classList.contains(
-                "active"
-            )
-        ) {
-
-            closeLoginModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   LOGIN FORM
-   BACKEND + FLASK SESSION
-========================================================= */
-
-loginForm?.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        const email =
-            document
-                .getElementById(
-                    "loginEmail"
-                )
-                ?.value.trim();
-
-
-        const password =
-            document
-                .getElementById(
-                    "loginPassword"
-                )
-                ?.value;
-
-
-        /* -------------------------------------------------
-           LOGIN MESSAGE
-        ------------------------------------------------- */
-
-        let loginMessage =
-            document.getElementById(
-                "loginMessage"
-            );
-
-
-        if (!loginMessage) {
-
-            loginMessage =
-                document.createElement("p");
-
-
-            loginMessage.id =
-                "loginMessage";
-
-
-            loginMessage.className =
-                "auth-message";
-
-
-            loginForm.appendChild(
-                loginMessage
-            );
-
-        }
-
-
-        loginMessage.textContent =
-            "";
-
-
-        loginMessage.style.color =
-            "#dc2626";
-
-
-        /* -------------------------------------------------
-           VALIDATION
-        ------------------------------------------------- */
-
-        if (!email) {
-
-            loginMessage.textContent =
-                "Please enter your email address.";
-
-            return;
-
-        }
-
-
-        if (!password) {
-
-            loginMessage.textContent =
-                "Please enter your password.";
-
-            return;
-
-        }
-
-
-        /* -------------------------------------------------
-           LOGIN REQUEST
-        ------------------------------------------------- */
-
-        try {
-
-            const response =
-                await fetch(
-                    "/api/auth/login",
-                    {
-
-                        method: "POST",
-
-                        /*
-                         * Important:
-                         * Allows Flask session cookie
-                         * to be stored and sent.
-                         */
-
-                        credentials:
-                            "same-origin",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                email: email,
-
-                                password:
-                                    password
-
-                            })
-
-                    }
-                );
-
-
-            const result =
-                await response.json();
-
-
-            /* -------------------------------------------------
-               LOGIN FAILED
-            ------------------------------------------------- */
-
-            if (!response.ok) {
-
-                loginMessage.textContent =
-                    result.message ||
-                    "Login failed.";
-
-                return;
-
-            }
-
-
-            /* =========================================================
-            LOGIN SUCCESS
-            ========================================================= */
-
-            loginMessage.style.color =
-            "var(--blue-700)";
-
-
-            loginMessage.textContent =
-            "Login successful.";
-
-
-            console.log(
-            "Logged in user:",
-            result.user
-            );
-
-
-            /* ---------------------------------------------------------
-            REDIRECT TO USER DASHBOARD
-            --------------------------------------------------------- */
-
-            setTimeout(() => {
-
-            window.location.href =
-                CONFIG.DASHBOARD_URL;
-
-            }, 500);
-
-
-        } catch (error) {
-
-            console.error(
-                "Login error:",
-                error
-            );
-
-
-            loginMessage.textContent =
-                "Unable to connect to the server.";
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   REGISTER MODAL
-========================================================= */
-
-const registerModal =
-    document.getElementById(
-        "registerModal"
-    );
-
-
-const openRegister =
-    document.getElementById(
-        "openRegister"
-    );
-
-
-const closeRegister =
-    document.getElementById(
-        "closeRegister"
-    );
-
-
-const backToLogin =
-    document.getElementById(
-        "backToLogin"
-    );
-
-
-const registerForm =
-    document.getElementById(
-        "registerForm"
-    );
-
-
-const registerMessage =
-    document.getElementById(
-        "registerMessage"
-    );
 
 
 /* =========================================================
@@ -760,20 +589,31 @@ const registerMessage =
 
 function openRegisterModal() {
 
-    if (!registerModal) return;
+    const registerModal =
+        document.getElementById("registerModal");
+
+    const loginModal =
+        document.getElementById("loginModal");
 
 
-    /* Close Login */
+    if (!registerModal) {
+        return;
+    }
 
-    closeLoginModal();
+
+    if (loginModal) {
+
+        loginModal.classList.remove("active");
+
+        loginModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+    }
 
 
-    /* Open Register */
-
-    registerModal.classList.add(
-        "active"
-    );
-
+    registerModal.classList.add("active");
 
     registerModal.setAttribute(
         "aria-hidden",
@@ -781,20 +621,19 @@ function openRegisterModal() {
     );
 
 
-    document.body.classList.add(
-        "auth-modal-open"
-    );
+    const nameInput =
+        document.getElementById("name");
 
 
-    setTimeout(() => {
+    if (nameInput) {
 
-        document
-            .getElementById(
-                "registerName"
-            )
-            ?.focus();
+        setTimeout(() => {
 
-    }, 200);
+            nameInput.focus();
+
+        }, 50);
+
+    }
 
 }
 
@@ -805,317 +644,652 @@ function openRegisterModal() {
 
 function closeRegisterModal() {
 
-    if (!registerModal) return;
+    const registerModal =
+        document.getElementById("registerModal");
 
 
-    registerModal.classList.remove(
-        "active"
-    );
+    if (!registerModal) {
+        return;
+    }
 
+
+    registerModal.classList.remove("active");
 
     registerModal.setAttribute(
         "aria-hidden",
         "true"
     );
 
+}
 
-    document.body.classList.remove(
-        "auth-modal-open"
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function handleLogin(event) {
+
+    event.preventDefault();
+
+
+    const form =
+        event.currentTarget;
+
+
+    const login =
+        document.getElementById("login")?.value.trim();
+
+
+    const password =
+        document.getElementById("loginPassword")?.value;
+
+
+    /* -----------------------------------------------------
+       BASIC VALIDATION
+    ----------------------------------------------------- */
+
+    if (!login) {
+
+        showAuthMessage(
+            "Please enter your username or email.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!password) {
+
+        showAuthMessage(
+            "Please enter your password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const submitButton =
+        form.querySelector(".auth-button");
+
+
+    setButtonLoading(
+        submitButton,
+        true,
+        "Login"
     );
+
+
+    clearAuthMessage();
+
+
+    try {
+
+        const response =
+            await fetch(
+                CONFIG.LOGIN_API,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        login: login,
+
+                        password: password
+
+                    })
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok || !result.success) {
+
+            showAuthMessage(
+                result.message ||
+                "Login failed.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           LOGIN SUCCESS
+        ------------------------------------------------- */
+
+        showAuthMessage(
+            "Login successful. Redirecting...",
+            "success"
+        );
+
+
+        /*
+         * Backend Flask session is already created.
+         * The user can now be sent to the dashboard.
+         */
+
+        setTimeout(() => {
+
+            window.location.href =
+                CONFIG.DASHBOARD_URL;
+
+        }, 700);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOGIN ERROR:",
+            error
+        );
+
+
+        showAuthMessage(
+            "Unable to connect to the server.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        setButtonLoading(
+            submitButton,
+            false,
+            "Login"
+        );
+
+    }
 
 }
 
 
 /* =========================================================
-   CREATE ACCOUNT BUTTON
+   REGISTER
 ========================================================= */
 
-openRegister?.addEventListener(
-    "click",
-    openRegisterModal
-);
+async function handleRegister(event) {
+
+    event.preventDefault();
 
 
-/* =========================================================
-   REGISTER CLOSE BUTTON
-========================================================= */
-
-closeRegister?.addEventListener(
-    "click",
-    closeRegisterModal
-);
+    const form =
+        event.currentTarget;
 
 
-/* =========================================================
-   BACK TO LOGIN
-========================================================= */
+    const name =
+        document.getElementById("name")?.value.trim();
 
-backToLogin?.addEventListener(
-    "click",
-    () => {
 
-        closeRegisterModal();
+    const username =
+        document.getElementById("username")?.value.trim();
+
+
+    const email =
+        document.getElementById("email")?.value.trim();
+
+
+    const password =
+        document.getElementById("registerPassword")?.value;
+
+
+    const confirmPassword =
+        document.getElementById("confirmPassword")?.value;
+
+
+    /* -----------------------------------------------------
+       BASIC VALIDATION
+    ----------------------------------------------------- */
+
+    if (!name) {
+
+        showAuthMessage(
+            "Please enter your full name.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!username) {
+
+        showAuthMessage(
+            "Please choose a username.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!email) {
+
+        showAuthMessage(
+            "Please enter your email address.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (!password) {
+
+        showAuthMessage(
+            "Please create a password.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (password.length < 8) {
+
+        showAuthMessage(
+            "Password must be at least 8 characters.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    if (password !== confirmPassword) {
+
+        showAuthMessage(
+            "Passwords do not match.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    const submitButton =
+        form.querySelector(".auth-button");
+
+
+    setButtonLoading(
+        submitButton,
+        true,
+        "Create Account"
+    );
+
+
+    clearAuthMessage();
+
+
+    try {
+
+        const response =
+            await fetch(
+                CONFIG.REGISTER_API,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        name: name,
+
+                        username: username,
+
+                        email: email,
+
+                        password: password,
+
+                        confirm_password:
+                            confirmPassword
+
+                    })
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (!response.ok || !result.success) {
+
+            showAuthMessage(
+                result.message ||
+                "Registration failed.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        /* -------------------------------------------------
+           REGISTRATION SUCCESS
+        ------------------------------------------------- */
+
+        showAuthMessage(
+            "Account created successfully. Please login.",
+            "success"
+        );
+
+
+        /*
+         * Do not automatically login here.
+         *
+         * Registration creates the account.
+         * Login will create the Flask session.
+         */
 
 
         setTimeout(() => {
 
+            form.reset();
+
+            clearAuthMessage();
+
+            closeRegisterModal();
+
             openLoginModal();
 
-        }, 150);
 
-    }
-);
+            const loginInput =
+                document.getElementById("login");
 
 
-/* =========================================================
-   REGISTER CLICK OUTSIDE
-========================================================= */
+            if (loginInput) {
 
-registerModal?.addEventListener(
-    "click",
-    event => {
-
-        if (
-            event.target ===
-            registerModal
-        ) {
-
-            closeRegisterModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   REGISTER ESCAPE
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape" &&
-            registerModal?.classList.contains(
-                "active"
-            )
-        ) {
-
-            closeRegisterModal();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   REGISTER FORM
-   BACKEND
-========================================================= */
-
-registerForm?.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-
-        const name =
-            document
-                .getElementById(
-                    "registerName"
-                )
-                ?.value.trim();
-
-
-        const email =
-            document
-                .getElementById(
-                    "registerEmail"
-                )
-                ?.value.trim();
-
-
-        const password =
-            document
-                .getElementById(
-                    "registerPassword"
-                )
-                ?.value;
-
-
-        const confirmPassword =
-            document
-                .getElementById(
-                    "registerConfirmPassword"
-                )
-                ?.value;
-
-
-        const terms =
-            document
-                .getElementById(
-                    "registerTerms"
-                )
-                ?.checked;
-
-
-        registerMessage.textContent =
-            "";
-
-
-        registerMessage.style.color =
-            "#dc2626";
-
-
-        /* -------------------------------------------------
-           VALIDATION
-        ------------------------------------------------- */
-
-        if (!name) {
-
-            registerMessage.textContent =
-                "Please enter your full name.";
-
-            return;
-
-        }
-
-
-        if (!email) {
-
-            registerMessage.textContent =
-                "Please enter your email address.";
-
-            return;
-
-        }
-
-
-        if (password.length < 8) {
-
-            registerMessage.textContent =
-                "Password must contain at least 8 characters.";
-
-            return;
-
-        }
-
-
-        if (
-            password !==
-            confirmPassword
-        ) {
-
-            registerMessage.textContent =
-                "Passwords do not match.";
-
-            return;
-
-        }
-
-
-        if (!terms) {
-
-            registerMessage.textContent =
-                "Please accept the Terms & Conditions.";
-
-            return;
-
-        }
-
-
-        /* -------------------------------------------------
-           REGISTER REQUEST
-        ------------------------------------------------- */
-
-        try {
-
-            const response =
-                await fetch(
-                    "/api/auth/register",
-                    {
-
-                        method: "POST",
-
-                        credentials:
-                            "same-origin",
-
-                        headers: {
-
-                            "Content-Type":
-                                "application/json"
-
-                        },
-
-                        body:
-                            JSON.stringify({
-
-                                name: name,
-
-                                email: email,
-
-                                password:
-                                    password,
-
-                                confirm_password:
-                                    confirmPassword
-
-                            })
-
-                    }
-                );
-
-
-            const result =
-                await response.json();
-
-
-            /* -------------------------------------------------
-               REGISTER FAILED
-            ------------------------------------------------- */
-
-            if (!response.ok) {
-
-                registerMessage.textContent =
-                    result.message ||
-                    "Registration failed.";
-
-                return;
+                loginInput.value =
+                    username;
 
             }
 
+        }, 900);
 
-            /* -------------------------------------------------
-               REGISTER SUCCESS
-            ------------------------------------------------- */
+    }
 
-            registerMessage.style.color =
-                "var(--blue-700)";
+    catch (error) {
 
-
-            registerMessage.textContent =
-                "Registration successful.";
-
-
-            registerForm.reset();
+        console.error(
+            "REGISTER ERROR:",
+            error
+        );
 
 
-        } catch (error) {
+        showAuthMessage(
+            "Unable to connect to the server.",
+            "error"
+        );
 
-            console.error(
-                "Registration error:",
-                error
+    }
+
+    finally {
+
+        setButtonLoading(
+            submitButton,
+            false,
+            "Create Account"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   AUTH MESSAGE
+========================================================= */
+
+function showAuthMessage(
+    message,
+    type = "error"
+) {
+
+    let messageElement =
+        document.querySelector(
+            ".auth-message"
+        );
+
+
+    /*
+     * Create message element only when needed.
+     * No HTML modification required.
+     */
+
+    if (!messageElement) {
+
+        const activeModal =
+            document.querySelector(
+                ".auth-modal.active"
             );
 
 
-            registerMessage.textContent =
-                "Unable to connect to the server.";
+        if (!activeModal) {
+            return;
+        }
+
+
+        messageElement =
+            document.createElement("div");
+
+
+        messageElement.className =
+            "auth-message";
+
+
+        const form =
+            activeModal.querySelector("form");
+
+
+        if (form) {
+
+            form.parentNode.insertBefore(
+                messageElement,
+                form
+            );
+
+        } else {
+
+            activeModal
+                .querySelector(".auth-modal-card")
+                .appendChild(
+                    messageElement
+                );
 
         }
 
     }
+
+
+    messageElement.textContent =
+        message;
+
+
+    messageElement.className =
+        `auth-message ${type}`;
+
+
+    /*
+     * Inline styling keeps this functional
+     * without changing your existing landing CSS.
+     */
+
+    messageElement.style.marginBottom =
+        "12px";
+
+    messageElement.style.padding =
+        "9px 11px";
+
+    messageElement.style.borderRadius =
+        "7px";
+
+    messageElement.style.fontSize =
+        "12px";
+
+    messageElement.style.textAlign =
+        "center";
+
+
+    if (type === "success") {
+
+        messageElement.style.background =
+            "#ecfdf5";
+
+        messageElement.style.color =
+            "#047857";
+
+        messageElement.style.border =
+            "1px solid #a7f3d0";
+
+    } else {
+
+        messageElement.style.background =
+            "#fef2f2";
+
+        messageElement.style.color =
+            "#b91c1c";
+
+        messageElement.style.border =
+            "1px solid #fecaca";
+
+    }
+
+}
+
+
+/* =========================================================
+   CLEAR AUTH MESSAGE
+========================================================= */
+
+function clearAuthMessage() {
+
+    const messages =
+        document.querySelectorAll(
+            ".auth-message"
+        );
+
+
+    messages.forEach(message => {
+
+        message.remove();
+
+    });
+
+}
+
+
+/* =========================================================
+   BUTTON LOADING
+========================================================= */
+
+function setButtonLoading(
+    button,
+    loading,
+    defaultText
+) {
+
+    if (!button) {
+        return;
+    }
+
+
+    if (loading) {
+
+        button.disabled = true;
+
+        button.dataset.originalText =
+            button.textContent;
+
+        button.textContent =
+            "Please wait...";
+
+        button.style.opacity =
+            "0.7";
+
+        button.style.cursor =
+            "not-allowed";
+
+    } else {
+
+        button.disabled = false;
+
+        button.textContent =
+            button.dataset.originalText ||
+            defaultText;
+
+        button.style.opacity =
+            "";
+
+        button.style.cursor =
+            "";
+
+    }
+
+}
+
+
+/* =========================================================
+   GENERIC ANCHOR PROTECTION
+   Only prevent empty "#" links.
+   Do NOT interfere with auth buttons.
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const link =
+            event.target.closest("a[href='#']");
+
+
+        if (!link) {
+            return;
+        }
+
+
+        /*
+         * Auth links already have their own
+         * click handlers.
+         */
+
+        if (
+            link.id === "navLogin" ||
+            link.id === "navRegister" ||
+            link.id === "showLogin" ||
+            link.id === "showRegister"
+        ) {
+            return;
+        }
+
+
+        event.preventDefault();
+
+    }
 );
+
