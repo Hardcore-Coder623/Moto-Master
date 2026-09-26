@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color"
+          content="#06152f">
+
+    <title>Moto Master | User Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+</head>
+
+<body>
+
+    <div class="dashboard-layout">
+
+        <!-- =========================
+             USER SIDEBAR
+        ========================== -->
+
+        {% include 'user/components/sidebar.html' %}
+
+
+        <!-- =========================
+             MAIN DASHBOARD AREA
+        ========================== -->
+
+        <div class="dashboard-main">
+
+            <!-- Dashboard Navbar -->
+
+            {% include 'user/components/navbar.html' %}
+
+
+            <!-- Dashboard Content -->
+
+            <main class="dashboard-content">
+
+                {% include 'user/components/overview.html' %}
+
+            </main>
+
+        </div>
+
+    </div>
+
+
+    <!-- Dashboard JavaScript -->
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+</body>
+
+</html>

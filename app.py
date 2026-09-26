@@ -1,9 +1,12 @@
 
 from flask import Flask, render_template
 from backend.auth import auth_bp
+from backend.dashboard import dashboard_bp
 import os
 
+
 app = Flask(__name__)
+
 
 # =========================================================
 # FLASK SESSION CONFIGURATION
@@ -23,6 +26,8 @@ if not app.secret_key:
 
 app.register_blueprint(auth_bp)
 
+app.register_blueprint(dashboard_bp)
+
 
 # =========================================================
 # LANDING PAGE
@@ -30,7 +35,10 @@ app.register_blueprint(auth_bp)
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+
+    return render_template(
+        "index.html"
+    )
 
 
 # =========================================================
@@ -38,5 +46,8 @@ def home():
 # =========================================================
 
 if __name__ == "__main__":
-    app.run(debug=True)
+
+    app.run(
+        debug=True
+    )
 
