@@ -2,6 +2,7 @@
 from flask import Flask, render_template
 from backend.auth import auth_bp
 from backend.dashboard import dashboard_bp
+from backend.design import design_bp
 import os
 
 
@@ -25,28 +26,26 @@ if not app.secret_key:
 # =========================================================
 
 app.register_blueprint(auth_bp)
-
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(design_bp)
 
 
 # =========================================================
-# LANDING PAGE
+# HOME PAGE
 # =========================================================
 
 @app.route("/")
 def home():
-
     return render_template(
         "index.html"
     )
 
 
 # =========================================================
-# RUN
+# RUN APPLICATION
 # =========================================================
 
 if __name__ == "__main__":
-
     app.run(
         debug=True
     )

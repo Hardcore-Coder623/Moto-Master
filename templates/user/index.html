@@ -1,5 +1,5 @@
-
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
@@ -14,14 +14,28 @@
 
     <title>Moto Master | User Dashboard</title>
 
+
+    <!-- =========================
+         DASHBOARD CSS
+    ========================== -->
+
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+
+    <!-- =========================
+         DESIGN CSS
+    ========================== -->
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/design.css') }}">
 
 </head>
 
 <body>
 
     <div class="dashboard-layout">
+
 
         <!-- =========================
              USER SIDEBAR
@@ -36,27 +50,39 @@
 
         <div class="dashboard-main">
 
-            <!-- Dashboard Navbar -->
+
+            <!-- =========================
+                 DASHBOARD NAVBAR
+            ========================== -->
 
             {% include 'user/components/navbar.html' %}
 
 
-            <!-- Dashboard Content -->
+            <!-- =========================
+                 DASHBOARD CONTENT
+            ========================== -->
 
-            <main class="dashboard-content">
+            <main
+                class="dashboard-content"
+                id="dashboardContent">
 
                 {% include 'user/components/overview.html' %}
 
             </main>
+
 
         </div>
 
     </div>
 
 
-    <!-- Dashboard JavaScript -->
+    <!-- =========================
+         DASHBOARD JAVASCRIPT
+    ========================== -->
 
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script
+        src="{{ url_for('static', filename='js/dashboard.js') }}">
+    </script>
 
 </body>
 
