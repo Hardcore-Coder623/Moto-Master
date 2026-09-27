@@ -1,0 +1,661 @@
+<div class="design-parameter-form">
+
+    <div class="design-form-grid">
+
+        <div class="design-input-group">
+            <label for="design_no">Design No</label>
+            <input type="text" id="design_no" name="design_no" required>
+        </div>
+
+        <div class="design-input-group">
+            <label for="design_name">Design Name</label>
+            <input type="text" id="design_name" name="design_name" required>
+        </div>
+
+        <div class="design-input-group">
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date" required>
+        </div>
+
+        <div class="design-input-group">
+            <label for="connection">Connection</label>
+            <input type="text" id="connection" name="connection" required>
+        </div>
+
+        <div class="design-input-group">
+            <label for="voltage">Voltage (V)</label>
+            <input
+                type="number"
+                id="voltage"
+                name="voltage"
+                min="0"
+                step="any"
+                required
+            >
+        </div>
+
+        <div class="design-input-group">
+            <label for="power">Power (Watts)</label>
+            <input
+                type="number"
+                id="power"
+                name="power"
+                min="0"
+                step="any"
+                required
+            >
+        </div>
+
+        <div class="design-input-group">
+            <label for="hp">Horse Power (HP)</label>
+            <input
+                type="number"
+                id="hp"
+                name="hp"
+                min="0"
+                step="0.01"
+                readonly
+            >
+        </div>
+
+        <div class="design-input-group">
+            <label for="frequency">Frequency (Hz)</label>
+            <select id="frequency" name="frequency" required>
+                <option value="">Select Frequency</option>
+                <option value="50">50 Hz</option>
+                <option value="60">60 Hz</option>
+            </select>
+        </div>
+
+        <div class="design-input-group">
+            <label for="rpm">RPM</label>
+            <input
+                type="number"
+                id="rpm"
+                name="rpm"
+                min="0"
+                step="1"
+                required
+            >
+        </div>
+
+        <div class="design-input-group">
+            <label for="pole">Pole</label>
+            <select id="pole" name="pole" required>
+                <option value="">Select Pole</option>
+                <option value="2">2 Pole</option>
+                <option value="4">4 Pole</option>
+                <option value="6">6 Pole</option>
+                <option value="8">8 Pole</option>
+                <option value="10">10 Pole</option>
+                <option value="12">12 Pole</option>
+            </select>
+        </div>
+
+        <div class="design-input-group">
+            <label for="uph">UPH</label>
+            <input
+                type="number"
+                id="uph"
+                name="uph"
+                min="0"
+                step="any"
+                required
+            >
+        </div>
+
+        <div class="design-input-group">
+            <label for="capacitor">Capacitor</label>
+            <input
+                type="text"
+                id="capacitor"
+                name="capacitor"
+                readonly
+            >
+        </div>
+
+    </div>
+
+
+    <div class="design-action">
+        <button type="button" class="design-next-button" id="mainDataNext">
+            Continue
+        </button>
+    </div>
+
+
+    <script>
+    (() => {
+
+        console.log("========================================");
+        console.log("MOTO MASTER - DESIGN CALCULATION START");
+        console.log("========================================");
+
+
+        function initDesignCalculation() {
+
+            console.log("[INIT] Initializing design calculation...");
+
+
+            /* =========================================
+               GET ELEMENTS
+            ========================================= */
+
+            const designNo =
+                document.getElementById("design_no");
+
+            const designName =
+                document.getElementById("design_name");
+
+            const date =
+                document.getElementById("date");
+
+            const connection =
+                document.getElementById("connection");
+
+            const power =
+                document.getElementById("power");
+
+            const voltage =
+                document.getElementById("voltage");
+
+            const hp =
+                document.getElementById("hp");
+
+            const frequency =
+                document.getElementById("frequency");
+
+            const rpm =
+                document.getElementById("rpm");
+
+            const pole =
+                document.getElementById("pole");
+
+            const uph =
+                document.getElementById("uph");
+
+            const capacitor =
+                document.getElementById("capacitor");
+
+
+            /* =========================================
+               ELEMENT CHECK
+            ========================================= */
+
+            console.log("[ELEMENT CHECK]");
+
+            console.log("Design No:", designNo);
+            console.log("Design Name:", designName);
+            console.log("Date:", date);
+            console.log("Connection:", connection);
+            console.log("Power:", power);
+            console.log("Voltage:", voltage);
+            console.log("HP:", hp);
+            console.log("Frequency:", frequency);
+            console.log("RPM:", rpm);
+            console.log("Pole:", pole);
+            console.log("UPH:", uph);
+            console.log("Capacitor:", capacitor);
+
+
+            if (
+                !power ||
+                !voltage ||
+                !hp ||
+                !uph ||
+                !capacitor
+            ) {
+
+                console.error(
+                    "[ERROR] Required calculation elements not found."
+                );
+
+                return;
+            }
+
+
+            console.log(
+                "[SUCCESS] All calculation elements found."
+            );
+
+
+            /* =========================================
+               POWER → HP
+            ========================================= */
+
+            function updateHP() {
+
+                const powerValue =
+                    parseFloat(power.value);
+
+
+                console.log(
+                    "[HP] Power input:",
+                    power.value
+                );
+
+
+                if (
+                    power.value !== "" &&
+                    Number.isFinite(powerValue)
+                ) {
+
+                    const hpValue =
+                        powerValue / 746;
+
+
+                    hp.value =
+                        hpValue.toFixed(2);
+
+
+                    console.log(
+                        "[HP] Calculation:",
+                        powerValue,
+                        "/ 746 =",
+                        hpValue
+                    );
+
+                    console.log(
+                        "[HP] Result:",
+                        hp.value
+                    );
+
+                } else {
+
+                    hp.value = "";
+
+                    console.log(
+                        "[HP] No valid power value."
+                    );
+                }
+            }
+
+
+            /* =========================================
+               POWER + VOLTAGE → CAPACITOR
+            ========================================= */
+
+            function updateCapacitor() {
+
+                const powerValue =
+                    parseFloat(power.value);
+
+                const voltageValue =
+                    parseFloat(voltage.value);
+
+
+                console.log(
+                    "[CAPACITOR] Power:",
+                    power.value
+                );
+
+                console.log(
+                    "[CAPACITOR] Voltage:",
+                    voltage.value
+                );
+
+
+                if (
+                    power.value !== "" &&
+                    voltage.value !== "" &&
+                    Number.isFinite(powerValue) &&
+                    Number.isFinite(voltageValue) &&
+                    voltageValue > 0
+                ) {
+
+
+                    const capacitorValue =
+                        (
+                            (35 * (powerValue * 2)) /
+                            (voltageValue * voltageValue)
+                        ) * 40;
+
+
+                    capacitor.value =
+                        capacitorValue.toFixed(2);
+
+
+                    console.log(
+                        "[CAPACITOR] Formula:"
+                    );
+
+                    console.log(
+                        "((35 × (Power × 2)) / Voltage²) × 40"
+                    );
+
+
+                    console.log(
+                        "[CAPACITOR] Result:",
+                        capacitorValue
+                    );
+
+                    console.log(
+                        "[CAPACITOR] Display:",
+                        capacitor.value
+                    );
+
+                } else {
+
+                    capacitor.value = "";
+
+                    console.log(
+                        "[CAPACITOR] Invalid or empty input."
+                    );
+                }
+            }
+
+
+            /* =========================================
+               VOLTAGE → UPH
+            ========================================= */
+
+            function updateUPH() {
+
+                uph.value =
+                    voltage.value;
+
+
+                console.log(
+                    "[VOLTAGE → UPH]",
+                    voltage.value,
+                    "→",
+                    uph.value
+                );
+            }
+
+
+            /* =========================================
+               MAIN CALCULATION
+            ========================================= */
+
+            function calculateAll() {
+
+                console.log(
+                    "----------------------------------------"
+                );
+
+                console.log(
+                    "[CALCULATE ALL]"
+                );
+
+
+                updateHP();
+
+                updateCapacitor();
+
+
+                console.log(
+                    "[CALCULATE ALL] Complete"
+                );
+
+                console.log(
+                    "----------------------------------------"
+                );
+            }
+
+
+            /* =========================================
+               POWER INPUT
+            ========================================= */
+
+            power.addEventListener(
+                "input",
+                function () {
+
+                    console.log(
+                        "[EVENT] Power changed:",
+                        power.value
+                    );
+
+
+                    calculateAll();
+
+                }
+            );
+
+
+            /* =========================================
+               VOLTAGE INPUT
+            ========================================= */
+
+            voltage.addEventListener(
+                "input",
+                function () {
+
+                    console.log(
+                        "[EVENT] Voltage changed:",
+                        voltage.value
+                    );
+
+
+                    updateUPH();
+
+                    updateCapacitor();
+
+                }
+            );
+
+
+            /* =========================================
+               UPH INPUT
+            ========================================= */
+
+            uph.addEventListener(
+                "input",
+                function () {
+
+                    console.log(
+                        "[EVENT] UPH changed:",
+                        uph.value
+                    );
+
+
+                    voltage.value =
+                        uph.value;
+
+
+                    console.log(
+                        "[UPH → VOLTAGE]",
+                        uph.value,
+                        "→",
+                        voltage.value
+                    );
+
+
+                    updateCapacitor();
+
+                }
+            );
+
+
+            /* =========================================
+               FREQUENCY
+            ========================================= */
+
+            if (frequency) {
+
+                frequency.addEventListener(
+                    "change",
+                    function () {
+
+                        console.log(
+                            "[FREQUENCY] Selected:",
+                            frequency.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /* =========================================
+               RPM
+            ========================================= */
+
+            if (rpm) {
+
+                rpm.addEventListener(
+                    "input",
+                    function () {
+
+                        console.log(
+                            "[RPM] Value:",
+                            rpm.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /* =========================================
+               POLE
+            ========================================= */
+
+            if (pole) {
+
+                pole.addEventListener(
+                    "change",
+                    function () {
+
+                        console.log(
+                            "[POLE] Selected:",
+                            pole.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /* =========================================
+               OTHER FORM DATA
+            ========================================= */
+
+            if (designNo) {
+
+                designNo.addEventListener(
+                    "input",
+                    function () {
+
+                        console.log(
+                            "[DESIGN NO]:",
+                            designNo.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            if (designName) {
+
+                designName.addEventListener(
+                    "input",
+                    function () {
+
+                        console.log(
+                            "[DESIGN NAME]:",
+                            designName.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            if (date) {
+
+                date.addEventListener(
+                    "change",
+                    function () {
+
+                        console.log(
+                            "[DATE]:",
+                            date.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            if (connection) {
+
+                connection.addEventListener(
+                    "input",
+                    function () {
+
+                        console.log(
+                            "[CONNECTION]:",
+                            connection.value
+                        );
+
+                    }
+                );
+
+            }
+
+
+            /* =========================================
+               INITIAL CALCULATION
+            ========================================= */
+
+            console.log(
+                "[INIT] Running initial calculation..."
+            );
+
+
+            calculateAll();
+
+
+            if (voltage.value !== "") {
+
+                uph.value =
+                    voltage.value;
+
+
+                console.log(
+                    "[INIT] Voltage → UPH:",
+                    voltage.value
+                );
+
+            }
+
+
+            console.log(
+                "[INIT] Design calculation ready."
+            );
+
+        }
+
+
+        /* =========================================
+           DOM READY
+        ========================================= */
+
+        if (
+            document.readyState === "loading"
+        ) {
+
+            document.addEventListener(
+                "DOMContentLoaded",
+                initDesignCalculation
+            );
+
+        } else {
+
+            initDesignCalculation();
+
+        }
+
+    })();
+    </script>
+
+</div>

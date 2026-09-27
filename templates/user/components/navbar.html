@@ -1,0 +1,48 @@
+
+<header class="dashboard-navbar">
+
+    <!-- =========================
+         PAGE TITLE
+    ========================== -->
+
+    <div class="dashboard-navbar-left">
+
+        <h1>
+            Dashboard
+        </h1>
+
+        <p>
+            Manage your motor winding designs and calculations.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         USER INFORMATION
+    ========================== -->
+
+    <div class="dashboard-user">
+
+        <div class="dashboard-user-avatar">
+
+            {{ user.name[0]|upper }}
+
+        </div>
+
+
+        <div class="dashboard-user-info">
+
+            <strong>
+                {{ user.name }}
+            </strong>
+
+            <span>
+                @{{ user.username }}
+            </span>
+
+        </div>
+
+    </div>
+
+</header>
