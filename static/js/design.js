@@ -1,13 +1,11 @@
 /* =====================================================
-MOTO MASTER — DESIGN MODULE
+   MOTO MASTER — DESIGN MODULE
 ===================================================== */
 
 window.initializeDesignPage = function () {
 
 /* =================================================
    RUN SCRIPTS HELPER
-   innerHTML does not execute <script> tags.
-   This clones and re-inserts them so they run.
 ================================================= */
 
 function runScripts(container) {
@@ -24,10 +22,12 @@ function runScripts(container) {
 
             Array.from(oldScript.attributes)
                 .forEach(function (attr) {
+
                     newScript.setAttribute(
                         attr.name,
                         attr.value
                     );
+
                 });
 
             oldScript.parentNode.replaceChild(
@@ -123,6 +123,7 @@ function saveValue(key, value) {
         key,
         value
     );
+
 }
 
 
@@ -206,6 +207,10 @@ function getValueAny(keys) {
 }
 
 
+/* =================================================
+   SAVE FROM IDS
+================================================= */
+
 function saveFromIds(ids) {
 
     for (let i = 0; i < ids.length; i++) {
@@ -216,7 +221,12 @@ function saveFromIds(ids) {
         if (element) {
 
             ids.forEach((id) => {
-                saveValue(id, element.value);
+
+                saveValue(
+                    id,
+                    element.value
+                );
+
             });
 
             return element.value;
@@ -229,19 +239,51 @@ function saveFromIds(ids) {
 }
 
 
+/* =================================================
+   RESTORE FORM FIELDS
+================================================= */
+
 function restoreFormFields(container) {
 
     const aliases = {
-        design_no: ["design_no", "designNo"],
-        designNo: ["designNo", "design_no"],
-        design_name: ["design_name", "designName"],
-        designName: ["designName", "design_name"],
-        date: ["date", "designDate"],
-        designDate: ["designDate", "date"]
+
+        design_no: [
+            "design_no",
+            "designNo"
+        ],
+
+        designNo: [
+            "designNo",
+            "design_no"
+        ],
+
+        design_name: [
+            "design_name",
+            "designName"
+        ],
+
+        designName: [
+            "designName",
+            "design_name"
+        ],
+
+        date: [
+            "date",
+            "designDate"
+        ],
+
+        designDate: [
+            "designDate",
+            "date"
+        ]
+
     };
 
+
     container
-        .querySelectorAll("input, select, textarea")
+        .querySelectorAll(
+            "input, select, textarea"
+        )
         .forEach((element) => {
 
             if (!element.id) {
@@ -256,7 +298,10 @@ function restoreFormFields(container) {
                 getValueAny(keys);
 
             if (stored !== "") {
-                element.value = stored;
+
+                element.value =
+                    stored;
+
             }
 
         });
@@ -302,11 +347,13 @@ async function loadForm(
         container.innerHTML =
             html;
 
-        restoreFormFields(container);
+        restoreFormFields(
+            container
+        );
 
-        /* Run <script> tags inside the loaded form */
-
-        runScripts(container);
+        runScripts(
+            container
+        );
 
         return true;
 
@@ -328,6 +375,7 @@ async function loadForm(
         `;
 
         return false;
+
     }
 
 }
@@ -441,17 +489,21 @@ phaseButtons.forEach((button) => {
             }
 
             if (wireType) {
+
                 wireType.value =
                     getValue(
                         "design_wire_type"
                     );
+
             }
 
             if (mechanicalComponent) {
+
                 mechanicalComponent.value =
                     getValue(
                         "design_mechanical_component"
                     );
+
             }
 
             checkComponentSelection();
@@ -629,9 +681,7 @@ if (componentsNextButton) {
                 !mechanicalComponent ||
                 !mechanicalComponent.value
             ) {
-
                 return;
-
             }
 
             if (sectionForms) {
@@ -701,9 +751,20 @@ if (componentsNextButton) {
 
 function saveMainData() {
 
-    saveFromIds(["designNo", "design_no"]);
-    saveFromIds(["designName", "design_name"]);
-    saveFromIds(["designDate", "date"]);
+    saveFromIds([
+        "designNo",
+        "design_no"
+    ]);
+
+    saveFromIds([
+        "designName",
+        "design_name"
+    ]);
+
+    saveFromIds([
+        "designDate",
+        "date"
+    ]);
 
     const fields = [
 
@@ -794,26 +855,50 @@ function saveStampingData() {
 
         function saveLossFactors(y, t) {
 
-            saveValue("lf_y", y);
-            saveValue("lf_t", t);
-            saveValue("stamping_lf_y", y);
-            saveValue("stamping_lf_t", t);
+            saveValue(
+                "lf_y",
+                y
+            );
+
+            saveValue(
+                "lf_t",
+                t
+            );
+
+            saveValue(
+                "stamping_lf_y",
+                y
+            );
+
+            saveValue(
+                "stamping_lf_t",
+                t
+            );
 
         }
 
         if (value === "CRC") {
 
-            saveLossFactors("22", "22");
+            saveLossFactors(
+                "22",
+                "22"
+            );
 
         }
         else if (value === "CRNO") {
 
-            saveLossFactors("8", "8");
+            saveLossFactors(
+                "8",
+                "8"
+            );
 
         }
         else if (value === "M-47") {
 
-            saveLossFactors("2", "2");
+            saveLossFactors(
+                "2",
+                "2"
+            );
 
         }
 
@@ -1049,7 +1134,7 @@ function attachRotorEvents() {
 
 
 /* =================================================
-   SAVE WINDING (local session only)
+   SAVE WINDING
 ================================================= */
 
 function saveWindingFormData() {
@@ -1092,17 +1177,39 @@ function saveWindingFormData() {
 
         if (element) {
 
-            saveValue(id, element.value);
-            saveValue("winding_" + id, element.value);
+            saveValue(
+                id,
+                element.value
+            );
+
+            saveValue(
+                "winding_" + id,
+                element.value
+            );
 
         }
 
     });
 
-    saveFromIds(["I_ph", "I_main"]);
-    saveFromIds(["cu_length", "culength"]);
-    saveFromIds(["air_gap", "airgap"]);
-    saveFromIds(["final_efficiency", "efficiency1"]);
+    saveFromIds([
+        "I_ph",
+        "I_main"
+    ]);
+
+    saveFromIds([
+        "cu_length",
+        "culength"
+    ]);
+
+    saveFromIds([
+        "air_gap",
+        "airgap"
+    ]);
+
+    saveFromIds([
+        "final_efficiency",
+        "efficiency1"
+    ]);
 
 }
 
@@ -1112,7 +1219,7 @@ window.saveWindingFormData =
 
 
 /* =================================================
-   SHOW REPORT (local data, no DB)
+   SHOW REPORT
 ================================================= */
 
 function showDesignReport(html) {
@@ -1125,7 +1232,9 @@ function showDesignReport(html) {
     if (!overlay) {
 
         overlay =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         overlay.id =
             "designReportOverlay";
@@ -1134,7 +1243,9 @@ function showDesignReport(html) {
             "position:fixed;inset:0;z-index:9999;" +
             "background:#f8f9fa;overflow:auto;";
 
-        document.body.appendChild(overlay);
+        document.body.appendChild(
+            overlay
+        );
 
     }
 
@@ -1157,34 +1268,44 @@ function showDesignReport(html) {
         });
 
     const printFix =
-        document.createElement("style");
+        document.createElement(
+            "style"
+        );
 
     printFix.textContent =
         "@media print { body > *:not(#designReportOverlay){display:none !important;} " +
         "#designReportOverlay{position:static;overflow:visible;} }";
 
-    overlay.appendChild(printFix);
+    overlay.appendChild(
+        printFix
+    );
 
-    Array.from(parsed.body.childNodes)
-        .forEach((node) => {
+    Array.from(
+        parsed.body.childNodes
+    )
+    .forEach((node) => {
 
-            overlay.appendChild(
-                node.cloneNode(true)
-            );
+        overlay.appendChild(
+            node.cloneNode(true)
+        );
 
-        });
+    });
 
     const backButton =
-        overlay.querySelector(".back-button");
+        overlay.querySelector(
+            ".back-button"
+        );
 
     if (backButton) {
 
-        backButton.onclick = function (event) {
+        backButton.onclick =
+            function (event) {
 
-            event.preventDefault();
-            overlay.remove();
+                event.preventDefault();
 
-        };
+                overlay.remove();
+
+            };
 
     }
 
@@ -1247,8 +1368,11 @@ function attachWindingEvents() {
                 const designData =
                     collectDesignData();
 
-                submitButton.disabled = true;
-                submitButton.textContent = "Generating Report…";
+                submitButton.disabled =
+                    true;
+
+                submitButton.textContent =
+                    "Generating Report…";
 
                 try {
 
@@ -1257,10 +1381,17 @@ function attachWindingEvents() {
                             "/design/report",
                             {
                                 method: "POST",
+
                                 headers: {
-                                    "Content-Type": "application/json"
+                                    "Content-Type":
+                                        "application/json"
                                 },
-                                body: JSON.stringify(designData)
+
+                                body:
+                                    JSON.stringify(
+                                        designData
+                                    )
+
                             }
                         );
 
@@ -1269,23 +1400,39 @@ function attachWindingEvents() {
                         const html =
                             await response.text();
 
-                        showDesignReport(html);
+                        showDesignReport(
+                            html
+                        );
 
-                    } else {
+                    }
+                    else {
 
-                        const err = await response.text();
-                        alert("Report error: " + err);
+                        const err =
+                            await response.text();
+
+                        alert(
+                            "Report error: " +
+                            err
+                        );
 
                     }
 
-                } catch (error) {
+                }
+                catch (error) {
 
-                    alert("Failed to generate report: " + error.message);
+                    alert(
+                        "Failed to generate report: " +
+                        error.message
+                    );
 
-                } finally {
+                }
+                finally {
 
-                    submitButton.disabled = false;
-                    submitButton.textContent = "Continue";
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Continue";
 
                 }
 
@@ -1340,38 +1487,58 @@ function collectDesignData() {
                 ]),
 
             connection:
-                getValue("connection"),
+                getValue(
+                    "connection"
+                ),
 
             voltage:
-                getNumber("voltage"),
+                getNumber(
+                    "voltage"
+                ),
 
             power:
-                getNumber("power"),
+                getNumber(
+                    "power"
+                ),
 
             hp:
-                getNumber("hp"),
+                getNumber(
+                    "hp"
+                ),
 
             frequency:
-                getNumber("frequency"),
+                getNumber(
+                    "frequency"
+                ),
 
             rpm:
-                getNumber("rpm"),
+                getNumber(
+                    "rpm"
+                ),
 
             pole:
-                getNumber("pole"),
+                getNumber(
+                    "pole"
+                ),
 
             uph:
-                getNumber("uph"),
+                getNumber(
+                    "uph"
+                ),
 
             capacitor:
-                getNumber("capacitor")
+                getNumber(
+                    "capacitor"
+                )
 
         },
 
         stamping_data: {
 
             material:
-                getValue("material"),
+                getValue(
+                    "material"
+                ),
 
             stamping_material:
                 getValue(
@@ -1530,16 +1697,24 @@ function collectDesignData() {
                 ),
 
             slip:
-                getNumber("slip"),
+                getNumber(
+                    "slip"
+                ),
 
             temp:
-                getNumber("temp"),
+                getNumber(
+                    "temp"
+                ),
 
             statorwt:
-                getNumber("statorwt"),
+                getNumber(
+                    "statorwt"
+                ),
 
             rotorwt:
-                getNumber("rotorwt"),
+                getNumber(
+                    "rotorwt"
+                ),
 
             cu_length:
                 getNumberAny([
@@ -1560,23 +1735,34 @@ function collectDesignData() {
                 ]),
 
             angle:
-                getNumber("angle"),
+                getNumber(
+                    "angle"
+                ),
 
             torque:
-                getNumber("torque"),
+                getNumber(
+                    "torque"
+                ),
 
-            // 1-phase / 2-phase auxiliary winding
             I_aux:
-                getNumber("I_aux"),
+                getNumber(
+                    "I_aux"
+                ),
 
             insulation_dia_aux:
-                getNumber("insulation_dia_aux"),
+                getNumber(
+                    "insulation_dia_aux"
+                ),
 
             actual_use_dia_aux:
-                getNumber("actual_use_dia_aux"),
+                getNumber(
+                    "actual_use_dia_aux"
+                ),
 
             final_turns_aux:
-                getNumber("final_turns_aux")
+                getNumber(
+                    "final_turns_aux"
+                )
 
         }
 

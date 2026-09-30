@@ -3,79 +3,87 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
 
-<meta name="theme-color"
-      content="#06152f">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Moto Master | User Dashboard</title>
+    <meta name="theme-color"
+          content="#06152f">
 
-
-<!-- Dashboard CSS -->
-
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <title>Moto Master | User Dashboard</title>
 
 
-<!-- Design CSS -->
+    <!-- =========================
+         DASHBOARD CSS
+    ========================== -->
 
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/design.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/dashboard.css') }}">
+
+
+    <!-- =========================
+         DESIGN CSS
+    ========================== -->
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/design.css') }}">
+
 </head>
 
 <body>
-<div class="dashboard-layout">
 
-
-    <!-- =========================
-         USER SIDEBAR
-    ========================== -->
-
-    {% include 'user/components/sidebar.html' %}
-
-
-    <!-- =========================
-         MAIN DASHBOARD AREA
-    ========================== -->
-
-    <div class="dashboard-main">
+    <div class="dashboard-layout">
 
 
         <!-- =========================
-             DASHBOARD NAVBAR
+             USER SIDEBAR
         ========================== -->
 
-        {% include 'user/components/navbar.html' %}
+        {% include 'user/components/sidebar.html' %}
 
 
         <!-- =========================
-             DASHBOARD CONTENT
+             MAIN DASHBOARD AREA
         ========================== -->
 
-        <main
-            class="dashboard-content"
-            id="dashboardContent">
+        <div class="dashboard-main">
 
-            {% include 'user/components/overview.html' %}
 
-        </main>
+            <!-- =========================
+                 DASHBOARD NAVBAR
+            ========================== -->
 
+            {% include 'user/components/navbar.html' %}
+
+
+            <!-- =========================
+                 DASHBOARD CONTENT
+            ========================== -->
+
+            <main
+                class="dashboard-content"
+                id="dashboardContent">
+
+                {% include 'user/components/overview.html' %}
+
+            </main>
+
+
+        </div>
 
     </div>
 
-</div>
 
+    <!-- =========================
+         DASHBOARD JAVASCRIPT
+    ========================== -->
 
-<!-- =========================
-     DASHBOARD JAVASCRIPT
-========================== -->
+    <script
+        src="{{ url_for('static', filename='js/dashboard.js') }}">
+    </script>
 
-<script
-    src="{{ url_for('static', filename='js/dashboard.js') }}">
-</script>
 </body>
 
 </html>
