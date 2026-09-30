@@ -161,6 +161,25 @@
     </div>
 
 
+    <!-- Auto-fill: start from a previous design -->
+
+    <div class="design-field design-start-from">
+
+        <label for="startFrom">
+            Start from
+        </label>
+
+        <select id="startFrom">
+            <option value="blank">Blank form</option>
+        </select>
+
+        <p class="design-start-hint" id="startFromHint">
+            Pick a previous design to fill every form with its values. You can change anything before saving.
+        </p>
+
+    </div>
+
+
     <div class="design-action">
 
         <button
@@ -408,6 +427,7 @@
 </section>
 </div>
 <script>
+(function () {
     const wireType = document.getElementById("wireType");
 const mechanicalComponent = document.getElementById("mechanicalComponent");
 const componentsNextButton = document.getElementById("componentsNextButton");
@@ -445,4 +465,5 @@ componentsNextButton.addEventListener("click", function () {
     document.getElementById("sectionComponents").classList.add("hidden");
     document.getElementById("sectionForms").classList.remove("hidden");
 });
+})();
 </script>

@@ -1,191 +1,123 @@
+{% from 'landing/report_macros.html' import row, stat, num with context %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Three Phase Motor Design Report</title>
-<style>
-  @page { size: A4; margin: 8mm; }
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0; background: #f8f9fa; color: #333; font-size: 11px;
-  }
-  .container {
-    max-width: 720px; margin: auto; background: #fff;
-    padding: 15px 20px; box-shadow: 0 0 6px rgba(0,0,0,0.12);
-    border-radius: 10px;
-  }
-  .header {
-    background: #004080; color: #fff; padding: 10px 16px;
-    border-radius: 6px; margin-bottom: 16px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
-  .logo { height: 42px; width: auto; border-radius: 4px; object-fit: contain; }
-  .header h1 { margin: 0; font-size: 18px; font-weight: 700; }
-  .header p  { margin: 4px 0 0; font-size: 13px; font-weight: 600; }
-  .section { margin-bottom: 14px; }
-  .section-row { display: flex; gap: 20px; margin-bottom: 14px; }
-  .section-row > div { flex: 1; }
-  p.section-title {
-    font-size: 12px; background: #004080; color: #fff;
-    padding: 3px 8px; margin: 0 0 4px; font-weight: 600;
-  }
-  table { width: 100%; border-collapse: collapse; margin-bottom: 10px; font-size: 12px; }
-  table, th, td { border: 1px solid #004080; }
-  th, td { padding: 4px 8px; text-align: left; color: #222; }
-  th { font-weight: bold; }
-  .footer {
-    text-align: center; margin-top: 20px; font-size: 10px; color: #777;
-    border-top: 1px dashed #ccc; padding-top: 8px;
-  }
-  .button-row {
-    display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 15px;
-  }
-  .back-button {
-    background-color: #444; color: white; padding: 0.5rem 0.9rem;
-    border: none; border-radius: 4px; cursor: pointer;
-    font-size: 0.9rem; text-decoration: none; transition: background-color 0.3s;
-  }
-  .back-button:hover { background-color: #333; }
-  #btnPrint {
-    padding: 0.5rem 1rem; font-size: 0.9rem;
-    background-color: #004080; color: white;
-    border: none; border-radius: 5px; cursor: pointer;
-  }
-  #btnPrint:hover { background-color: #003060; }
-  @media print {
-    .button-row { display: none; }
-  }
-</style>
+<title>Motor Design Report - {{ main_data.design_no }} - {{ main_data.design_name }}</title>
+{% include 'landing/report_styles.html' %}
 </head>
-<body>
+<body style="margin:0">
 
-<div class="container">
+<div class="mm-report">
 
-  <!-- Toolbar (hidden on print) -->
-  <div class="button-row no-print">
-    <button class="back-button" onclick="history.back()">&#8592; Back</button>
-    <button id="btnPrint" onclick="window.print()">&#128438; Print / Save PDF</button>
-  </div>
-
-  <!-- Header -->
-  <div class="header">
-    <img src="/static/img/MotoMaster Software Splash Screen.png" alt="Logo" class="logo" style="height:60px;width:150px">
-    <div style="flex:1;text-align:center;">
-      <h1>Three Phase Motor Design Report</h1>
-      <p>Design No: <strong style="font-size:16px;">{{main_data.design_no}}</strong> |
-         Name: <strong style="font-size:16px;">{{main_data.design_name}}</strong>
-      </p>
+    <!-- Toolbar (hidden on print) -->
+    <div class="mm-toolbar">
+        <div class="mm-toolbar-group">
+            <button type="button" class="mm-btn mm-btn-outline back-button" onclick="history.back()">&#8592; Back</button>
+            <a class="mm-btn mm-btn-outline mm-dashboard-link" href="/dashboard">Dashboard</a>
+        </div>
+        <button type="button" class="mm-btn mm-btn-primary" id="btnPrint" onclick="window.print()">Print / Save PDF</button>
     </div>
-    <div style="text-align:right;font-size:13px;">
-      <p><strong>Date:</strong> {{ main_data.date }}</p>
+
+    <div class="mm-sheet">
+
+        <!-- Header -->
+        <header class="mm-header">
+
+            <div class="mm-header-top">
+                <div class="mm-brand">
+                    <div class="mm-brand-mark">M</div>
+                    <div>Moto <strong>Master</strong></div>
+                </div>
+                <div class="mm-date">Date: <strong>{{ main_data.date }}</strong></div>
+            </div>
+
+            <div class="mm-kicker">Motor Design Report</div>
+            <h1 class="mm-title">Three Phase Induction Motor</h1>
+
+            <div class="mm-meta">
+                <span class="mm-chip">Design No: <strong>{{ main_data.design_no }}</strong></span>
+                <span class="mm-chip">Name: <strong>{{ main_data.design_name }}</strong></span>
+                <span class="mm-chip">Connection: <strong>{{ main_data.connection or 'N/A' }}</strong></span>
+            </div>
+
+        </header>
+
+        <main class="mm-body">
+
+            <!-- Performance -->
+            <div class="mm-section-title">Performance Summary</div>
+
+            <div class="mm-stats">
+                {{ stat('Final Efficiency', winding_data.final_efficiency, '%', primary=true) }}
+                {{ stat('Phase Current', winding_data.I_ph, 'A') }}
+                {{ stat('Slip', winding_data.slip, '%') }}
+                {{ stat('Temperature Rise', winding_data.temp, '°C') }}
+                {{ stat('Torque', num(winding_data.torque), 'Nm') }}
+                {{ stat('Air Gap', winding_data.air_gap, 'mm') }}
+            </div>
+
+            <div class="mm-grid">
+
+                <!-- Design parameters -->
+                <section class="mm-card is-wide">
+                    <div class="mm-section-title">Design Parameters</div>
+                    <div class="mm-rows">
+                        {{ row('Voltage', main_data.voltage, 'V') }}
+                        {{ row('Power', main_data.power, 'W') }}
+                        {{ row('HP', main_data.hp, 'HP') }}
+                        {{ row('Frequency', main_data.frequency, 'Hz') }}
+                        {{ row('Connection', main_data.connection) }}
+                        {{ row('Speed', main_data.rpm, 'RPM') }}
+                        {{ row('Pole', main_data.pole) }}
+                    </div>
+                </section>
+
+                <!-- Stamping -->
+                <section class="mm-card">
+                    <div class="mm-section-title">Stamping Data</div>
+                    {{ row('Stamping Material', stamping_data.stamping_material) }}
+                    {{ row('Stator Weight', winding_data.statorwt, 'kg') }}
+                    {{ row('Outer Diameter', stamping_data.d0, 'mm') }}
+                    {{ row('Inner Diameter', stamping_data.dia, 'mm') }}
+                    {{ row('Slots', stamping_data.N) }}
+                    {{ row('Stack Length', winding_data.final_stack_length, 'mm') }}
+                </section>
+
+                <!-- Rotor -->
+                <section class="mm-card">
+                    <div class="mm-section-title">Rotor Data</div>
+                    {{ row('Bar Material', stamping_data.material) }}
+                    {{ row('Rotor Weight', winding_data.rotorwt, 'kg') }}
+                    {{ row('End Ring Width', rotor_data.rng_wt, 'mm') }}
+                    {{ row('End Ring Height', rotor_data.rng_ht, 'mm') }}
+                    {{ row('Skew Angle', num(winding_data.angle), '°') }}
+                </section>
+
+                <!-- Winding -->
+                <section class="mm-card is-wide">
+                    <div class="mm-section-title">Winding Data</div>
+                    <div class="mm-rows">
+                        {{ row('Actual Diameter Used', winding_data.actual_use_dia, 'mm') }}
+                        {{ row('Insulation Diameter', winding_data.insulation_dia, 'mm') }}
+                        {{ row('Final Turns', winding_data.final_turns) }}
+                        {{ row('Copper Length', num(winding_data.cu_length), 'mm') }}
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+
+        <footer class="mm-footer">
+            <span><strong>Moto Master</strong> · Motor Design Software</span>
+            <span>Generated {{ current_date }}</span>
+        </footer>
+
     </div>
-  </div>
-
-  <!-- Design Parameters -->
-  <div class="section">
-    <p class="section-title">Design Parameters</p>
-    <table>
-      <tbody>
-        <tr><th>Voltage</th>    <td>{{main_data.voltage}} V</td></tr>
-        <tr><th>Power</th>     <td>{{main_data.power}} W</td></tr>
-        <tr><th>HP</th>        <td>{{main_data.hp}} HP</td></tr>
-        <tr><th>Frequency</th> <td>{{main_data.frequency}} Hz</td></tr>
-        <tr><th>Connection</th><td>{{main_data.connection}}</td></tr>
-        <tr><th>RPM</th>       <td>{{main_data.rpm}} RPM</td></tr>
-        <tr><th>Pole</th>      <td>{{main_data.pole}}</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Stamping + Rotor side by side -->
-  <div class="section-row">
-    <div>
-      <p class="section-title">Stamping Data</p>
-      <table>
-        <tbody>
-          <tr><th>Stamping Material</th><td>{{stamping_data.stamping_material}}</td></tr>
-          <tr><th>Stator Weight</th>    <td>{{ winding_data.statorwt }} kg</td></tr>
-          <tr><th>Outer Diameter</th>   <td>{{stamping_data.d0}} mm</td></tr>
-          <tr><th>Inner Diameter</th>   <td>{{stamping_data.dia}} mm</td></tr>
-          <tr><th>Slot</th>             <td>{{stamping_data.N}}</td></tr>
-          <tr><th>Stack Length</th>     <td>{{ winding_data.final_stack_length }} mm</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <p class="section-title">Rotor Data</p>
-      <table>
-        <tbody>
-          <tr><th>Bar Material</th>   <td>{{ stamping_data.material }}</td></tr>
-          <tr><th>Rotor Weight</th>   <td>{{ winding_data.rotorwt }} kg</td></tr>
-          <tr><th>End Ring Width</th> <td>{{ rotor_data.rng_wt }} mm</td></tr>
-          <tr><th>End Ring Height</th><td>{{ rotor_data.rng_ht }} mm</td></tr>
-          <tr><th>Skew Angle</th>
-            <td>
-              {% if winding_data.angle not in ('N/A', '', None) %}
-                {{ winding_data.angle | float | round(2) }}°
-              {% else %}N/A{% endif %}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Winding Data -->
-  <div class="section">
-    <p class="section-title">Winding Data</p>
-    <table>
-      <tbody>
-        <tr><th>Actual Diameter Used</th><td>{{winding_data.actual_use_dia}} mm</td></tr>
-        <tr><th>Insulation Diameter</th> <td>{{winding_data.insulation_dia}} mm</td></tr>
-        <tr><th>Final Turns</th>         <td>{{winding_data.final_turns}}</td></tr>
-        <tr><th>Cu Length</th>
-          <td>
-            {% if winding_data.cu_length not in ('N/A', '', None) %}
-              {{ winding_data.cu_length | float | round(2) }} mm
-            {% else %}N/A{% endif %}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Performance Summary -->
-  <div class="section">
-    <p class="section-title">Performance Summary</p>
-    <table>
-      <thead>
-        <tr>
-          <th>I Phase (A)</th>
-          <th>Slip (%)</th>
-          <th>Temperature (°C)</th>
-          <th>Air Gap (mm)</th>
-          <th>Final Efficiency (%)</th>
-          <th>Torque (Nm)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ winding_data.I_ph }}</td>
-          <td>{{ winding_data.slip }}</td>
-          <td>{{ winding_data.temp }}</td>
-          <td>{{ winding_data.air_gap }}</td>
-          <td>{{ winding_data.final_efficiency }}</td>
-          <td>
-            {% if winding_data.torque not in ('N/A', '', None) %}
-              {{ winding_data.torque | float | round(2) }}
-            {% else %}N/A{% endif %}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="footer">&copy; 2025 MotoMaster | Motor Design Software</div>
 
 </div>
+
 </body>
 </html>

@@ -1062,6 +1062,37 @@ window.initializeWindingForm = function () {
             ) || 0;
 
 
+        /*
+         * Only show results once every required
+         * winding input has been entered.
+         */
+
+        const outputFields = [
+            "slip", "temp", "statorwt", "rotorwt", "cu_length",
+            "air_gap", "final_efficiency", "angle", "torque"
+        ];
+
+        if (
+            zs <= 0 ||
+            finalStackLength <= 0 ||
+            actualDia <= 0 ||
+            i_ph <= 0
+        ) {
+
+            outputFields.forEach((id) => {
+
+                const el = document.getElementById(id);
+
+                if (el) {
+                    el.value = "";
+                }
+
+            });
+
+            return;
+        }
+
+
         const t_ph =
             (
                 N *
@@ -1560,7 +1591,8 @@ window.initializeWindingForm = function () {
         // =====================================================
 
         const mechanicalComponent =
-            sessionStorage.getItem("mechanical_component");
+            sessionStorage.getItem("mechanical_component") ||
+            sessionStorage.getItem("design_mechanical_component");
 
         let fr_los = 0;
 

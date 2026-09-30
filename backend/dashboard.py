@@ -222,7 +222,7 @@ def dashboard():
             """
             SELECT
                 id,
-                design_type,
+                phase,
                 design_no,
                 design_name,
                 created_at,
@@ -246,7 +246,12 @@ def dashboard():
 
                 "id": row[0],
 
-                "design_type": row[1],
+                "phase": row[1],
+                "phase_label": {
+                    "1_phase": "Single Phase",
+                    "2_phase": "Two Phase",
+                    "3_phase": "Three Phase"
+                }.get(row[1], row[1]),
 
                 "design_no": row[2],
 

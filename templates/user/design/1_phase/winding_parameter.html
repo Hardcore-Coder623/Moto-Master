@@ -9,6 +9,8 @@
         <div class="winding-form-panel">
     
             <h2>Winding & Stack Parameters</h2>
+
+            <div id="windingCalcStatus" class="winding-calc-status" role="status" aria-live="polite"></div>
     
     
             <!-- =====================================
@@ -881,6 +883,74 @@
         
         
             /* =========================================================
+               CALCULATION STATUS (shown to the user)
+            ========================================================= */
+
+            const FIELD_LABELS = {
+                hp: "HP (Main Data)",
+                uph: "UPH (Main Data)",
+                frequency: "Frequency (Main Data)",
+                pole: "Pole (Main Data)",
+                dia: "Dia (Stamping)",
+                d0: "D0 (Stamping)",
+                N: "N (Stamping)",
+                Y: "Y (Stamping)",
+                W: "W (Stamping)",
+                W2: "W2 (Stamping)",
+                A1: "A1 (Stamping)",
+                a: "a (Stamping)",
+                b: "b (Stamping)",
+                c: "c (Stamping)",
+                d: "d (Stamping)",
+                e: "e (Stamping)",
+                dw: "dw (Stamping)",
+                M: "M (Rotor)",
+                V: "V (Rotor)",
+                V2: "V2 (Rotor)",
+                X: "X (Rotor)",
+                A2: "A2 (Rotor)",
+                rng_wt: "RNG WT (Rotor)",
+                rng_ht: "RNG HT (Rotor)",
+                ra: "RA (Rotor)",
+                rb: "RB (Rotor)",
+                rc: "RC (Rotor)",
+                rd: "RD (Rotor)",
+                re: "RE (Rotor)",
+                rw: "RW (Rotor)",
+                shaft_diameter: "Shaft Diameter (Rotor)"
+            };
+
+
+            function setStatus(message, type) {
+
+                const box =
+                    document.getElementById("windingCalcStatus");
+
+                if (!box) {
+                    return;
+                }
+
+                box.textContent = message || "";
+
+                box.className =
+                    "winding-calc-status" +
+                    (message ? " is-" + (type || "info") : "");
+
+            }
+
+
+            function getSessionText(primary, fallback) {
+
+                return (
+                    sessionStorage.getItem(primary) ||
+                    sessionStorage.getItem(fallback) ||
+                    ""
+                );
+
+            }
+
+
+            /* =========================================================
                REQUIRED SESSION VALUES
             ========================================================= */
         
@@ -1280,6 +1350,19 @@
                     console.warn(
                         "[MAIN] Cannot calculate - dependency missing"
                     );
+
+                    const missingMain = [];
+
+                    if (!Number.isFinite(hp)) missingMain.push(FIELD_LABELS.hp);
+                    if (!Number.isFinite(uph)) missingMain.push(FIELD_LABELS.uph);
+                    if (!Number.isFinite(A1)) missingMain.push(FIELD_LABELS.A1);
+                    if (!(currentDensity > 0)) missingMain.push("Current Density");
+                    if (!(efficiency > 0)) missingMain.push("Recommended Efficiency");
+
+                    setStatus(
+                        "Enter / check: " + missingMain.join(", "),
+                        "warning"
+                    );
         
                     return;
         
@@ -1496,39 +1579,12 @@
         
                 const dependency =
                     requiredSessionValues();
-        
-        
-                /*
-                 * Do NOT stop the whole calculation
-                 * immediately.
-                 *
-                 * We need to know exactly which
-                 * dependency is missing.
-                 */
-        
-                if (
-                    !dependency.valid
-                ) {
-        
-                    console.error(
-                        "[CALCULATE ALL] Missing session values."
-                    );
-        
-                    console.error(
-                        "[CALCULATE ALL] Check the SESSION DEBUG below."
-                    );
-        
-                    debugRequiredSessionValues();
-        
-                    return;
-        
-                }
-        
-        
+
+
                 const d =
                     dependency.data;
-        
-        
+
+
                 /* =====================================================
                    DS
                 ===================================================== */
@@ -1559,6 +1615,11 @@
         
                     console.error(
                         "[CALC] Invalid ds"
+                    );
+
+                    setStatus(
+                        "Enter " + FIELD_LABELS.dia + " to calculate the stack length.",
+                        "warning"
                     );
         
                     return;
@@ -1659,6 +1720,11 @@
                     console.error(
                         "[CALC STOP] Final Turns is empty or invalid."
                     );
+
+                    setStatus(
+                        "Enter Final Turns (Main Winding) to continue the calculation.",
+                        "info"
+                    );
         
                     return;
         
@@ -1676,51 +1742,10 @@
                     console.error(
                         "[CALC STOP] Final Aux Turns is empty or invalid."
                     );
-        
-                    return;
-        
-                }
-        
-        
-                if (
-        
-                    !Number.isFinite(finalStackLength) ||
-        
-                    finalStackLength <= 0
-        
-                ) {
-        
-                    console.error(
-                        "[CALC STOP] Final Stack Length is empty or invalid."
-                    );
-        
-        
-                    if (
-                        recommendedStackLengthInput
-                    ) {
-        
-                        console.log(
-                            "[INFO] Recommended Stack Length =",
-                            recommendedStackLengthInput.value
-                        );
-        
-                    }
-        
-                    return;
-        
-                }
-        
-        
-                if (
-        
-                    !Number.isFinite(actualDia) ||
-        
-                    actualDia <= 0
-        
-                ) {
-        
-                    console.error(
-                        "[CALC STOP] Actual Use Diameter is empty or invalid."
+
+                    setStatus(
+                        "Enter Final Turns (Auxiliary Winding) to continue the calculation.",
+                        "info"
                     );
         
                     return;
@@ -1857,6 +1882,96 @@
                     stackLength,
                     2
                 );
+
+
+                if (
+        
+                    !Number.isFinite(finalStackLength) ||
+        
+                    finalStackLength <= 0
+        
+                ) {
+        
+                    console.error(
+                        "[CALC STOP] Final Stack Length is empty or invalid."
+                    );
+        
+        
+                    if (
+                        recommendedStackLengthInput
+                    ) {
+        
+                        console.log(
+                            "[INFO] Recommended Stack Length =",
+                            recommendedStackLengthInput.value
+                        );
+        
+                    }
+        
+                    setStatus(
+                        "Recommended stack length calculated. Enter Final Stack Length to see performance results.",
+                        "info"
+                    );
+
+                    return;
+        
+                }
+        
+        
+                if (
+        
+                    !Number.isFinite(actualDia) ||
+        
+                    actualDia <= 0
+        
+                ) {
+        
+                    console.error(
+                        "[CALC STOP] Actual Use Diameter is empty or invalid."
+                    );
+
+                    setStatus(
+                        "Enter Actual Use Diameter (Main Winding) to see performance results.",
+                        "info"
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                if (
+                    !dependency.valid
+                ) {
+
+                    const missingKeys =
+                        Object.keys(d).filter(
+                            function (key) {
+                                return !Number.isFinite(d[key]);
+                            }
+                        );
+
+                    console.error(
+                        "[CALCULATE ALL] Missing session values:",
+                        missingKeys
+                    );
+
+                    debugRequiredSessionValues();
+
+                    setStatus(
+                        "Performance cannot be calculated. Missing values from previous steps: " +
+                        missingKeys
+                            .map(function (key) { return FIELD_LABELS[key] || key; })
+                            .join(", ") +
+                        ". Go Back and fill them in.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
         
         
                 /* =====================================================
@@ -1899,7 +2014,7 @@
                     // WIRE TYPE → XC_85 AND X_T
                     // =====================================================
 
-                    const selectedWireType = sessionStorage.getItem("wire_type");
+                    const selectedWireType = getSessionText("wire_type", "design_wire_type");
 
                     let xc_85;
                     let X_T;
@@ -2950,7 +3065,7 @@
                 // =====================================================
 
                 const mechanicalComponent =
-                    sessionStorage.getItem("mechanical_component");
+                    getSessionText("mechanical_component", "design_mechanical_component");
 
                 let fr_los = 0;
 
@@ -3100,7 +3215,7 @@
                         : 0;
         
         
-                        const wireType = sessionStorage.getItem("wire_type");
+                        const wireType = getSessionText("wire_type", "design_wire_type");
                 const VEL =
                     PI *
                     ds *
@@ -3616,6 +3731,11 @@
                 console.log(
                     "[CALCULATE ALL] COMPLETE"
                 );
+
+                setStatus(
+                    "All winding calculations are up to date.",
+                    "success"
+                );
                 console.log("========================================");
         
             }
@@ -3674,71 +3794,14 @@
                             );
         
         
-                            /* =========================================
-                               MAIN INPUTS CHANGED
-                            ========================================== */
-        
-                            if (
-        
-                                id ===
-                                "current_density" ||
-        
-                                id ===
-                                "efficiency" ||
-        
-                                id ===
-                                "insulation_dia" ||
-        
-                                id ===
-                                "insulation_dia_aux"
-        
-                            ) {
-        
-                                calculateMainAndAux();
-        
-                                return;
-        
-                            }
-        
-        
-                            /* =========================================
-                               FINAL VALUES CHANGED
-                            ========================================== */
-        
-                            if (
-        
-                                id ===
-                                "final_turns" ||
-        
-                                id ===
-                                "final_turns_aux" ||
-        
-                                id ===
-                                "final_stack_length" ||
-        
-                                id ===
-                                "actual_use_dia"
-        
-                            ) {
-        
-                                const imain =
-                                    getInputNumber(
-                                        "I_main"
-                                    );
-        
-        
-                                if (
-                                    Number.isFinite(imain)
-                                ) {
-        
-                                    calculateStackLength(
-                                        imain
-                                    );
-        
-                                }
-        
-                            }
-        
+                            /*
+                             * Any change re-runs the whole chain:
+                             * currents -> recommended values ->
+                             * stack length -> performance.
+                             */
+
+                            calculateMainAndAux();
+
                         }
                     );
         
@@ -3763,7 +3826,8 @@
         
         
                     const saved =
-                        sessionStorage.getItem(id);
+                        sessionStorage.getItem(id) ??
+                        sessionStorage.getItem("winding_" + id);
         
         
                     if (
@@ -3787,23 +3851,9 @@
                INITIAL CALCULATION
             ========================================================= */
         
-            if (
-        
-                currentDensityInput &&
-        
-                efficiencyInput &&
-        
-                currentDensityInput.value !== "" &&
-        
-                efficiencyInput.value !== ""
-        
-            ) {
-        
-                calculateMainAndAux();
-        
-            }
-        
-        
+            calculateMainAndAux();
+
+
             /* =========================================================
                SESSION DEBUG
             ========================================================= */
@@ -4121,6 +4171,493 @@
                 };
         
         
+
+            /* =========================================================
+               SWG CALCULATOR
+            ========================================================= */
+
+            const swgData = [
+
+                { gauge: 7, diameter: 4.064 },
+                { gauge: 8, diameter: 3.658 },
+                { gauge: 9, diameter: 3.264 },
+                { gauge: 10, diameter: 2.906 },
+                { gauge: 11, diameter: 2.642 },
+                { gauge: 12, diameter: 2.337 },
+                { gauge: 13, diameter: 2.032 },
+                { gauge: 14, diameter: 1.829 },
+                { gauge: 15, diameter: 1.651 },
+                { gauge: 16, diameter: 1.626 },
+                { gauge: 17, diameter: 1.422 },
+                { gauge: 18, diameter: 1.219 },
+                { gauge: 19, diameter: 1.07 },
+                { gauge: 20, diameter: 0.914 },
+                { gauge: 21, diameter: 0.813 },
+                { gauge: 22, diameter: 0.711 },
+                { gauge: 23, diameter: 0.635 },
+                { gauge: 24, diameter: 0.559 },
+                { gauge: 25, diameter: 0.508 },
+                { gauge: 26, diameter: 0.457 },
+                { gauge: 27, diameter: 0.406 },
+                { gauge: 28, diameter: 0.355 },
+                { gauge: 29, diameter: 0.33 },
+                { gauge: 30, diameter: 0.305 },
+                { gauge: 31, diameter: 0.28 },
+                { gauge: 32, diameter: 0.254 },
+                { gauge: 33, diameter: 0.229 },
+                { gauge: 34, diameter: 0.203 },
+                { gauge: 35, diameter: 0.178 },
+                { gauge: 36, diameter: 0.152 },
+                { gauge: 37, diameter: 0.127 },
+                { gauge: 38, diameter: 0.102 },
+                { gauge: 39, diameter: 0.076 },
+                { gauge: 40, diameter: 0.064 },
+                { gauge: 41, diameter: 0.051 },
+                { gauge: 42, diameter: 0.038 },
+                { gauge: 43, diameter: 0.032 },
+                { gauge: 44, diameter: 0.025 },
+                { gauge: 45, diameter: 0.02 },
+                { gauge: 46, diameter: 0.015 },
+                { gauge: 47, diameter: 0.013 },
+                { gauge: 48, diameter: 0.01 },
+                { gauge: 49, diameter: 0.008 },
+                { gauge: 50, diameter: 0.006 }
+
+            ];
+
+
+            const swgGauges =
+                swgData.map(
+                    item => item.gauge
+                );
+
+
+            function fillSelect(selectElement) {
+
+                if (!selectElement) {
+                    return;
+                }
+
+                selectElement.innerHTML = "";
+
+                swgGauges.forEach(
+                    (gauge) => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value =
+                            gauge;
+
+                        option.textContent =
+                            gauge;
+
+                        selectElement.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+            }
+
+
+            const wireGauge =
+                document.getElementById(
+                    "wire_gauge"
+                );
+
+            const effectiveGauge =
+                document.getElementById(
+                    "effective_gauge"
+                );
+
+
+            fillSelect(wireGauge);
+
+            fillSelect(effectiveGauge);
+
+
+            const multiGaugeSelects =
+                document.querySelectorAll(
+                    ".multi_gauge"
+                );
+
+
+            multiGaugeSelects.forEach(
+                (select) => {
+
+                    fillSelect(select);
+
+                }
+            );
+
+
+            function gaugeToDiameter(gauge) {
+
+                const entry =
+                    swgData.find(
+                        item =>
+                            item.gauge == gauge
+                    );
+
+                return entry
+                    ? entry.diameter
+                    : null;
+
+            }
+
+
+            function diameterToArea(diameter) {
+
+                return (
+                    Math.PI *
+                    Math.pow(
+                        diameter / 2,
+                        2
+                    )
+                );
+
+            }
+
+
+            function areaToGauge(area) {
+
+                let closest = null;
+
+                let minDiff =
+                    Infinity;
+
+
+                swgData.forEach(
+                    (item) => {
+
+                        const itemArea =
+                            diameterToArea(
+                                item.diameter
+                            );
+
+                        const diff =
+                            Math.abs(
+                                itemArea -
+                                area
+                            );
+
+
+                        if (
+                            diff <
+                            minDiff
+                        ) {
+
+                            minDiff =
+                                diff;
+
+                            closest =
+                                item.gauge;
+
+                        }
+
+                    }
+                );
+
+
+                return closest;
+
+            }
+
+
+            function updateResults() {
+
+                const numWires =
+                    Number(
+                        document.getElementById(
+                            "num_wires"
+                        )?.value
+                    );
+
+
+                const wireG =
+                    Number(
+                        wireGauge?.value
+                    );
+
+
+                const effectiveG =
+                    Number(
+                        effectiveGauge?.value
+                    );
+
+
+                const result1 =
+                    document.getElementById(
+                        "result1"
+                    );
+
+                const result2 =
+                    document.getElementById(
+                        "result2"
+                    );
+
+
+                if (
+                    numWires > 0 &&
+                    wireG
+                ) {
+
+                    const diameter =
+                        gaugeToDiameter(
+                            wireG
+                        );
+
+
+                    if (
+                        diameter !== null
+                    ) {
+
+                        const areaOne =
+                            diameterToArea(
+                                diameter
+                            );
+
+
+                        const totalArea =
+                            areaOne *
+                            numWires;
+
+
+                        const effGauge =
+                            areaToGauge(
+                                totalArea
+                            );
+
+
+                        if (result1) {
+
+                            result1.textContent =
+                                `Effective gauge of ${numWires} wires of SWG ${wireG} is approximately SWG ${effGauge}.`;
+
+                        }
+
+                    }
+
+                }
+                else if (result1) {
+
+                    result1.textContent = "";
+
+                }
+
+
+                if (
+                    effectiveG &&
+                    wireG &&
+                    effectiveG < wireG
+                ) {
+
+                    const requiredDiameter =
+                        gaugeToDiameter(
+                            effectiveG
+                        );
+
+
+                    const oneWireDiameter =
+                        gaugeToDiameter(
+                            wireG
+                        );
+
+
+                    if (
+                        requiredDiameter &&
+                        oneWireDiameter
+                    ) {
+
+                        const requiredArea =
+                            diameterToArea(
+                                requiredDiameter
+                            );
+
+
+                        const oneWireArea =
+                            diameterToArea(
+                                oneWireDiameter
+                            );
+
+
+                        const wiresNeeded =
+                            requiredArea /
+                            oneWireArea;
+
+
+                        if (result2) {
+
+                            result2.textContent =
+                                `Number of SWG ${wireG} wires to replace 1 SWG ${effectiveG}: ${Math.ceil(wiresNeeded)}.`;
+
+                        }
+
+                    }
+
+                }
+                else if (result2) {
+
+                    result2.textContent = "";
+
+                }
+
+            }
+
+
+            function calcMultiGaugeEffective() {
+
+                const rows =
+                    document.querySelectorAll(
+                        "#multi_table_body tr"
+                    );
+
+
+                let totalArea = 0;
+
+
+                rows.forEach(
+                    (row) => {
+
+                        const numberInput =
+                            row.querySelector(
+                                ".multi_num"
+                            );
+
+                        const gaugeInput =
+                            row.querySelector(
+                                ".multi_gauge"
+                            );
+
+
+                        const num =
+                            Number(
+                                numberInput?.value
+                            );
+
+
+                        const gauge =
+                            Number(
+                                gaugeInput?.value
+                            );
+
+
+                        if (
+                            num > 0
+                        ) {
+
+                            const diameter =
+                                gaugeToDiameter(
+                                    gauge
+                                );
+
+
+                            if (diameter) {
+
+                                totalArea +=
+                                    num *
+                                    diameterToArea(
+                                        diameter
+                                    );
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+                const effective =
+                    totalArea
+                        ? areaToGauge(totalArea)
+                        : 0;
+
+
+                const output =
+                    document.getElementById(
+                        "multi_effective_gauge"
+                    );
+
+
+                if (output) {
+
+                    output.textContent =
+                        effective;
+
+                }
+
+            }
+
+
+            if (wireGauge) {
+
+                wireGauge.addEventListener(
+                    "change",
+                    updateResults
+                );
+
+            }
+
+
+            if (effectiveGauge) {
+
+                effectiveGauge.addEventListener(
+                    "change",
+                    updateResults
+                );
+
+            }
+
+
+            const numWires =
+                document.getElementById(
+                    "num_wires"
+                );
+
+
+            if (numWires) {
+
+                numWires.addEventListener(
+                    "input",
+                    updateResults
+                );
+
+            }
+
+
+            document
+                .querySelectorAll(
+                    ".multi_num, .multi_gauge"
+                )
+                .forEach(
+                    (element) => {
+
+                        element.addEventListener(
+                            "input",
+                            calcMultiGaugeEffective
+                        );
+
+                        element.addEventListener(
+                            "change",
+                            calcMultiGaugeEffective
+                        );
+
+                    }
+                );
+
+
+            updateResults();
+
+            calcMultiGaugeEffective();
+
+
+
+
             console.log(
                 "Moto Master winding calculator loaded."
             );

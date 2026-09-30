@@ -193,7 +193,12 @@
 
                     {% for design in recent_designs %}
 
-                        <div class="dashboard-list-item">
+                        <div class="dashboard-list-item is-clickable"
+                             data-design-id="{{ design.id }}"
+                             data-mm-action="edit"
+                             role="button"
+                             tabindex="0"
+                             title="Open this design">
 
                             <div class="list-item-icon">
                                 ◫
@@ -213,7 +218,7 @@
                                         Design #{{ design.id }}
                                     {% endif %}
 
-                                    · Type {{ design.design_type }}
+                                    · {{ design.phase_label }}
 
                                 </span>
 
@@ -428,6 +433,15 @@
                     </p>
 
                 </div>
+
+                {% if total_reports and total_reports > 1 %}
+                <a href="#"
+                   id="combineReportsLink"
+                   class="panel-combine-link"
+                   title="Combine several reports into one performance report">
+                    Combine
+                </a>
+                {% endif %}
 
                 <a href="#"
                    id="viewAllReports">

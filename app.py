@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from backend.auth import auth_bp
 from backend.dashboard import dashboard_bp
 from backend.design import design_bp
+from backend.profile import profile_bp
 import os
 
 
@@ -28,6 +29,7 @@ if not app.secret_key:
 app.register_blueprint(auth_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(design_bp)
+app.register_blueprint(profile_bp)
 
 
 # =========================================================
