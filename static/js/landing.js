@@ -48,29 +48,106 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initMobileMenu() {
 
+    const navbar = document.getElementById("navbar");
+
     const menuToggle = document.getElementById("menuToggle");
 
     const navLinks = document.querySelector(".nav-links");
 
-    if (!menuToggle || !navLinks) {
+    const navActions = document.querySelector(".nav-actions");
+
+    if (!navbar || !menuToggle || !navLinks) {
         return;
     }
 
 
-    menuToggle.addEventListener("click", () => {
+    /*
+     * The CSS shows the phone menu when the navbar has
+     * the class "nav-mobile-open" (see landing.css).
+     */
 
-        navLinks.classList.toggle("active");
+    function setMenu(open) {
+
+        navbar.classList.toggle("nav-mobile-open", open);
+
+        document.body.classList.toggle("nav-menu-lock", open);
+
+        menuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+
+        menuToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+
+        menuToggle.textContent = open ? "✕" : "☰";
+
+    }
+
+    function isOpen() {
+        return navbar.classList.contains("nav-mobile-open");
+    }
+
+
+    menuToggle.setAttribute("aria-controls", "navMenu");
+
+    navLinks.id = navLinks.id || "navMenu";
+
+    setMenu(false);
+
+
+    menuToggle.addEventListener("click", (event) => {
+
+        event.stopPropagation();
+
+        setMenu(!isOpen());
 
     });
 
 
-    navLinks.querySelectorAll("a").forEach(link => {
+    /* Close after choosing a link or Login / Register. */
 
-        link.addEventListener("click", () => {
+    [navLinks, navActions].forEach((group) => {
 
-            navLinks.classList.remove("active");
+        if (!group) {
+            return;
+        }
+
+        group.querySelectorAll("a, button").forEach((item) => {
+
+            item.addEventListener("click", () => setMenu(false));
 
         });
+
+    });
+
+
+    /* Close when tapping outside the navbar. */
+
+    document.addEventListener("click", (event) => {
+
+        if (isOpen() && !navbar.contains(event.target)) {
+            setMenu(false);
+        }
+
+    });
+
+
+    /* Close with Escape. */
+
+    document.addEventListener("keydown", (event) => {
+
+        if (event.key === "Escape" && isOpen()) {
+            setMenu(false);
+            menuToggle.focus();
+        }
+
+    });
+
+
+    /* Reset when the screen becomes wide again. */
+
+    window.addEventListener("resize", () => {
+
+        if (window.innerWidth > 850 && isOpen()) {
+            setMenu(false);
+        }
 
     });
 

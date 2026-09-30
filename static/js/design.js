@@ -88,6 +88,358 @@ const formWinding =
 let selectedPhase =
     sessionStorage.getItem("design_phase") || null;
 
+const startFrom =
+    document.getElementById("startFrom");
+
+const startFromHint =
+    document.getElementById("startFromHint");
+
+const DS =
+    window.MotoMasterSession;
+
+
+/* A finished design is not continued by a fresh New Design page:
+   the next design starts from a copy of it instead. */
+
+if (DS && DS.get("design_completed") === "1") {
+
+    DS.set("design_id", null);
+    DS.set("design_completed", null);
+    DS.setSource(null);
+
+}
+
+
+/* =================================================
+   SAVE STATUS (small message, bottom right)
+================================================= */
+
+function showSaveStatus(message, isError) {
+
+    let box =
+        document.getElementById("designSaveStatus");
+
+    if (!box) {
+
+        box = document.createElement("div");
+        box.id = "designSaveStatus";
+        box.className = "design-save-status";
+        box.setAttribute("role", "status");
+        document.body.appendChild(box);
+
+    }
+
+    box.textContent = message;
+    box.classList.toggle("is-error", !!isError);
+    box.classList.add("is-visible");
+
+    clearTimeout(box._hideTimer);
+
+    box._hideTimer = setTimeout(
+        () => box.classList.remove("is-visible"),
+        isError ? 6000 : 1800
+    );
+
+}
+
+
+/* =================================================
+   SAVE TO DATABASE
+   Runs on every Next and on the final Continue.
+   Saves are queued so two quick clicks never
+   create two designs.
+================================================= */
+
+let saveQueue =
+    Promise.resolve(null);
+
+function saveDesignToDb(step, finalize) {
+
+    saveQueue =
+        saveQueue.then(async () => {
+
+            if (!DS) {
+                return null;
+            }
+
+            const payload = {
+                design_id: DS.get("design_id") || null,
+                values: DS.all(),
+                step: step,
+                finalize: !!finalize
+            };
+
+            try {
+
+                const response =
+                    await fetch("/design/api/save", {
+                        method: "POST",
+                        credentials: "same-origin",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+
+                const body =
+                    await response.json().catch(() => ({}));
+
+                if (!response.ok || !body.success) {
+
+                    showSaveStatus(
+                        "Not saved: " + (body.message || ("error " + response.status)),
+                        true
+                    );
+
+                    return null;
+                }
+
+                DS.set("design_id", body.design_id);
+
+                const name =
+                    DS.get("design_name") ||
+                    DS.get("designName") ||
+                    "Untitled design";
+
+                const no =
+                    DS.get("design_no") ||
+                    DS.get("designNo");
+
+                DS.setSource({
+                    mode: "edit",
+                    id: body.design_id,
+                    label: name + (no ? " #" + no : ""),
+                    phase: selectedPhase
+                });
+
+                if (finalize) {
+
+                    DS.set("design_completed", "1");
+
+                    showSaveStatus("Design saved · report added to your reports");
+
+                } else {
+
+                    showSaveStatus("Draft saved");
+
+                }
+
+                return body;
+
+            }
+            catch (error) {
+
+                showSaveStatus(
+                    "Not saved (offline?). Your values are kept in this browser.",
+                    true
+                );
+
+                return null;
+            }
+
+        });
+
+    return saveQueue;
+
+}
+
+
+/* =================================================
+   START FROM (auto-fill from a previous design)
+================================================= */
+
+function currentSourceFor(phase) {
+
+    const source =
+        DS ? DS.getSource() : null;
+
+    if (source && source.phase === phase) {
+        return source;
+    }
+
+    return null;
+
+}
+
+
+async function populateStartFrom(phase) {
+
+    if (!startFrom || !phase) {
+        return;
+    }
+
+    const source =
+        currentSourceFor(phase);
+
+    let designs = [];
+    let loadFailed = false;
+
+    try {
+
+        const response =
+            await fetch(
+                "/design/api/designs?phase=" + encodeURIComponent(phase),
+                { credentials: "same-origin" }
+            );
+
+        const body =
+            await response.json();
+
+        if (response.ok && body.success) {
+            designs = body.designs;
+        } else {
+            loadFailed = true;
+        }
+
+    }
+    catch (error) {
+        loadFailed = true;
+    }
+
+    startFrom.innerHTML = "";
+
+    if (source) {
+
+        const option = document.createElement("option");
+
+        option.value = "current";
+
+        option.textContent =
+            source.mode === "copy"
+                ? "Copy of " + source.label + " (already filled in)"
+                : "Continue: " + source.label;
+
+        startFrom.appendChild(option);
+
+    }
+
+    const blank = document.createElement("option");
+    blank.value = "blank";
+    blank.textContent = "Blank form";
+    startFrom.appendChild(blank);
+
+    const others =
+        designs.filter((d) => !(source && source.mode === "edit" && d.id === source.id));
+
+    if (others.length) {
+
+        const group = document.createElement("optgroup");
+
+        group.label = "Fill from a previous design";
+
+        others.forEach((d) => {
+
+            const option = document.createElement("option");
+
+            option.value = String(d.id);
+
+            option.textContent =
+                d.design_name +
+                (d.design_no ? " #" + d.design_no : "") +
+                " · " + (d.status === "completed" ? "completed" : "draft") +
+                " · " + d.updated_at;
+
+            group.appendChild(option);
+
+        });
+
+        startFrom.appendChild(group);
+
+    }
+
+    /* Default: keep what is loaded, else the latest design, else blank. */
+
+    if (source) {
+        startFrom.value = "current";
+    }
+    else if (others.length) {
+        startFrom.value = String(others[0].id);
+    }
+    else {
+        startFrom.value = "blank";
+    }
+
+    updateStartFromHint(loadFailed);
+
+}
+
+
+function updateStartFromHint(loadFailed) {
+
+    if (!startFromHint || !startFrom) {
+        return;
+    }
+
+    if (loadFailed) {
+        startFromHint.textContent =
+            "Saved designs could not be loaded right now. You can still start a blank design.";
+        return;
+    }
+
+    const value = startFrom.value;
+
+    if (value === "current") {
+        startFromHint.textContent =
+            "Your forms keep the values already filled in.";
+    }
+    else if (value === "blank") {
+        startFromHint.textContent =
+            "All forms start empty.";
+    }
+    else {
+        startFromHint.textContent =
+            "Every form will be filled with this design's values (Design No. left empty). " +
+            "It is saved as a new design; the original is not changed.";
+    }
+
+}
+
+
+if (startFrom) {
+
+    startFrom.addEventListener(
+        "change",
+        () => updateStartFromHint(false)
+    );
+
+}
+
+
+/* Apply the choice just before Main Data opens. */
+
+async function applyStartFrom() {
+
+    if (!DS || !startFrom) {
+        return;
+    }
+
+    const choice =
+        startFrom.value || "blank";
+
+    if (choice === "current") {
+        return;
+    }
+
+    if (choice === "blank") {
+
+        DS.clear();
+        DS.set("design_id", null);
+        DS.setSource(null);
+        return;
+
+    }
+
+    try {
+
+        await DS.loadFromServer(choice, "copy");
+
+    }
+    catch (error) {
+
+        showSaveStatus(error.message, true);
+
+    }
+
+}
+
 
 /* =================================================
    INITIAL STATE
@@ -508,6 +860,8 @@ phaseButtons.forEach((button) => {
 
             checkComponentSelection();
 
+            populateStartFrom(selectedPhase);
+
             if (sectionComponents) {
 
                 sectionComponents.scrollIntoView({
@@ -552,6 +906,20 @@ if (selectedPhase) {
 
     }
 
+    if (wireType) {
+        wireType.value =
+            getValue("design_wire_type") ||
+            getValue("wire_type");
+    }
+
+    if (mechanicalComponent) {
+        mechanicalComponent.value =
+            getValue("design_mechanical_component") ||
+            getValue("mechanical_component");
+    }
+
+    populateStartFrom(selectedPhase);
+
 }
 
 
@@ -593,6 +961,11 @@ if (wireType) {
                 wireType.value
             );
 
+            saveValue(
+                "wire_type",
+                wireType.value
+            );
+
             checkComponentSelection();
 
         }
@@ -609,6 +982,11 @@ if (mechanicalComponent) {
 
             saveValue(
                 "design_mechanical_component",
+                mechanicalComponent.value
+            );
+
+            saveValue(
+                "mechanical_component",
                 mechanicalComponent.value
             );
 
@@ -723,6 +1101,16 @@ if (componentsNextButton) {
                 }
 
             }
+
+            await applyStartFrom();
+
+            /* Step 1 / 2 choices made on this page win over a template. */
+
+            saveValue("design_phase", selectedPhase);
+            saveValue("design_wire_type", wireType.value);
+            saveValue("wire_type", wireType.value);
+            saveValue("design_mechanical_component", mechanicalComponent.value);
+            saveValue("mechanical_component", mechanicalComponent.value);
 
             const loaded =
                 await loadMainData();
@@ -971,6 +1359,8 @@ function attachMainDataEvents() {
 
             saveMainData();
 
+            saveDesignToDb(2);
+
             const loaded =
                 await loadStamping();
 
@@ -1014,6 +1404,8 @@ function attachStampingEvents() {
             async () => {
 
                 saveStampingData();
+
+                saveDesignToDb(3);
 
                 const loaded =
                     await loadRotor();
@@ -1085,6 +1477,8 @@ function attachRotorEvents() {
             async () => {
 
                 saveRotorData();
+
+                saveDesignToDb(4);
 
                 const loaded =
                     await loadWinding();
@@ -1309,7 +1703,93 @@ function showDesignReport(html) {
 
     }
 
+    /*
+     * Print / Save PDF prints the report on its own
+     * (in a hidden frame) so the dashboard layout can
+     * never interfere with the A4 page.
+     */
+
+    const printButton =
+        overlay.querySelector(
+            "#btnPrint"
+        );
+
+    if (printButton) {
+
+        printButton.onclick =
+            function (event) {
+
+                event.preventDefault();
+
+                printReportHtml(
+                    html
+                );
+
+            };
+
+    }
+
     overlay.scrollTop = 0;
+
+}
+
+
+function printReportHtml(html) {
+
+    const frame =
+        document.createElement(
+            "iframe"
+        );
+
+    frame.setAttribute(
+        "aria-hidden",
+        "true"
+    );
+
+    frame.style.cssText =
+        "position:fixed;right:0;bottom:0;" +
+        "width:210mm;height:297mm;border:0;" +
+        "visibility:hidden;pointer-events:none;";
+
+    frame.onload =
+        function () {
+
+            const win =
+                frame.contentWindow;
+
+            const cleanup =
+                function () {
+                    setTimeout(
+                        function () {
+                            frame.remove();
+                        },
+                        500
+                    );
+                };
+
+            win.addEventListener(
+                "afterprint",
+                cleanup
+            );
+
+            setTimeout(
+                function () {
+
+                    win.focus();
+                    win.print();
+
+                },
+                300
+            );
+
+        };
+
+    frame.srcdoc =
+        html;
+
+    document.body.appendChild(
+        frame
+    );
 
 }
 
@@ -1337,6 +1817,8 @@ function attachWindingEvents() {
             async () => {
 
                 saveWindingFormData();
+
+                saveDesignToDb(4);
 
                 const loaded =
                     await loadRotor();
@@ -1372,7 +1854,9 @@ function attachWindingEvents() {
                     true;
 
                 submitButton.textContent =
-                    "Generating Report…";
+                    "Saving & generating report…";
+
+                await saveDesignToDb(4, true);
 
                 try {
 

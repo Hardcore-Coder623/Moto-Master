@@ -1370,37 +1370,71 @@
                 display: block;
             }
 
-            .nav-mobile-open .nav-links {
-                display: flex;
+            /* ---------- Phone menu (opened by the ☰ button) ---------- */
 
-                position: absolute;
-
-                top: 76px;
-                left: 0;
-
-                width: 100%;
-
-                padding: 20px;
-
-                flex-direction: column;
-                align-items: flex-start;
-
+            .navbar.nav-mobile-open {
                 background: var(--white);
-
-                border-bottom: 1px solid var(--gray-200);
-
                 box-shadow: var(--shadow-md);
             }
 
-            .nav-mobile-open .nav-actions {
+            .nav-mobile-open .nav-inner {
+                height: auto;
+                min-height: 76px;
+                flex-wrap: wrap;
+                max-height: 100vh;
+                max-height: 100dvh;
+                overflow-y: auto;
+            }
+
+            .nav-mobile-open .brand {
+                height: 76px;
+            }
+
+            .nav-mobile-open .nav-links {
+                order: 3;
+                width: 100%;
+
                 display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0;
 
-                position: absolute;
+                padding: 6px 0 10px;
 
-                top: 275px;
-                left: 20px;
+                border-top: 1px solid var(--gray-200);
+            }
 
-                right: 20px;
+            .nav-mobile-open .nav-links a {
+                padding: 14px 4px;
+                font-size: 1rem;
+                border-bottom: 1px solid var(--gray-100);
+            }
+
+            .nav-mobile-open .nav-links a::after {
+                display: none;
+            }
+
+            .nav-mobile-open .nav-actions {
+                order: 4;
+                width: 100%;
+
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+
+                padding: 4px 0 20px;
+            }
+
+            .nav-mobile-open .nav-actions .btn {
+                width: 100%;
+                padding: 14px 19px;
+            }
+
+            .menu-toggle {
+                width: 44px;
+                height: 44px;
+                line-height: 1;
             }
 
             .hero {
@@ -1687,22 +1721,6 @@
         }
 
         @media (max-width: 850px) {
-            .nav-mobile-open .nav-actions {
-                top: 270px;
-                display: flex;
-                flex-direction: column;
-                align-items: stretch;
-                padding: 0 20px 20px;
-                left: 0;
-                right: 0;
-                background: var(--white);
-                border-bottom: 1px solid var(--gray-200);
-            }
-
-            .nav-mobile-open .nav-actions .btn {
-                width: 100%;
-            }
-
             .price-card:hover,
             .price-card.featured:hover {
                 transform: none;
@@ -2593,3 +2611,21 @@ body.auth-modal-open {
 
 }
 
+
+
+/* Stop the page scrolling behind the open phone menu. */
+body.nav-menu-lock {
+    overflow: hidden;
+}
+
+/* Login button in the navbar (was unstyled) — same look as .btn-outline */
+.btn-secondary {
+    color: var(--blue-800);
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+}
+
+.btn-secondary:hover {
+    border-color: var(--blue-500);
+    box-shadow: var(--shadow-sm);
+}

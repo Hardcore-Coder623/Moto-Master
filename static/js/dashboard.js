@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         newDesignMenu.addEventListener(
             "click",
-            loadNewDesign
+            (event) => startNewDesign(event)
         );
 
     }
@@ -402,7 +402,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         overviewNewDesign.addEventListener(
             "click",
-            loadNewDesign
+            (event) => startNewDesign(event)
         );
 
     }
@@ -412,10 +412,213 @@ document.addEventListener("DOMContentLoaded", () => {
 
         emptyNewDesign.addEventListener(
             "click",
-            loadNewDesign
+            (event) => startNewDesign(event)
         );
 
     }
+
+
+    /* =====================================================
+       MY DESIGNS
+       Saved designs: continue, use as template,
+       open report, delete.
+    ===================================================== */
+
+    async function loadMyDesigns(event) {
+
+        if (event) {
+            event.preventDefault();
+        }
+
+        if (!dashboardContent) {
+            return;
+        }
+
+        dashboardContent.innerHTML =
+            '<div style="padding:50px;text-align:center;">Loading your designs...</div>';
+
+        try {
+
+            const response =
+                await fetch("/design/my-designs", { credentials: "same-origin" });
+
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
+            }
+
+            dashboardContent.innerHTML =
+                await response.text();
+
+            setActiveMenu(designsMenu);
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+        }
+        catch (error) {
+
+            console.error("My Designs loading error:", error);
+
+            dashboardContent.innerHTML =
+                '<div style="padding:50px;text-align:center;">' +
+                '<h2>Unable to load your designs</h2>' +
+                '<p>Please try again.</p></div>';
+
+        }
+
+    }
+
+
+    function startNewDesign(event) {
+
+        /* A fresh New Design: forget which saved design was open,
+           keep the values so "Start from" can offer them. */
+
+        const DS = window.MotoMasterSession;
+
+        if (DS) {
+
+            const source = DS.getSource();
+
+            if (DS.get("design_completed") === "1" || (source && source.mode === "copy")) {
+                DS.set("design_id", null);
+                DS.set("design_completed", null);
+                DS.setSource(null);
+            }
+
+        }
+
+        return loadNewDesign(event);
+
+    }
+
+
+    async function openSavedDesign(designId, mode) {
+
+        const DS = window.MotoMasterSession;
+
+        if (!DS) {
+            return;
+        }
+
+        try {
+
+            await DS.loadFromServer(designId, mode);
+
+            await loadNewDesign();
+
+        }
+        catch (error) {
+
+            alert(error.message);
+
+        }
+
+    }
+
+
+    if (dashboardContent) {
+
+        dashboardContent.addEventListener("click", async (event) => {
+
+            const button =
+                event.target.closest("[data-mm-action]");
+
+            if (!button) {
+                return;
+            }
+
+            const action =
+                button.dataset.mmAction;
+
+            if (action === "new") {
+                event.preventDefault();
+                startNewDesign();
+                return;
+            }
+
+            const row =
+                button.closest("[data-design-id]");
+
+            if (!row) {
+                return;
+            }
+
+            const designId =
+                row.dataset.designId;
+
+            if (action === "edit" || action === "copy") {
+
+                event.preventDefault();
+
+                button.disabled = true;
+
+                await openSavedDesign(designId, action);
+
+                button.disabled = false;
+
+                return;
+            }
+
+            if (action === "delete") {
+
+                event.preventDefault();
+
+                const name =
+                    (row.querySelector(".my-design-title strong") || {}).textContent || "this design";
+
+                if (!confirm("Delete " + name.trim() + "? Its reports will be deleted too.")) {
+                    return;
+                }
+
+                button.disabled = true;
+
+                try {
+
+                    const response =
+                        await fetch("/design/api/designs/" + encodeURIComponent(designId), {
+                            method: "DELETE",
+                            credentials: "same-origin"
+                        });
+
+                    const body =
+                        await response.json().catch(() => ({}));
+
+                    if (!response.ok || !body.success) {
+                        throw new Error(body.message || "Could not delete the design.");
+                    }
+
+                    const DS = window.MotoMasterSession;
+
+                    if (DS && String(DS.get("design_id")) === String(designId)) {
+                        DS.set("design_id", null);
+                        DS.setSource(null);
+                    }
+
+                    loadMyDesigns();
+
+                }
+                catch (error) {
+
+                    alert(error.message);
+
+                    button.disabled = false;
+
+                }
+
+            }
+
+        });
+
+    }
+
+
+    [designsMenu, viewAllDesigns].forEach((element) => {
+
+        if (element) {
+            element.addEventListener("click", loadMyDesigns);
+        }
+
+    });
 
 
     /* =====================================================
@@ -424,17 +627,91 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const placeholderItems = [
 
-        designsMenu,
         reportsMenu,
         subscriptionMenu,
         paymentsMenu,
         profileMenu,
-        viewAllDesigns,
         viewAllReports,
         manageSubscription,
         choosePlan
 
     ];
+
+
+    /* =====================================================
+       PHONE MENU (☰)
+       On small screens the sidebar collapses to a top bar;
+       the button opens / closes the menu.
+    ===================================================== */
+
+    const sidebar =
+        document.querySelector(".dashboard-sidebar");
+
+    const sidebarToggle =
+        document.getElementById("dashboardMenuToggle");
+
+    function setSidebarMenu(open) {
+
+        if (!sidebar || !sidebarToggle) {
+            return;
+        }
+
+        sidebar.classList.toggle("is-open", open);
+
+        sidebarToggle.setAttribute("aria-expanded", open ? "true" : "false");
+
+        sidebarToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+
+        sidebarToggle.textContent = open ? "✕" : "☰";
+
+    }
+
+    if (sidebar && sidebarToggle) {
+
+        sidebarToggle.addEventListener("click", (event) => {
+
+            event.stopPropagation();
+
+            setSidebarMenu(!sidebar.classList.contains("is-open"));
+
+        });
+
+        sidebar
+            .querySelectorAll(".dashboard-menu-item")
+            .forEach((item) => {
+
+                item.addEventListener("click", () => setSidebarMenu(false));
+
+            });
+
+        document.addEventListener("click", (event) => {
+
+            if (
+                sidebar.classList.contains("is-open") &&
+                !sidebar.contains(event.target)
+            ) {
+                setSidebarMenu(false);
+            }
+
+        });
+
+        document.addEventListener("keydown", (event) => {
+
+            if (event.key === "Escape") {
+                setSidebarMenu(false);
+            }
+
+        });
+
+        window.addEventListener("resize", () => {
+
+            if (window.innerWidth > 650) {
+                setSidebarMenu(false);
+            }
+
+        });
+
+    }
 
 
     placeholderItems.forEach((element) => {

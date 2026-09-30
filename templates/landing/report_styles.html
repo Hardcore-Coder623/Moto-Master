@@ -1,0 +1,527 @@
+<style>
+/* =========================================================
+   MOTO MASTER — DESIGN REPORT
+   Shared by report.html (3-phase) and report1.html (1/2-phase).
+
+   Layout: one fixed A4 page (210 x 297 mm). The same sheet is
+   shown on screen and printed, so what you see is what prints.
+   The data cards stretch to fill the whole page.
+
+   Colours: white report, black header, black accents — matching
+   the design form. Every rule is scoped to .mm-report so nothing
+   leaks into the dashboard when the report opens as an overlay.
+========================================================= */
+
+.mm-report {
+    --black: #0a0a0a;
+    --white: #ffffff;
+
+    --page-bg: #e9ebef;          /* area around the A4 sheet (screen only) */
+    --sheet-bg: #ffffff;
+    --header-bg: #0a0a0a;
+    --card-bg: #ffffff;
+    --tile-bg: #f6f7f9;
+    --border: #dfe3ea;
+    --line: #eceff3;
+    --text: #1f2937;
+    --text-strong: #0a0a0a;
+    --text-muted: #374151;
+    --on-dark: #e5e5e5;          /* secondary text on black */
+
+    --page-w: 210mm;
+    --page-h: 297mm;
+    --page-pad: 10mm;
+
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    box-sizing: border-box;
+
+    background: var(--page-bg);
+    color: var(--text);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+    font-size: 12.5px;
+    line-height: 1.4;
+
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.mm-report *,
+.mm-report *::before,
+.mm-report *::after {
+    box-sizing: border-box;
+}
+
+.mm-report h1,
+.mm-report h2,
+.mm-report h3,
+.mm-report p {
+    margin: 0;
+}
+
+/* ---------- Toolbar (screen only) ---------- */
+
+.mm-report .mm-toolbar {
+    width: var(--page-w);
+    max-width: 100%;
+    margin: 0 auto 14px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.mm-report .mm-btn {
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 10px 18px;
+    border-radius: 10px;
+
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.mm-report .mm-btn:hover {
+    transform: translateY(-1px);
+}
+
+.mm-report .mm-btn-outline {
+    color: var(--text-strong);
+    background: var(--white);
+    border: 1px solid var(--border);
+}
+
+.mm-report .mm-btn-outline:hover {
+    border-color: var(--black);
+}
+
+.mm-report .mm-btn-primary {
+    color: var(--white);
+    background: var(--black);
+    border: 1px solid var(--black);
+    box-shadow: 0 8px 20px rgba(10, 10, 10, 0.18);
+}
+
+/* ---------- A4 sheet ---------- */
+
+.mm-report .mm-sheet {
+    width: var(--page-w);
+    height: var(--page-h);
+    margin: 0 auto;
+    padding: var(--page-pad);
+
+    display: flex;
+    flex-direction: column;
+
+    background: var(--sheet-bg);
+    box-shadow: 0 10px 30px rgba(10, 10, 10, 0.12);
+    overflow: hidden;
+}
+
+/* ---------- Header ---------- */
+
+.mm-report .mm-header {
+    flex: 0 0 auto;
+
+    padding: 5mm 6mm;
+    border-radius: 3mm;
+
+    color: var(--white);
+    background: var(--header-bg);
+}
+
+.mm-report .mm-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    padding-bottom: 3.5mm;
+    margin-bottom: 3.5mm;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.mm-report .mm-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 1.3em;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.mm-report .mm-brand-mark {
+    width: 9mm;
+    height: 9mm;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 2.5mm;
+
+    color: var(--black);
+    background: var(--white);
+
+    font-size: 1em;
+    font-weight: 900;
+}
+
+.mm-report .mm-brand strong {
+    color: var(--on-dark);
+    font-weight: 600;
+}
+
+.mm-report .mm-date {
+    color: var(--on-dark);
+    font-size: 1em;
+}
+
+.mm-report .mm-date strong {
+    color: var(--white);
+}
+
+.mm-report .mm-kicker {
+    margin-bottom: 1mm;
+
+    color: var(--on-dark);
+    font-size: 0.85em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.mm-report .mm-title {
+    font-size: 1.75em;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.mm-report .mm-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2mm;
+    margin-top: 3mm;
+}
+
+.mm-report .mm-chip {
+    padding: 1.2mm 3mm;
+    border-radius: 999px;
+
+    color: var(--on-dark);
+    font-size: 0.95em;
+
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.mm-report .mm-chip strong {
+    color: var(--white);
+    font-weight: 700;
+}
+
+/* ---------- Body (fills the rest of the page) ---------- */
+
+.mm-report .mm-body {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    padding-top: 5mm;
+}
+
+.mm-report .mm-section-title {
+    display: flex;
+    align-items: center;
+    gap: 2mm;
+
+    margin-bottom: 2.5mm;
+
+    color: var(--text-strong);
+    font-size: 0.9em;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.mm-report .mm-section-title::before {
+    content: "";
+    width: 1mm;
+    height: 3.5mm;
+    border-radius: 1mm;
+    background: var(--black);
+}
+
+/* Performance tiles */
+
+.mm-report .mm-stats {
+    flex: 0 0 auto;
+
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 3mm;
+
+    margin-bottom: 5mm;
+}
+
+.mm-report .mm-stat {
+    padding: 3mm 4mm;
+
+    border-radius: 2.5mm;
+    border: 1px solid var(--border);
+    background: var(--tile-bg);
+}
+
+.mm-report .mm-stat.is-primary {
+    color: var(--white);
+    background: var(--black);
+    border-color: var(--black);
+}
+
+.mm-report .mm-stat-label {
+    color: var(--text-muted);
+    font-size: 0.92em;
+    font-weight: 600;
+}
+
+.mm-report .mm-stat.is-primary .mm-stat-label,
+.mm-report .mm-stat.is-primary .mm-stat-unit {
+    color: var(--on-dark);
+}
+
+.mm-report .mm-stat-value {
+    margin-top: 0.8mm;
+
+    color: var(--text-strong);
+    font-size: 1.6em;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+
+.mm-report .mm-stat.is-primary .mm-stat-value {
+    color: var(--white);
+}
+
+.mm-report .mm-stat-unit {
+    margin-left: 2px;
+
+    color: var(--text-muted);
+    font-size: 0.6em;
+    font-weight: 700;
+}
+
+/* Data cards — the grid takes all remaining height and
+   every card stretches, so the page is always full. */
+
+.mm-report .mm-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    align-content: stretch;
+    gap: 4mm;
+}
+
+.mm-report .mm-card {
+    display: flex;
+    flex-direction: column;
+
+    padding: 3.5mm 4.5mm 2mm;
+
+    border: 1px solid var(--border);
+    border-radius: 2.5mm;
+    background: var(--card-bg);
+}
+
+.mm-report .mm-card.is-wide {
+    grid-column: 1 / -1;
+}
+
+.mm-report .mm-card.is-wide .mm-rows {
+    flex: 1 1 auto;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    column-gap: 8mm;
+}
+
+/* Rows grow evenly to fill each card. */
+.mm-report .mm-row {
+    flex: 1 1 auto;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3mm;
+
+    min-height: 6mm;
+    padding: 1mm 0;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.mm-report .mm-row:last-child {
+    border-bottom: 0;
+}
+
+.mm-report .mm-card.is-wide .mm-row:nth-last-child(2):nth-child(odd) {
+    border-bottom: 0;
+}
+
+.mm-report .mm-row-label {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.mm-report .mm-row-value {
+    color: var(--text-strong);
+    font-weight: 700;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.mm-report .mm-row-value .mm-unit {
+    margin-left: 2px;
+    color: var(--text-muted);
+    font-size: 0.95em;
+    font-weight: 600;
+}
+
+.mm-report .mm-na {
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* ---------- Footer ---------- */
+
+.mm-report .mm-footer {
+    flex: 0 0 auto;
+
+    margin-top: 4mm;
+    padding-top: 3mm;
+
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    border-top: 2px solid var(--black);
+
+    color: var(--text-muted);
+    font-size: 0.92em;
+}
+
+.mm-report .mm-footer strong {
+    color: var(--text-strong);
+}
+
+/* ---------- Narrow screens: let the page flow ---------- */
+
+@media screen and (max-width: 840px) {
+
+    .mm-report {
+        font-size: 13px;
+    }
+
+    .mm-report .mm-toolbar {
+        width: 100%;
+    }
+
+    .mm-report .mm-sheet {
+        width: 100%;
+        height: auto;
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .mm-report .mm-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mm-report .mm-grid,
+    .mm-report .mm-card.is-wide .mm-rows {
+        grid-template-columns: 1fr;
+    }
+
+    .mm-report .mm-card.is-wide .mm-row:nth-last-child(2):nth-child(odd) {
+        border-bottom: 1px solid var(--line);
+    }
+
+    .mm-report .mm-row {
+        min-height: 0;
+        padding: 8px 0;
+    }
+
+    .mm-report .mm-footer {
+        flex-direction: column;
+    }
+}
+
+/* ---------- Print / Save as PDF: exactly one A4 page ---------- */
+
+@page {
+    size: A4 portrait;
+    margin: 0;
+}
+
+@media print {
+
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+    }
+
+    #designReportOverlay {
+        position: static !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+    }
+
+    .mm-report {
+        min-height: 0;
+        padding: 0;
+        background: #ffffff;
+    }
+
+    .mm-report .mm-toolbar {
+        display: none !important;
+    }
+
+    .mm-report .mm-sheet {
+        width: var(--page-w);
+        height: var(--page-h);
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        page-break-after: avoid;
+        break-after: avoid;
+    }
+}
+</style>

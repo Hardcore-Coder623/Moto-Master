@@ -1,5 +1,8 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request, Response
+from flask import Blueprint, render_template, redirect, url_for, session, request, Response, jsonify
 from datetime import datetime
+
+from backend import design_store
+from backend.design_store import DesignError
 
 design_bp = Blueprint(
     "design",
@@ -62,7 +65,14 @@ def design_report():
     if "user_id" not in session:
         return "Unauthorized", 401
 
-    data    = request.get_json(force=True, silent=True) or {}
+    data = request.get_json(force=True, silent=True) or {}
+
+    return Response(build_report_html(data), mimetype="text/html")
+
+
+def build_report_html(data):
+    """Render report.html (3-phase) or report1.html (1/2-phase) from design data."""
+
     phase   = data.get("phase", "3_phase")
     md      = data.get("main_data",    {})
     sd      = data.get("stamping_data", {})
@@ -189,4 +199,139 @@ def design_report():
             current_date = current_date,
         )
 
-    return Response(html, mimetype="text/html")
+    return html
+
+
+# ─────────────────────────────────────────────────────────────
+# SAVED DESIGNS (database)
+# ─────────────────────────────────────────────────────────────
+
+def _json_error(message, status=400):
+    return jsonify({"success": False, "message": message}), status
+
+
+@design_bp.route("/api/save", methods=["POST"])
+def api_save_design():
+    """Save the design so far. Called on every Next and on the final Continue."""
+
+    if "user_id" not in session:
+        return _json_error("Please log in again.", 401)
+
+    payload = request.get_json(force=True, silent=True) or {}
+
+    try:
+        result = design_store.save_design(session["user_id"], payload)
+    except DesignError as error:
+        return _json_error(str(error))
+    except Exception as error:  # database down, etc.
+        print("DESIGN SAVE ERROR:", error)
+        return _json_error("Could not reach the database. Your values are kept in this browser.", 500)
+
+    return jsonify({"success": True, **result})
+
+
+@design_bp.route("/api/designs", methods=["GET"])
+def api_list_designs():
+    """Saved designs, newest first. Optional ?phase=1_phase"""
+
+    if "user_id" not in session:
+        return _json_error("Please log in again.", 401)
+
+    phase = request.args.get("phase")
+    if phase not in design_store.PHASES:
+        phase = None
+
+    try:
+        rows = design_store.list_designs(session["user_id"], phase=phase)
+    except Exception as error:
+        print("DESIGN LIST ERROR:", error)
+        return _json_error("Could not load your designs.", 500)
+
+    designs = [
+        {
+            "id": row["id"],
+            "design_no": row["design_no"],
+            "design_name": row["design_name"],
+            "phase": row["phase"],
+            "phase_label": row["phase_label"],
+            "status": row["status"],
+            "current_step": row["current_step"],
+            "updated_at": row["updated_at"].strftime("%d %b %Y, %H:%M") if row["updated_at"] else "",
+        }
+        for row in rows
+    ]
+
+    return jsonify({"success": True, "designs": designs})
+
+
+@design_bp.route("/api/designs/<int:design_id>", methods=["GET"])
+def api_get_design(design_id):
+    """All form values of one design, keyed the way the forms read them."""
+
+    if "user_id" not in session:
+        return _json_error("Please log in again.", 401)
+
+    try:
+        summary, values = design_store.load_design_values(session["user_id"], design_id)
+    except Exception as error:
+        print("DESIGN LOAD ERROR:", error)
+        return _json_error("Could not load the design.", 500)
+
+    if not summary:
+        return _json_error("Design not found.", 404)
+
+    return jsonify({"success": True, "design": summary, "values": values})
+
+
+@design_bp.route("/api/designs/<int:design_id>", methods=["DELETE"])
+def api_delete_design(design_id):
+
+    if "user_id" not in session:
+        return _json_error("Please log in again.", 401)
+
+    try:
+        deleted = design_store.delete_design(session["user_id"], design_id)
+    except Exception as error:
+        print("DESIGN DELETE ERROR:", error)
+        return _json_error("Could not delete the design.", 500)
+
+    if not deleted:
+        return _json_error("Design not found.", 404)
+
+    return jsonify({"success": True})
+
+
+@design_bp.route("/report/<int:design_id>", methods=["GET"])
+def saved_design_report(design_id):
+    """Report of a saved design, from its latest calculation."""
+
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    try:
+        data = design_store.load_report_data(session["user_id"], design_id)
+    except Exception as error:
+        print("REPORT LOAD ERROR:", error)
+        return "Could not load the report.", 500
+
+    if not data:
+        return "No report yet — finish the Winding step for this design first.", 404
+
+    return Response(build_report_html(data), mimetype="text/html")
+
+
+@design_bp.route("/my-designs", methods=["GET"])
+def my_designs():
+    """My Designs page (loaded into the dashboard)."""
+
+    if "user_id" not in session:
+        return "", 401
+
+    try:
+        designs = design_store.list_designs(session["user_id"])
+        error = None
+    except Exception as err:
+        print("MY DESIGNS ERROR:", err)
+        designs, error = [], "Could not load your designs."
+
+    return render_template("user/design/my_designs.html", designs=designs, error=error)
