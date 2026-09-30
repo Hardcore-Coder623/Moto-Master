@@ -2,6 +2,269 @@
    MOTO MASTER — DESIGN MODULE
 ===================================================== */
 
+/* =====================================================
+   FORM KEYBOARD + MOUSE HELPERS  (all phases, all steps)
+
+   • Enter in a field moves to the next field of the same
+     step. Calculated (read-only) fields are skipped. After
+     the last field, the Next / Continue button gets focus,
+     so one more Enter goes to the next step.
+   • The mouse wheel never changes a number field: the
+     page scrolls instead.
+===================================================== */
+
+(function () {
+
+    if (window.motoMasterFormKeysReady) {
+        return;
+    }
+
+    window.motoMasterFormKeysReady = true;
+
+    var FIELD_SELECTOR =
+        "input:not([type=hidden]):not([type=button]):not([type=submit])" +
+        ":not([type=checkbox]):not([type=radio]):not([type=file]), select";
+
+    function usable(el) {
+        return !el.disabled &&
+            !el.readOnly &&
+            el.tabIndex !== -1 &&
+            el.getClientRects().length > 0;          /* visible */
+    }
+
+    function stepOf(el) {
+        return el.closest(".design-form-step") ||
+            el.closest(".design-section") ||
+            el.closest(".design-module");
+    }
+
+    document.addEventListener("keydown", function (event) {
+
+        if (event.key !== "Enter" || event.isComposing ||
+            event.shiftKey || event.ctrlKey || event.altKey || event.metaKey) {
+            return;
+        }
+
+        var field = event.target;
+
+        if (!field || !field.matches || !field.matches(FIELD_SELECTOR)) {
+            return;
+        }
+
+        var step = stepOf(field);
+
+        if (!step || !field.closest(".design-module")) {
+            return;
+        }
+
+        event.preventDefault();
+
+        var fields = Array.prototype.filter.call(
+            step.querySelectorAll(FIELD_SELECTOR),
+            usable
+        );
+
+        var next = fields[fields.indexOf(field) + 1];
+
+        if (!next) {
+
+            var buttons = step.querySelectorAll(
+                ".design-next-button, .design-submit-button"
+            );
+
+            next = buttons[buttons.length - 1] || null;
+
+        }
+
+        if (next) {
+
+            next.focus();                            /* blur fires "change" on the field */
+
+            if (next.select && next.tagName === "INPUT") {
+                try { next.select(); } catch (e) { /* date inputs */ }
+            }
+
+        } else {
+
+            field.blur();
+
+        }
+
+    });
+
+    /* Mouse wheel over a number field: scroll the page, never change the value. */
+
+    document.addEventListener("wheel", function (event) {
+
+        var field = event.target;
+
+        if (field && field.type === "number" &&
+            document.activeElement === field) {
+
+            field.blur();
+
+        }
+
+    }, { passive: true });
+
+})();
+
+
+/* =====================================================
+   WINDING CALCULATION CONSTANTS
+   The small 2x2 box on the Winding page:
+     Slot fill factor, B (flux density), LF (tooth loss), LY (yoke loss).
+   Empty field = default value. Values are kept in sessionStorage
+   (keys = the input ids) so they survive Back / Next and are saved
+   with the design.
+===================================================== */
+
+window.MotoMasterConstants = (function () {
+
+    function stored(key) {
+        try { return sessionStorage.getItem(key); } catch (e) { return null; }
+    }
+
+    function num(raw) {
+        var value = parseFloat(raw);
+        return Number.isFinite(value) ? value : null;
+    }
+
+    /* Loss-factor default = what the stamping material gave (CRC 22, CRNO 8, M-47 2). */
+    function stampingLoss(kind) {
+        var value = num(stored("stamping_lf_" + kind));
+        if (value === null) {
+            value = num(stored("lf_" + kind));
+        }
+        return value === null ? 0 : value;
+    }
+
+    var FIELDS = [
+        { id: "wc_fill_factor",  name: "fill", label: "Slot fill factor", min: 0.05, max: 1,   def: function () { return 0.47; } },
+        { id: "wc_flux_density", name: "b",    label: "B",                min: 0.05, max: 3,   def: function () { return 0.47; } },
+        { id: "wc_lf",           name: "lf",   label: "LF",               min: 0,    max: 100, def: function () { return stampingLoss("t"); } },
+        { id: "wc_ly",           name: "ly",   label: "LY",               min: 0,    max: 100, def: function () { return stampingLoss("y"); } }
+    ];
+
+    function isValid(field, value) {
+        return value !== null && value >= field.min && value <= field.max;
+    }
+
+    function read(field) {
+        var raw = stored(field.id);
+        var value = raw === null || raw === "" ? null : num(raw);
+        if (isValid(field, value)) {
+            return { value: value, custom: true };
+        }
+        return { value: field.def(), custom: false };
+    }
+
+    /* Values the calculations use right now. */
+    function values() {
+        var out = {};
+        FIELDS.forEach(function (field) {
+            out[field.name] = read(field).value;
+        });
+        return out;
+    }
+
+    function format(value) {
+        return String(Math.round(value * 10000) / 10000);
+    }
+
+    function updateStatus() {
+        var box = document.getElementById("wcStatus");
+        var panel = document.getElementById("windingConstants");
+        if (!box) {
+            return;
+        }
+        var custom = FIELDS
+            .map(function (field) { var r = read(field); return r.custom ? field.label + " " + format(r.value) : null; })
+            .filter(Boolean);
+
+        box.textContent = custom.length
+            ? "Custom: " + custom.join(", ")
+            : "Empty = default value";
+
+        if (panel) {
+            panel.classList.toggle("has-custom", custom.length > 0);
+        }
+    }
+
+    /* Wire the inputs; onChange re-runs the page's calculations. */
+    function bind(onChange) {
+
+        FIELDS.forEach(function (field) {
+
+            var input = document.getElementById(field.id);
+            if (!input) {
+                return;
+            }
+
+            input.placeholder = format(field.def());
+            input.title = field.label + " — default " + format(field.def()) +
+                " (allowed " + field.min + " to " + field.max + ")";
+
+            var saved = stored(field.id);
+            input.value = saved !== null ? saved : "";
+            input.classList.remove("is-invalid");
+
+            input.addEventListener("input", function () {
+
+                var raw = input.value.trim();
+                var value = raw === "" ? null : num(raw);
+
+                if (raw === "") {
+                    try { sessionStorage.removeItem(field.id); } catch (e) {}
+                    input.classList.remove("is-invalid");
+                }
+                else if (isValid(field, value)) {
+                    try { sessionStorage.setItem(field.id, String(value)); } catch (e) {}
+                    input.classList.remove("is-invalid");
+                }
+                else {
+                    /* out of range: keep calculating with the default */
+                    try { sessionStorage.removeItem(field.id); } catch (e) {}
+                    input.classList.add("is-invalid");
+                }
+
+                updateStatus();
+
+                if (typeof onChange === "function") {
+                    onChange();
+                }
+
+            });
+
+        });
+
+        var reset = document.getElementById("wcReset");
+
+        if (reset) {
+            reset.addEventListener("click", function () {
+                FIELDS.forEach(function (field) {
+                    try { sessionStorage.removeItem(field.id); } catch (e) {}
+                    var input = document.getElementById(field.id);
+                    if (input) {
+                        input.value = "";
+                        input.classList.remove("is-invalid");
+                    }
+                });
+                updateStatus();
+                if (typeof onChange === "function") {
+                    onChange();
+                }
+            });
+        }
+
+        updateStatus();
+    }
+
+    return { values: values, bind: bind, fields: FIELDS };
+
+})();
+
+
 window.initializeDesignPage = function () {
 
 /* =================================================
@@ -144,6 +407,37 @@ function showSaveStatus(message, isError) {
 
 
 /* =================================================
+   DEMO BANNER (demo users: 4 reports in total)
+================================================= */
+
+function updateDemoBanner(left) {
+
+    const banner =
+        document.getElementById("designDemoBanner");
+
+    const text =
+        document.getElementById("designDemoText");
+
+    if (!banner || !text) {
+        return;
+    }
+
+    const limit =
+        banner.dataset.limit || "4";
+
+    left = Math.max(0, Number(left) || 0);
+    banner.dataset.left = String(left);
+    banner.classList.toggle("is-used-up", left <= 0);
+
+    text.textContent =
+        left > 0
+            ? left + " of " + limit + " design reports left (total for Single, Two and Three Phase)."
+            : "You have used all " + limit + " demo design reports. Choose a plan to keep creating designs.";
+
+}
+
+
+/* =================================================
    SAVE TO DATABASE
    Runs on every Next and on the final Continue.
    Saves are queued so two quick clicks never
@@ -182,6 +476,14 @@ function saveDesignToDb(step, finalize) {
                 const body =
                     await response.json().catch(() => ({}));
 
+                if (body.code === "demo_limit") {
+
+                    updateDemoBanner(0);
+                    showSaveStatus(body.message, true);
+
+                    return { demoLimit: true, message: body.message };
+                }
+
                 if (!response.ok || !body.success) {
 
                     showSaveStatus(
@@ -214,7 +516,20 @@ function saveDesignToDb(step, finalize) {
 
                     DS.set("design_completed", "1");
 
-                    showSaveStatus("Design saved · report added to your reports");
+                    if (body.demo) {
+
+                        updateDemoBanner(body.demo.left);
+
+                        showSaveStatus(
+                            "Design saved · report added to your reports · " +
+                            body.demo.left + " of " + body.demo.limit + " demo reports left"
+                        );
+
+                    } else {
+
+                        showSaveStatus("Design saved · report added to your reports");
+
+                    }
 
                 } else {
 
@@ -1856,7 +2171,21 @@ function attachWindingEvents() {
                 submitButton.textContent =
                     "Saving & generating report…";
 
-                await saveDesignToDb(4, true);
+                const saved =
+                    await saveDesignToDb(4, true);
+
+                if (saved && saved.demoLimit) {
+
+                    alert(saved.message);
+
+                    submitButton.disabled =
+                        false;
+
+                    submitButton.textContent =
+                        "Continue";
+
+                    return;
+                }
 
                 try {
 

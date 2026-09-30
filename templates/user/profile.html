@@ -53,6 +53,11 @@
                         <input type="email" id="profileEmail" name="email" value="{{ user.email }}" maxlength="150" autocomplete="email" required>
                     </div>
 
+                    <div class="design-input-group">
+                        <label for="profilePhone">Phone number</label>
+                        <input type="tel" id="profilePhone" name="phone" value="{{ user.phone or '' }}" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="e.g. +91 98765 43210" required>
+                    </div>
+
                 </div>
 
                 <p class="profile-message" id="profileMessage" role="status" aria-live="polite"></p>

@@ -37,9 +37,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initPricing();
 
+    initDemoStart();
+
     initAuthModals();
 
+    showLoggedOutReason();
+
 });
+
+
+/* =========================================================
+   LOGGED OUT BECAUSE OF A LOGIN ON ANOTHER DEVICE
+   (one active login per account)
+========================================================= */
+
+function showLoggedOutReason() {
+
+    const params =
+        new URLSearchParams(window.location.search);
+
+    if (params.get("reason") !== "other_device") {
+        return;
+    }
+
+    window.history.replaceState({}, "", window.location.pathname);
+
+    openLoginModal();
+
+    showAuthMessage(
+        "You were logged out because this account was logged in on another device. " +
+        "Each account can be used on one device at a time.",
+        "error"
+    );
+
+}
 
 
 /* =========================================================
@@ -315,6 +346,8 @@ function initPricing() {
                     plan
                 );
 
+                sessionStorage.removeItem("startDemo");
+
             }
 
 
@@ -323,6 +356,52 @@ function initPricing() {
         });
 
     });
+
+}
+
+
+/* =========================================================
+   FREE DEMO
+   "Try Free Demo" -> create account (or log in) -> the
+   dashboard opens straight on New Design. Any account
+   without an active plan is a demo account: 4 design
+   reports in total, all phases together.
+========================================================= */
+
+function initDemoStart() {
+
+    document.querySelectorAll("[data-demo-start]").forEach(link => {
+
+        link.addEventListener("click", event => {
+
+            event.preventDefault();
+
+            try {
+                sessionStorage.setItem("startDemo", "1");
+                sessionStorage.removeItem("selectedPlan");
+            } catch (e) { /* storage blocked: still open the form */ }
+
+            openRegisterModal();
+
+        });
+
+    });
+
+}
+
+
+function afterLoginUrl() {
+
+    let demo = false;
+
+    try {
+        demo = sessionStorage.getItem("startDemo") === "1";
+        sessionStorage.removeItem("startDemo");
+    } catch (e) { /* ignore */ }
+
+    return demo
+        ? CONFIG.DASHBOARD_URL + "?page=new-design"
+        : CONFIG.DASHBOARD_URL;
 
 }
 
@@ -859,12 +938,8 @@ async function handleLogin(event) {
          * The user can now be sent to the dashboard.
          */
 
-        setTimeout(() => {
-
-            window.location.href =
-                CONFIG.DASHBOARD_URL;
-
-        }, 700);
+        window.location.href =
+            afterLoginUrl();
 
     }
 
@@ -920,6 +995,12 @@ async function handleRegister(event) {
     const email =
         document.getElementById("email")?.value.trim();
 
+    const phone =
+        document.getElementById("phone")?.value.trim() || "";
+
+    const phoneDigits =
+        phone.replace(/[\s\-().]/g, "");
+
 
     const password =
         document.getElementById("registerPassword")?.value;
@@ -966,6 +1047,28 @@ async function handleRegister(event) {
 
         return;
 
+    }
+
+
+    if (!phone) {
+
+        showAuthMessage(
+            "Please enter your phone number.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if (!/^\+?[0-9]{10,15}$/.test(phoneDigits)) {
+
+        showAuthMessage(
+            "Enter a valid phone number (10 to 15 digits, + country code allowed).",
+            "error"
+        );
+
+        return;
     }
 
 
@@ -1040,6 +1143,8 @@ async function handleRegister(event) {
 
                         email: email,
 
+                        phone: phone,
+
                         password: password,
 
                         confirm_password:
@@ -1071,43 +1176,42 @@ async function handleRegister(event) {
            REGISTRATION SUCCESS
         ------------------------------------------------- */
 
+        /*
+         * The server logs the new user in straight away,
+         * so go to the dashboard (New Design for demo) now.
+         */
+
+        if (result.logged_in) {
+
+            showAuthMessage(
+                "Account created. Opening Moto Master...",
+                "success"
+            );
+
+            window.location.href =
+                afterLoginUrl();
+
+            return;
+
+        }
+
         showAuthMessage(
             "Account created successfully. Please login.",
             "success"
         );
 
+        form.reset();
+        clearAuthMessage();
+        closeRegisterModal();
+        openLoginModal();
 
-        /*
-         * Do not automatically login here.
-         *
-         * Registration creates the account.
-         * Login will create the Flask session.
-         */
+        const loginInput =
+            document.getElementById("login");
 
-
-        setTimeout(() => {
-
-            form.reset();
-
-            clearAuthMessage();
-
-            closeRegisterModal();
-
-            openLoginModal();
-
-
-            const loginInput =
-                document.getElementById("login");
-
-
-            if (loginInput) {
-
-                loginInput.value =
-                    username;
-
-            }
-
-        }, 900);
+        if (loginInput) {
+            loginInput.value =
+                username;
+        }
 
     }
 

@@ -1,0 +1,90 @@
+<div class="design-module my-designs">
+
+    <div class="design-page-header">
+        <div>
+            <h1>Reports</h1>
+            <p>Every report you have generated. Each one shows the values exactly as they were when it was created.</p>
+        </div>
+    </div>
+
+    {% if error %}
+
+        <div class="winding-calc-status is-error">{{ error }}</div>
+
+    {% elif not reports %}
+
+        <section class="design-section my-designs-empty">
+            <h2>No reports yet</h2>
+            <p>A report is created when you finish the Winding step of a design and press <strong>Continue</strong>.</p>
+            <button type="button" class="design-next-button" data-mm-action="new">Start a design</button>
+        </section>
+
+    {% else %}
+
+        {% if reports | length > 1 %}
+        <div class="combine-bar" id="combineBar">
+            <label class="combine-select-all">
+                <input type="checkbox" id="combineSelectAll">
+                Select all
+            </label>
+            <span class="combine-hint" id="combineHint">Tick 2 or more reports to combine their performance into one report.</span>
+            <button type="button" class="design-next-button" id="combineButton" data-mm-action="combine" disabled>
+                Combine selected
+            </button>
+        </div>
+        {% endif %}
+
+        <section class="design-section my-designs-list">
+
+            {% for r in reports %}
+
+            <article class="my-design-row" data-report-id="{{ r.id }}" data-design-id="{{ r.design_id }}">
+
+                <div class="my-design-main">
+
+                    <div class="my-design-title">
+                        {% if reports | length > 1 %}
+                        <input type="checkbox" class="combine-check" value="{{ r.id }}"
+                               aria-label="Select report {{ r.design_name }} for combining">
+                        {% endif %}
+                        <strong>{{ r.design_name }}</strong>
+                        {% if r.design_no %}<span class="my-design-no">#{{ r.design_no }}</span>{% endif %}
+                    </div>
+
+                    <div class="my-design-meta">
+                        <span class="my-design-tag">{{ r.phase_label }}</span>
+                        {% if r.final_efficiency is not none %}<span>η {{ r.final_efficiency | float | round(2) }}%</span>{% endif %}
+                        {% if r.slip is not none %}<span>Slip {{ r.slip | float | round(2) }}%</span>{% endif %}
+                        {% if r.torque is not none %}<span>Torque {{ r.torque | float | round(2) }} Nm</span>{% endif %}
+                        <span class="my-design-date">Generated {{ r.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+                    </div>
+
+                </div>
+
+                <div class="my-design-actions">
+
+                    <a class="design-next-button my-design-link" href="{{ r.file_url }}" target="_blank" rel="noopener">
+                        Open
+                    </a>
+
+                    <button type="button" class="design-back-button" data-mm-action="edit"
+                            title="Open this design to change it">
+                        Edit design
+                    </button>
+
+                    <button type="button" class="my-design-delete" data-mm-action="delete-report"
+                            aria-label="Delete report for {{ r.design_name }}" title="Delete report">
+                        Delete
+                    </button>
+
+                </div>
+
+            </article>
+
+            {% endfor %}
+
+        </section>
+
+    {% endif %}
+
+</div>

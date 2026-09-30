@@ -35,11 +35,21 @@ CREATE TABLE users (
 
     email VARCHAR(150) NOT NULL UNIQUE,
 
+    -- Digits only, optional leading "+" (e.g. +919876543210)
+    phone VARCHAR(20),
+
     password_hash TEXT NOT NULL,
 
     -- Public registration always creates role = user.
     -- Admin can be manually changed in the database.
     role VARCHAR(20) NOT NULL DEFAULT 'user',
+
+    -- Demo users (no active subscription) can generate 4 design
+    -- reports in total, all phases together. Never goes down.
+    demo_reports_used INTEGER NOT NULL DEFAULT 0,
+
+    -- One active login per account: token of the current login.
+    session_token VARCHAR(64),
 
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -48,6 +58,8 @@ CREATE TABLE users (
     CONSTRAINT users_role_check
         CHECK (role IN ('user', 'admin'))
 );
+
+COMMENT ON COLUMN users.demo_reports_used IS 'demo-v2';
 
 
 -- ============================================================
@@ -422,6 +434,11 @@ CREATE TABLE design_winding_data (
     final_turns_aux    INTEGER,
 
     final_stack_length NUMERIC(10,3),    -- mm
+    -- Winding "Calculation constants" box (NULL = default)
+    slot_fill_factor NUMERIC(6,4) CHECK (slot_fill_factor > 0 AND slot_fill_factor <= 1),
+    flux_density     NUMERIC(6,4) CHECK (flux_density > 0 AND flux_density <= 3),
+    loss_factor_t    NUMERIC(8,3) CHECK (loss_factor_t >= 0 AND loss_factor_t <= 100),
+    loss_factor_y    NUMERIC(8,3) CHECK (loss_factor_y >= 0 AND loss_factor_y <= 100),
 
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

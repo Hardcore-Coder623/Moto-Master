@@ -20,6 +20,8 @@ from decimal import Decimal
 import psycopg2
 import psycopg2.extras
 
+from backend import demo
+
 
 def get_db_connection():
     return psycopg2.connect(os.getenv("DATABASE_URL"))
@@ -94,6 +96,33 @@ WINDING_FIELDS = [
 
 AUX_COLUMNS = {"insulation_dia_aux", "actual_use_dia_aux", "final_turns_aux"}
 
+# Calculation constants box on the Winding page (empty = default).
+# Stored only if the columns exist (database/add_winding_constants.sql).
+WINDING_CONSTANT_FIELDS = [
+    ("slot_fill_factor", "num", ["wc_fill_factor"]),
+    ("flux_density",     "num", ["wc_flux_density"]),
+    ("loss_factor_t",    "num", ["wc_lf"]),
+    ("loss_factor_y",    "num", ["wc_ly"]),
+]
+
+_constants_columns_ok = None
+
+
+def _constants_columns_exist(cur):
+    """True when design_winding_data has the constants columns (checked once)."""
+    global _constants_columns_ok
+    if _constants_columns_ok is None:
+        cur.execute(
+            """
+            SELECT COUNT(*) FROM information_schema.columns
+            WHERE table_name = 'design_winding_data'
+              AND column_name IN ('slot_fill_factor', 'flux_density',
+                                  'loss_factor_t', 'loss_factor_y')
+            """
+        )
+        _constants_columns_ok = cur.fetchone()[0] == 4
+    return _constants_columns_ok
+
 RESULT_FIELDS = [
     ("i_ph",  "num", ["winding_I_ph", "I_ph", "winding_I_main", "I_main"]),
     ("i_aux", "num", ["winding_I_aux", "I_aux"]),
@@ -131,6 +160,10 @@ PHASE_LABELS = {
 
 class DesignError(Exception):
     """A problem the user can fix (shown as a message)."""
+
+
+class DemoLimitError(DesignError):
+    """A demo user has used all of their demo design reports."""
 
 
 # =========================================================
@@ -308,6 +341,13 @@ def save_design(user_id, payload):
         with conn:
             with conn.cursor() as cur:
 
+                # ---- demo limit (total across all phases) -------
+                access = None
+                if finalize or not design_id:
+                    access = demo.get_access(cur, user_id, lock=finalize)
+                    if access["demo"] and access["left"] <= 0:
+                        raise DemoLimitError(demo.DEMO_LIMIT_MESSAGE)
+
                 # ---- designs row --------------------------------
                 if design_id:
                     cur.execute(
@@ -349,6 +389,13 @@ def save_design(user_id, payload):
 
                 result["design_id"] = design_id
 
+                # ---- winding calculation constants --------------
+                constants = _collect(values, WINDING_CONSTANT_FIELDS)
+                if _constants_columns_exist(cur):
+                    for table, row in forms:
+                        if table == "design_winding_data":
+                            row.update(constants)
+
                 # ---- four form tables (upsert) -------------------
                 for table, row in forms:
                     columns = list(row.keys())
@@ -377,6 +424,7 @@ def save_design(user_id, payload):
                     }
                     for table, row in forms:
                         snapshot[table.replace("design_", "")] = row
+                    snapshot["constants"] = constants
 
                     columns = list(results.keys())
                     cur.execute(
@@ -410,6 +458,14 @@ def save_design(user_id, payload):
                     )
                     result["report_id"] = report_id
                     result["calculation_id"] = calculation_id
+
+                    if access["demo"]:
+                        demo.record_demo_report(cur, user_id)
+                        result["demo"] = {
+                            "limit": access["limit"],
+                            "used": access["used"] + 1,
+                            "left": access["left"] - 1,
+                        }
 
                     cur.execute(
                         "UPDATE designs SET status = 'completed', current_step = 4 WHERE id = %s",
@@ -499,6 +555,10 @@ def load_design_values(user_id, design_id):
     put(["design_phase"], design["phase"])
     put(["design_wire_type", "wire_type"], design["wire_type"])
     put(["design_mechanical_component", "mechanical_component"], design["mechanical_component"])
+
+    winding_row = rows.get("design_winding_data") or {}
+    for column, _, keys in WINDING_CONSTANT_FIELDS:
+        put(keys, winding_row.get(column))
 
     for table, fields in FORM_TABLES:
         row = rows[table]

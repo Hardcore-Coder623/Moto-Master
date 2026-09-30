@@ -1,5 +1,37 @@
 <div class="winding-parameter-form">
 
+<div class="winding-top">
+
+    <h2>Winding Parameters</h2>
+
+    <aside class="winding-constants" id="windingConstants" aria-label="Calculation constants">
+                <div class="wc-head">
+                    <strong>Calculation constants</strong>
+                    <button type="button" class="wc-reset" id="wcReset" title="Use default values">Reset</button>
+                </div>
+                <div class="wc-grid">
+                    <label class="wc-field" for="wc_fill_factor">
+                        <span>Slot fill factor</span>
+                        <input type="number" id="wc_fill_factor" step="0.01" min="0.05" max="1" inputmode="decimal">
+                    </label>
+                    <label class="wc-field" for="wc_flux_density">
+                        <span>B (flux density)</span>
+                        <input type="number" id="wc_flux_density" step="0.01" min="0.05" max="3" inputmode="decimal">
+                    </label>
+                    <label class="wc-field" for="wc_lf">
+                        <span>LF (tooth loss)</span>
+                        <input type="number" id="wc_lf" step="0.1" min="0" max="100" inputmode="decimal">
+                    </label>
+                    <label class="wc-field" for="wc_ly">
+                        <span>LY (yoke loss)</span>
+                        <input type="number" id="wc_ly" step="0.1" min="0" max="100" inputmode="decimal">
+                    </label>
+                </div>
+                <p class="wc-status" id="wcStatus">Empty = default value</p>
+            </aside>
+
+</div>
+
 <div class="winding-two-column-layout">
 
     <!-- ===================================================== -->
@@ -450,6 +482,80 @@
 <script>
 window.initializeWindingForm = function () {
 
+    /* Calculation constants box (Slot fill factor, B, LF, LY). */
+    function windingConstants() {
+        if (window.MotoMasterConstants) {
+            return window.MotoMasterConstants.values();
+        }
+        return {
+            fill: 0.47,
+            b: 0.47,
+            lf: Number(sessionStorage.getItem("stamping_lf_t")) || 0,
+            ly: Number(sessionStorage.getItem("stamping_lf_y")) || 0
+        };
+    }
+
+    /* =========================================================
+       CALCULATION LOG
+       Open the browser DevTools (F12) → Console to see every
+       calculation step. Set CALC_LOG = false to turn it off.
+    ========================================================= */
+
+    const CALC_LOG = true;
+
+    function fmtLog(value) {
+        if (typeof value === "number") {
+            if (!Number.isFinite(value)) {
+                return String(value);
+            }
+            return String(Math.round(value * 1e6) / 1e6);
+        }
+        return JSON.stringify(value);
+    }
+
+    /* All log output uses console.log, so nothing is hidden by the
+       console's level filter. CALC_VALUES collects every value of the
+       current calculation and is printed as one object at the end. */
+
+    let CALC_VALUES = {};
+
+    function logGroup(title) {
+        if (CALC_LOG) {
+            CALC_VALUES = {};
+            console.log("");
+            console.log("========== [3-PHASE] " + title + " ==========");
+        }
+    }
+
+    function logEnd() {
+        if (CALC_LOG) {
+            console.log("---------- end ----------");
+        }
+    }
+
+    function logVal(name, value, formula) {
+        if (CALC_LOG) {
+            CALC_VALUES[name.trim()] = value;
+            console.log(
+                name.padEnd(24) + "= " + fmtLog(value) +
+                (formula ? "    <- " + formula : "")
+            );
+        }
+    }
+
+    function logStop(reason) {
+        if (CALC_LOG) {
+            console.log("STOPPED: " + reason);
+        }
+    }
+
+    function logAll(title) {
+        if (CALC_LOG) {
+            console.log("[3-PHASE] " + title + " (all values):", Object.assign({}, CALC_VALUES));
+        }
+    }
+
+
     /*
      * Helper functions.
      */
@@ -643,6 +749,37 @@ window.initializeWindingForm = function () {
     );
 
 
+    logGroup("Inputs from previous steps");
+    logVal("hp", hp, "Main Data");
+    logVal("uph", uph, "Main Data");
+    logVal("pole", pole, "Main Data");
+    logVal("power (W)", power, "Main Data");
+    logVal("frequency", frequency, "Main Data");
+    logVal("connection", connection, "Main Data");
+    logVal("A1", A1, "Stamping");
+    logVal("N (stator slots)", N, "Stamping");
+    logVal("Y", Y, "Stamping");
+    logVal("W", W, "Stamping");
+    logVal("W2", W2, "Stamping");
+    logVal("d0", d0, "Stamping");
+    logVal("dia", dia, "Stamping");
+    logVal("M (rotor slots)", M, "Rotor");
+    logVal("V", V, "Rotor");
+    logVal("V2", V2, "Rotor");
+    logVal("X", X, "Rotor");
+    logVal("A2", A2, "Rotor");
+    logVal("shaft_diameter", shaft_diameter, "Rotor");
+    logVal("rng_ht", rng_ht, "Rotor");
+    logVal("rng_wt", rng_wt, "Rotor");
+    logVal("pf", pf, "constant");
+    logVal("ks", ks, "constant");
+    logVal("rps", rps, "constant");
+    logVal("ds", ds, "dia / 1000");
+    logVal("material", sessionStorage.getItem("material"), "Stamping (bar material)");
+    logVal("constants box", windingConstants(), "fill / B / LF / LY in use");
+    logEnd();
+
+
     /*
      * Input references.
      */
@@ -793,12 +930,21 @@ window.initializeWindingForm = function () {
         const ef =
             getEfficiency();
 
+        logGroup("I PH & recommended diameter");
+        logVal("currentDensity", currentDensity, "input (A/mm²)");
+        logVal("ef", ef, "efficiency % / 100");
+        logVal("hp", hp);
+        logVal("uph", uph);
+        logVal("connection", connection);
+
         if (
             !Number.isFinite(currentDensity) ||
             currentDensity <= 0 ||
             !hp ||
             !uph
         ) {
+            logStop("need Current Density > 0, HP and UPH");
+            logEnd();
             return;
         }
 
@@ -835,13 +981,25 @@ window.initializeWindingForm = function () {
         }
         else {
 
+            logStop("connection is '" + connection + "' (only Star / Delta have a formula)");
+            logEnd();
             return;
         }
 
 
+        logVal(
+            "I_ph",
+            I_ph,
+            connection === "Star"
+                ? "(hp*736) / (1.73*uph*ef*pf)"
+                : "(hp*736) / (3*uph*ef*pf)"
+        );
+
         if (
             !Number.isFinite(I_ph)
         ) {
+            logStop("I_ph is not a number (check efficiency)");
+            logEnd();
             return;
         }
 
@@ -861,6 +1019,11 @@ window.initializeWindingForm = function () {
             Math.sqrt(
                 QG / 0.75
             );
+
+        logVal("QG", QG, "I_ph / currentDensity");
+        logVal("recommendedDia", recommendedDia, "sqrt(QG / 0.75)");
+        logAll("I PH & recommended diameter");
+        logEnd();
 
 
         setValue(
@@ -903,13 +1066,16 @@ window.initializeWindingForm = function () {
             !Number.isFinite(insulationDia) ||
             insulationDia === 0
         ) {
+            logGroup("Recommended turns");
+            logStop("Insulation Diameter is empty");
+            logEnd();
             return;
         }
 
 
         const recommendedTurns =
             (
-                0.47 *
+                windingConstants().fill *
                 A1
             ) /
             (
@@ -924,6 +1090,13 @@ window.initializeWindingForm = function () {
             recommendedTurns,
             2
         );
+
+        logGroup("Recommended turns");
+        logVal("slot fill factor", windingConstants().fill, "constants box (default 0.47)");
+        logVal("A1", A1);
+        logVal("insulationDia", insulationDia);
+        logVal("recommendedTurns", recommendedTurns, "(fill*A1) / (0.786*insDia²)");
+        logEnd();
 
 
         calculateRecommendedStackLength();
@@ -958,6 +1131,11 @@ window.initializeWindingForm = function () {
             getEfficiency();
 
 
+        logGroup("Recommended stack length");
+        logVal("iPh", iPh);
+        logVal("recommendedTurns", recommendedTurns);
+        logVal("ef", ef);
+
         if (
             !Number.isFinite(iPh) ||
             !Number.isFinite(recommendedTurns) ||
@@ -967,6 +1145,8 @@ window.initializeWindingForm = function () {
             power === 0 ||
             ds === 0
         ) {
+            logStop("need I PH, recommended turns, efficiency, dia and power");
+            logEnd();
             return;
         }
 
@@ -995,16 +1175,23 @@ window.initializeWindingForm = function () {
         const q1 =
             (
                 11 *
-                bConstant *
+                windingConstants().b *
                 ac
             ) /
             1000;
 
 
+        logVal("q", q, "power / (ef*pf*1000)");
+        logVal("ac", ac, "(iPh*recTurns*N) / (3.14*ds)");
+        logVal("B (flux density)", windingConstants().b, "constants box (default 0.47)");
+        logVal("q1", q1, "(11*B*ac) / 1000");
+
         if (
             q1 === 0 ||
             rps === 0
         ) {
+            logStop("q1 is 0");
+            logEnd();
             return;
         }
 
@@ -1027,6 +1214,10 @@ window.initializeWindingForm = function () {
             recommendedStackLength,
             2
         );
+
+        logVal("recommendedStackLength", recommendedStackLength, "(q / (q1*rps*ds²)) * 1000");
+        logAll("Recommended stack length");
+        logEnd();
 
 
         updateAllCalculations();
@@ -1072,12 +1263,21 @@ window.initializeWindingForm = function () {
             "air_gap", "final_efficiency", "angle", "torque"
         ];
 
+        logGroup("Performance (final values)");
+        logVal("zs (final turns)", zs);
+        logVal("finalStackLength", finalStackLength);
+        logVal("actualDia", actualDia);
+        logVal("i_ph", i_ph);
+
         if (
             zs <= 0 ||
             finalStackLength <= 0 ||
             actualDia <= 0 ||
             i_ph <= 0
         ) {
+
+            logStop("need Final Turns, Final Stack Length, Actual Use Diameter and I PH");
+            logEnd();
 
             outputFields.forEach((id) => {
 
@@ -1195,10 +1395,10 @@ window.initializeWindingForm = function () {
          */
 
         const lf_y =
-            getNumber("lf_y", 0);
+            windingConstants().ly;
 
         const lf_t =
-            getNumber("lf_t", 0);
+            windingConstants().lf;
 
 
         /*
@@ -1614,7 +1814,7 @@ window.initializeWindingForm = function () {
 
         } else {
 
-            console.warn(
+            console.log(
                 "[FRICTION LOSS] Mechanical component not selected:",
                 mechanicalComponent
             );
@@ -1976,30 +2176,140 @@ window.initializeWindingForm = function () {
         /*
          * Angle and torque.
          *
-         * XL = stator leakage reactance (Ω).
-         * Calculated from winding geometry and frequency.
-         *   XL = 2 * π * f * L
-         *   L  = μ₀ * (t_ph² * area_slot) / (stack * slots_per_phase)
-         * Simplified form used in motor design practice:
-         *   XL = (4 * π * f * μ₀ * t_ph² * A1/1e6) / (N/3 * finalStackLength/1000)
+         * XL = leakage reactance, full method (same as the single-phase
+         * calculation): slot + overhang + zigzag reactance, using the slot
+         * dimensions a, b, c, d, e, dw (stamping), rc, re (rotor) and the
+         * magnetising current. Q1 = N / (3*pole) = slots per pole per phase.
+         *
+         * (The previous "simplified" XL gave ~0.004 Ω, which pushed
+         *  FK = RR/Z1 above 1, so acos() was impossible and Angle stayed 0.)
          */
 
-        const mu0 = 4 * Math.PI * 1e-7;
+        const PI = Math.PI;
 
-        const XL =
-            (t_ph > 0 && N > 0 && finalStackLength > 0)
-                ? (
-                    4 * Math.PI * frequency * mu0 *
-                    t_ph * t_ph *
-                    (A1 / 1e6)
-                ) /
-                (
-                    (N / 3) *
-                    (finalStackLength / 1000)
-                )
+        /* ---- magnetising current (I_MAG) ---- */
+
+        const A_mag = 0.68;
+        const K_car = 0.61;
+
+        const Y1 =
+            N !== 0 ? 3140 * dsLocal / N : 0;
+
+        const S_car =
+            (Y1 - e * K_car) !== 0 ? Y1 / (Y1 - e * K_car) : 0;
+
+        const F_car = 0.365;
+
+        const X1 =
+            M !== 0 ? 3140 * dsLocal / M : 0;
+
+        const R_car =
+            (X1 - re - F_car) !== 0 ? Math.round(X1 / (X1 - re - F_car)) : 0;
+
+        const C1 =
+            R_car * S_car;
+
+        const r_y1 = 101;
+        const r_t1 = 7050;
+        const s_y1 = 2200;
+        const s_t1 = 6140;
+
+        const G_gap =
+            800 * A_mag * B_av * C1 / 1.23;
+
+        const E_sy =
+            pole !== 0 ? s_y1 * 1.047 * (dsLocal + ysVal + 2 * w_ht) / pole : 0;
+
+        const F_ry =
+            pole !== 0 ? r_y1 * 1.047 * (dsLocal - ry - 2 * r_tht) / pole : 0;
+
+        const H_st =
+            s_t1 * w_ht;
+
+        const J_rt =
+            r_t1 * r_tht;
+
+        const magspg =
+            G_gap + E_sy + F_ry + H_st + J_rt;
+
+        const I_MAG =
+            (ks * N * zs) !== 0
+                ? 6 * 0.427 * pole * magspg / (ks * N * zs)
                 : 0;
 
+        /* ---- slot leakage (XS) ---- */
+
+        const mu_o = 1.256e-6;
+
+        const v1 =
+            ((a + dw) !== 0 ? 2 * b / (a + dw) : 0) +
+            ((a + e) !== 0 ? 2 * c / (a + e) : 0) +
+            (e !== 0 ? d / e : 0);
+
+        const C2 =
+            M !== 0 ? ks * ks * N / M : 0;
+
+        const F3 = 0.748;
+
+        const acosArg =
+            rc !== 0 ? re / (2 * rc) : NaN;
+
+        const G1 =
+            (acosArg >= -1 && acosArg <= 1) ? 0.5 * Math.acos(acosArg) : 0;
+
+        const v2 =
+            F3 + G1;
+
+        const Q1 =
+            pole !== 0 ? N / (3 * pole) : 0;
+
+        const lambda =
+            (v1 + C2 * v2) * mu_o;
+
+        const pift =
+            8 * PI * frequency * t_ph * t_ph;
+
+        const XS =
+            (pole * Q1) !== 0
+                ? pift * (finalStackLength / 1000) * lambda / (pole * Q1)
+                : 0;
+
+        /* ---- overhang leakage (X0) ---- */
+
+        const K1 = 0.88;
+
+        const T_pole =
+            pole !== 0 ? PI * dsLocal / pole : 0;
+
+        const Y2 =
+            N !== 0 ? PI * dsLocal / N : 0;
+
+        const ovhg_o =
+            Y2 !== 0 ? (K1 * T_pole * T_pole / Y2) * 1.256e-6 : 0;
+
+        const X0 =
+            (pole * Q1) !== 0 ? pift * ovhg_o / (pole * Q1) : 0;
+
+        /* ---- zigzag leakage (XZ) ---- */
+
+        const qr =
+            pole !== 0 ? M / (3 * pole) : 0;
+
+        const X_m =
+            I_MAG !== 0 ? uph / I_MAG : 0;
+
+        const mop = 3;
+
+        const XZ =
+            (Q1 !== 0 && qr !== 0)
+                ? (5 / 6) * (X_m / (mop * mop)) * ((1 / (Q1 * Q1)) + (1 / (qr * qr)))
+                : 0;
+
+        const XL =
+            XS + X0 + XZ;
+
         sessionStorage.setItem("XL", XL.toString());
+        sessionStorage.setItem("I_MAG", I_MAG.toString());
 
 
         const denominator =
@@ -2060,6 +2370,17 @@ window.initializeWindingForm = function () {
                     180 /
                     Math.PI
                 );
+
+        }
+        else if (Z1 !== 0) {
+
+            /* only a rounding overshoot is clamped; a real overshoot is reported */
+            if (Math.abs(FK) <= 1.000001) {
+                angle = Math.acos(Math.max(-1, Math.min(1, FK))) * (180 / Math.PI);
+            }
+            else {
+                logStop("Angle: FK = RR/Z1 = " + FK.toFixed(4) + " is outside -1..1, acos() impossible — check slot / rotor dimensions (a–e, dw, rc, re)");
+            }
 
         }
 
@@ -2144,6 +2465,97 @@ window.initializeWindingForm = function () {
             "airgap",
             airgap.toString()
         );
+
+
+        /* ---- log every intermediate value ---- */
+
+        logVal("t_ph", t_ph, "(N*zs) / (2*3)");
+        logVal("phi", phi, "uph / (4.44*f*ks*t_ph)");
+        logVal("ysVal", ysVal, "Y / 1000");
+        logVal("dsLocal", dsLocal, "dia / 1000");
+        logVal("ry", ry, "X / 1000");
+        logVal("tau", tau, "3.14*ds / pole");
+        logVal("lf_t (LF)", lf_t, "constants box (default = stamping)");
+        logVal("lf_y (LY)", lf_y, "constants box (default = stamping)");
+        logVal("xc_85", xc_85, "(0.0239*320) / 360");
+        logVal("w_ht", w_ht, "W2 / 1000");
+        logVal("m_tn", m_tn, "2*(stack/1000) + 0.48");
+        logVal("area", area, "6*dia²*0.785");
+        logVal("rp_85", rp_85, "xc_85*zs*N*m_tn / area");
+        logVal("t_los", t_los, "7220*(N*W*stack*w_ht)*(2*lf_t)");
+        logVal("sy_los", sy_los, "22671*(stack*ys*(ds+ys+2*w_ht))*(lf_y*2)");
+        logVal("j_bar", j_bar, "ks*N*zs*i_ph / M");
+        logVal("material", material);
+        logVal("b_los", b_los, "(k*(stack+0.005)/A2)*M*j_bar²  k=0.031 Al / 0.021 Cu");
+        logVal("r_tht", r_tht, "(V2 + 0.8*X) / 1000");
+        logVal("sy_s", sy_s, "phi / (1.9*ys*stack)");
+        logVal("st_s", st_s, "1360*phi / (9.5*stack*N*W*rps)");
+        logVal("rt_s", rt_s, "1360*phi / (9.5*stack*M*V*rps)");
+        logVal("ry_s", ry_s, "sy_s*ys / ry");
+        logVal("i_rng", i_rng, "3.1847*M*j_bar / (10*pole)");
+        logVal("B_av", B_av, "uph / (4.44*f*ks*t_ph*stack*0.95*tau)");
+        logVal("l_rng", l_rng, "(ds - 2*0.0016 - rng_wt/1000)*3.14 / pole");
+        logVal("rng_r", rng_r, "0.021*l_rng / (rng_ht*rng_wt)");
+        logVal("rmg_los", rmg_los, "2*i_rng²*rng_r");
+        logVal("cu_los", cu_los, "3*i_ph²*rp_85");
+        logVal("mechanicalComponent", mechanicalComponent);
+        logVal("fr_los", fr_los, "hp*746*(0.06 bush / -0.025 ball bearing)");
+        logVal("wl (total loss)", wl, "t_los+sy_los+b_los+rmg_los+cu_los+fr_los");
+        logVal("nenlstg", nenlstg, "power");
+        logVal("zusatzlos", zusatzlos, "nenlstg*0.007");
+        logVal("EFFICIENCY %", efficiency, "100*nenlstg / (nenlstg+wl)");
+        logVal("kl", kl, "(b_los+rmg_los) / nenlstg");
+        logVal("SLIP %", slip, "100*kl / (1+kl)");
+        logVal("l1", l1);
+        logVal("l2", l2);
+        logVal("CU LENGTH", culength, "l1 + l2");
+        logVal("dsh", dsh, "shaft_diameter / 1000");
+        logVal("Q", Q, "7850*(d0+ds)*(d0-ds) - N*A1/100");
+        logVal("STATOR WEIGHT", statorwt, "(780*Q*stack/1000)*0.95");
+        logVal("QR", QR, "7850*(ds+dsh)*(ds-dsh) - M*A2/100");
+        logVal("ROTOR WEIGHT", rotorwt, "(780*QR*stack/1000)*0.95");
+        logVal("AIR GAP", airgap, "0.4 + 2*sqrt(stack*ds)");
+        logVal("ovrhng", ovrhng, "3.14*dia / (2000*pole)");
+        logVal("X_T", X_T, "constant");
+        logVal("VEL", VEL, "3.14*ds*rps");
+        logVal("IA", IA);
+        logVal("EX", EX, "IA*(1 + 0.1*VEL)");
+        logVal("BX", BX, "3.14*d0*stack");
+        logVal("wlt", wlt, "cu_los+t_los+sy_los+zusatzlos");
+        logVal("TEMP RISE", temp, "0.03*X_T*wlt / (EX+BX)");
+        logVal("Y1", Y1, "3140*ds / N");
+        logVal("S (carter)", S_car, "Y1 / (Y1 - e*0.61)");
+        logVal("X1", X1, "3140*ds / M");
+        logVal("R (carter)", R_car, "round(X1 / (X1 - re - 0.365))");
+        logVal("C1", C1, "R*S");
+        logVal("G (gap)", G_gap, "800*0.68*B_av*C1 / 1.23");
+        logVal("E (stator yoke)", E_sy, "2200*1.047*(ds+ys+2*w_ht) / pole");
+        logVal("F (rotor yoke)", F_ry, "101*1.047*(ds-ry-2*r_tht) / pole");
+        logVal("H (stator teeth)", H_st, "6140*w_ht");
+        logVal("J (rotor teeth)", J_rt, "7050*r_tht");
+        logVal("magspg", magspg, "G+E+F+H+J");
+        logVal("I_MAG", I_MAG, "6*0.427*pole*magspg / (ks*N*zs)");
+        logVal("v1", v1, "2b/(a+dw) + 2c/(a+e) + d/e");
+        logVal("C2", C2, "ks²*N / M");
+        logVal("G1", G1, "0.5*acos(re / (2*rc))");
+        logVal("v2", v2, "0.748 + G1");
+        logVal("Q1", Q1, "N / (3*pole)  slots/pole/phase");
+        logVal("lambda", lambda, "(v1 + C2*v2)*mu_o");
+        logVal("pift", pift, "8*pi*f*t_ph²");
+        logVal("XS (slot)", XS, "pift*stack*lambda / (pole*Q1)");
+        logVal("X0 (overhang)", X0, "pift*ovhg_o / (pole*Q1)");
+        logVal("qr", qr, "M / (3*pole)");
+        logVal("X_m", X_m, "uph / I_MAG");
+        logVal("XZ (zigzag)", XZ, "5/6*(X_m/9)*(1/Q1² + 1/qr²)");
+        logVal("XL", XL, "XS + X0 + XZ");
+        logVal("R3", R3, "0.33*(b_los+rmg_los) / (pf*i_ph)²");
+        logVal("RR", RR, "rp_85 + R3");
+        logVal("Z1", Z1, "sqrt(rp_85² + XL²)");
+        logVal("FK", FK, "RR / Z1  (angle only when -1..1)");
+        logVal("ANGLE", angle, "acos(FK) in degrees");
+        logVal("TORQUE", torque, "(38.95*rp_85/(rp_85+R3)) / 16.54");
+        logAll("Performance");
+        logEnd();
     }
 
 
@@ -2242,6 +2654,14 @@ window.initializeWindingForm = function () {
     /*
      * Initial calculations.
      */
+
+    if (window.MotoMasterConstants) {
+        window.MotoMasterConstants.bind(function () {
+            calculateCurrentDensity();
+            calculateRecommendedTurns();
+            updateAllCalculations();
+        });
+    }
 
     calculateCurrentDensity();
 

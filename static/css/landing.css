@@ -2629,3 +2629,36 @@ body.nav-menu-lock {
     border-color: var(--blue-500);
     box-shadow: var(--shadow-sm);
 }
+
+
+/* =========================================================
+   FREE DEMO LINKS
+   Demo = account without a plan: 4 design reports in total.
+========================================================= */
+
+.cta-box .btn.cta-demo-btn {
+    margin-left: 10px;
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.cta-box .btn.cta-demo-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.pricing-demo-note {
+    margin-top: 10px;
+    font-size: 0.95rem;
+}
+
+.pricing-demo-note a {
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+@media (max-width: 560px) {
+    .cta-box .btn.cta-demo-btn {
+        margin: 12px 0 0;
+    }
+}

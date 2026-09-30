@@ -1,0 +1,532 @@
+
+<section class="dashboard-overview">
+
+    <!-- =========================
+         WELCOME HEADER
+    ========================== -->
+
+    <div class="dashboard-welcome">
+
+        <div>
+            <span class="dashboard-eyebrow">
+                USER DASHBOARD
+            </span>
+
+            <h2>
+                Welcome back, {{ user.name }}!
+            </h2>
+
+            <p>
+                Manage your motor winding designs, reports and subscription
+                from one place.
+            </p>
+        </div>
+
+        <a href="#"
+           class="dashboard-primary-button"
+           id="overviewNewDesign">
+
+            + New Design
+
+        </a>
+
+    </div>
+
+
+    <!-- =========================
+         STAT CARDS
+    ========================== -->
+
+    <div class="dashboard-stats">
+
+
+        <!-- Total Designs -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-icon">
+                ◫
+            </div>
+
+            <div class="dashboard-stat-content">
+
+                <span>
+                    Total Designs
+                </span>
+
+                <strong>
+                    {{ total_designs }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Calculations -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-icon">
+                ∑
+            </div>
+
+            <div class="dashboard-stat-content">
+
+                <span>
+                    Calculations
+                </span>
+
+                <strong>
+                    {{ total_calculations }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Reports -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-icon">
+                ▤
+            </div>
+
+            <div class="dashboard-stat-content">
+
+                <span>
+                    Reports
+                </span>
+
+                <strong>
+                    {{ total_reports }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <!-- Subscription -->
+
+        <div class="dashboard-stat-card">
+
+            <div class="dashboard-stat-icon">
+                ◇
+            </div>
+
+            <div class="dashboard-stat-content">
+
+                <span>
+                    Subscription
+                </span>
+
+                {% if subscription %}
+
+                    <strong class="stat-plan">
+                        {{ subscription.plan|capitalize }}
+                    </strong>
+
+                    <small class="status-{{ subscription.status }}">
+                        {{ subscription.status|capitalize }}
+                    </small>
+
+                {% else %}
+
+                    <strong class="stat-plan">
+                        No Plan
+                    </strong>
+
+                    <small class="status-inactive">
+                        Inactive
+                    </small>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         DASHBOARD GRID
+    ========================== -->
+
+    <div class="dashboard-grid">
+
+
+        <!-- =========================
+             RECENT DESIGNS
+        ========================== -->
+
+        <section class="dashboard-panel designs-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div>
+
+                    <h3>
+                        Recent Designs
+                    </h3>
+
+                    <p>
+                        Your latest motor winding designs.
+                    </p>
+
+                </div>
+
+                <a href="#"
+                   id="viewAllDesigns">
+                    View All
+                </a>
+
+            </div>
+
+
+            {% if recent_designs %}
+
+                <div class="dashboard-list">
+
+                    {% for design in recent_designs %}
+
+                        <div class="dashboard-list-item is-clickable"
+                             data-design-id="{{ design.id }}"
+                             data-mm-action="edit"
+                             role="button"
+                             tabindex="0"
+                             title="Open this design">
+
+                            <div class="list-item-icon">
+                                ◫
+                            </div>
+
+                            <div class="list-item-content">
+
+                                <strong>
+                                    {{ design.design_name }}
+                                </strong>
+
+                                <span>
+
+                                    {% if design.design_no %}
+                                        {{ design.design_no }}
+                                    {% else %}
+                                        Design #{{ design.id }}
+                                    {% endif %}
+
+                                    · {{ design.phase_label }}
+
+                                </span>
+
+                            </div>
+
+                            <div class="list-item-date">
+
+                                {{ design.updated_at.strftime('%d %b %Y')
+                                   if design.updated_at else '' }}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="dashboard-empty-state">
+
+                    <div class="empty-icon">
+                        ◫
+                    </div>
+
+                    <h4>
+                        No designs yet
+                    </h4>
+
+                    <p>
+                        Create your first motor winding design to get started.
+                    </p>
+
+                    <a href="#"
+                       class="dashboard-small-button"
+                       id="emptyNewDesign">
+
+                        Create Design
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =========================
+             SUBSCRIPTION
+        ========================== -->
+
+        <section class="dashboard-panel subscription-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div>
+
+                    <h3>
+                        Subscription
+                    </h3>
+
+                    <p>
+                        Your current plan.
+                    </p>
+
+                </div>
+
+                <a href="#"
+                   id="manageSubscription">
+
+                    Manage
+
+                </a>
+
+            </div>
+
+
+            {% if subscription %}
+
+                <div class="subscription-summary">
+
+                    <div class="subscription-plan">
+
+                        <span>
+                            Current Plan
+                        </span>
+
+                        <strong>
+                            {{ subscription.plan|capitalize }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="subscription-status-row">
+
+                        <span>
+                            Status
+                        </span>
+
+                        <span class="subscription-badge
+                                     status-{{ subscription.status }}">
+
+                            {{ subscription.status|capitalize }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="subscription-detail-row">
+
+                        <span>
+                            Amount
+                        </span>
+
+                        <strong>
+                            ₹{{ subscription.amount }}
+                        </strong>
+
+                    </div>
+
+
+                    {% if subscription.start_date %}
+
+                        <div class="subscription-detail-row">
+
+                            <span>
+                                Start Date
+                            </span>
+
+                            <strong>
+
+                                {{ subscription.start_date.strftime('%d %b %Y') }}
+
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if subscription.end_date %}
+
+                        <div class="subscription-detail-row">
+
+                            <span>
+                                End Date
+                            </span>
+
+                            <strong>
+
+                                {{ subscription.end_date.strftime('%d %b %Y') }}
+
+                            </strong>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+
+                <div class="dashboard-empty-state compact">
+
+                    <div class="empty-icon">
+                        ◇
+                    </div>
+
+                    <h4>
+                        No active subscription
+                    </h4>
+
+                    <p>
+                        Choose a plan to start creating designs.
+                    </p>
+
+                    <a href="#"
+                       class="dashboard-small-button"
+                       id="choosePlan">
+
+                        Choose Plan
+
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =========================
+             RECENT REPORTS
+        ========================== -->
+
+        <section class="dashboard-panel reports-panel">
+
+            <div class="dashboard-panel-header">
+
+                <div>
+
+                    <h3>
+                        Recent Reports
+                    </h3>
+
+                    <p>
+                        Your recently generated reports.
+                    </p>
+
+                </div>
+
+                {% if total_reports and total_reports > 1 %}
+                <a href="#"
+                   id="combineReportsLink"
+                   class="panel-combine-link"
+                   title="Combine several reports into one performance report">
+                    Combine
+                </a>
+                {% endif %}
+
+                <a href="#"
+                   id="viewAllReports">
+
+                    View All
+
+                </a>
+
+            </div>
+
+
+            {% if recent_reports %}
+
+                <div class="dashboard-list">
+
+                    {% for report in recent_reports %}
+
+                        <div class="dashboard-list-item">
+
+                            <div class="list-item-icon report-icon">
+                                ▤
+                            </div>
+
+                            <div class="list-item-content">
+
+                                <strong>
+                                    {{ report.report_name }}
+                                </strong>
+
+                                <span>
+                                    {{ report.design_name }}
+                                </span>
+
+                            </div>
+
+                            <div class="list-item-action">
+
+                                {% if report.file_url %}
+
+                                    <a href="{{ report.file_url }}"
+                                       target="_blank"
+                                       rel="noopener">
+
+                                        View
+
+                                    </a>
+
+                                {% else %}
+
+                                    <span>
+                                        —
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="dashboard-empty-state">
+
+                    <div class="empty-icon">
+                        ▤
+                    </div>
+
+                    <h4>
+                        No reports yet
+                    </h4>
+
+                    <p>
+                        Generated PDF reports will appear here.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</section>

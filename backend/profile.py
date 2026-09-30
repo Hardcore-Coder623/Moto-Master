@@ -2,7 +2,7 @@
 MOTO MASTER - user profile
 
 GET  /profile               profile page (loaded into the dashboard)
-POST /api/profile           update name / username / email
+POST /api/profile           update name / username / email / phone
 POST /api/profile/password  change password
 """
 
@@ -13,6 +13,8 @@ import psycopg2
 import psycopg2.extras
 from flask import Blueprint, jsonify, render_template, request, session
 from werkzeug.security import check_password_hash, generate_password_hash
+
+from backend.auth import clean_phone, ensure_phone_column
 
 
 profile_bp = Blueprint("profile", __name__)
@@ -33,11 +35,14 @@ def _error(message, status=400):
 def _load_user(user_id):
     conn = get_db_connection()
     try:
+        with conn:
+            with conn.cursor() as cur:
+                ensure_phone_column(cur)
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             cur.execute(
                 """
                 SELECT
-                    u.id, u.name, u.username, u.email, u.role, u.created_at,
+                    u.id, u.name, u.username, u.email, u.phone, u.role, u.created_at,
                     (SELECT COUNT(*) FROM designs d WHERE d.user_id = u.id) AS design_count,
                     (SELECT COUNT(*) FROM reports r JOIN designs d ON d.id = r.design_id
                       WHERE d.user_id = u.id) AS report_count
@@ -80,9 +85,14 @@ def update_profile():
     name = str(data.get("name", "")).strip()
     username = str(data.get("username", "")).strip()
     email = str(data.get("email", "")).strip().lower()
+    phone_raw = str(data.get("phone", "")).strip()
 
-    if not name or not username or not email:
-        return _error("Name, username and email are required.")
+    if not name or not username or not email or not phone_raw:
+        return _error("Name, username, email and phone number are required.")
+
+    phone = clean_phone(phone_raw)
+    if not phone:
+        return _error("Enter a valid phone number (10 to 15 digits, + country code allowed).")
 
     if len(name) > 100:
         return _error("Name must be 100 characters or fewer.")
@@ -115,9 +125,11 @@ def update_profile():
                         return _error("That username is already taken.", 409)
                     return _error("That email is already used by another account.", 409)
 
+                ensure_phone_column(cur)
+
                 cur.execute(
-                    "UPDATE users SET name = %s, username = %s, email = %s WHERE id = %s",
-                    (name, username, email, user_id),
+                    "UPDATE users SET name = %s, username = %s, email = %s, phone = %s WHERE id = %s",
+                    (name, username, email, phone, user_id),
                 )
 
     except psycopg2.Error as error:
@@ -133,7 +145,7 @@ def update_profile():
     return jsonify({
         "success": True,
         "message": "Profile saved.",
-        "user": {"name": name, "username": username, "email": email},
+        "user": {"name": name, "username": username, "email": email, "phone": phone},
     })
 
 

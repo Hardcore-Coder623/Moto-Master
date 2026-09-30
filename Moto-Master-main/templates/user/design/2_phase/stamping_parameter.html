@@ -1,0 +1,444 @@
+<div class="design-parameter-form">
+
+<div class="design-form-grid">
+
+    <div class="design-input-group">
+        <label for="material">
+            Rotor Material
+        </label>
+
+        <select
+            id="material"
+            name="material"
+            required
+        >
+            <option value="">
+                Select Material
+            </option>
+
+            <option value="copper">
+                Copper
+            </option>
+
+            <option value="aluminium">
+                Aluminium
+            </option>
+        </select>
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="stamping_material">
+            Stamping Material
+        </label>
+
+        <select
+            id="stamping_material"
+            name="stamping_material"
+            required
+        >
+            <option value="">
+                Select Material
+            </option>
+
+            <option value="CRC">
+                CRC
+            </option>
+
+            <option value="M-47">
+                M-47
+            </option>
+
+            <option value="CRNO">
+                CRNO
+            </option>
+        </select>
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="N">
+            N
+        </label>
+
+        <input
+            type="number"
+            id="N"
+            name="N"
+            min="0"
+            step="1"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="Y">
+            Y (mm)
+        </label>
+
+        <input
+            type="number"
+            id="Y"
+            name="Y"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="W">
+            W (mm)
+        </label>
+
+        <input
+            type="number"
+            id="W"
+            name="W"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="W2">
+            W" (mm)
+        </label>
+
+        <input
+            type="number"
+            id="W2"
+            name="W2"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="A1">
+            A1 (sqmm)
+        </label>
+
+        <input
+            type="number"
+            id="A1"
+            name="A1"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="shape">
+            Shape
+        </label>
+
+        <select
+            id="shape"
+            name="shape"
+            required
+        >
+            <option value="">
+                Select Shape
+            </option>
+
+            <option value="Round">
+                Round
+            </option>
+
+            <option value="Trp">
+                Trp
+            </option>
+        </select>
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="a">
+            a (mm)
+        </label>
+
+        <input
+            type="number"
+            id="a"
+            name="a"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="b">
+            b (mm)
+        </label>
+
+        <input
+            type="number"
+            id="b"
+            name="b"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="c">
+            c (mm)
+        </label>
+
+        <input
+            type="number"
+            id="c"
+            name="c"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="d">
+            d (mm)
+        </label>
+
+        <input
+            type="number"
+            id="d"
+            name="d"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="e">
+            e (mm)
+        </label>
+
+        <input
+            type="number"
+            id="e"
+            name="e"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="dw">
+            dw (mm)
+        </label>
+
+        <input
+            type="number"
+            id="dw"
+            name="dw"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="d0">
+            d0 (mm)
+        </label>
+
+        <input
+            type="number"
+            id="d0"
+            name="d0"
+            step="0.01"
+            required
+        >
+    </div>
+
+
+    <div class="design-input-group">
+        <label for="dia">
+            dia (mm)
+        </label>
+
+        <input
+            type="number"
+            id="dia"
+            name="dia"
+            step="0.01"
+            required
+        >
+    </div>
+
+</div>
+
+
+<div
+    class="design-calculated-values"
+    id="stampingCalculatedValues"
+>
+
+    <div class="design-calculated-item">
+
+        <span>
+            LF Y
+        </span>
+
+        <strong id="lf_y">
+            0
+        </strong>
+
+    </div>
+
+
+    <div class="design-calculated-item">
+
+        <span>
+            LF T
+        </span>
+
+        <strong id="lf_t">
+            0
+        </strong>
+
+    </div>
+
+</div>
+
+<div class="design-action">
+    <button type="button" class="design-back-button" id="stampingBack">
+        Back
+    </button>
+    <button type="button" class="design-next-button" id="stampingNext">
+        Continue
+    </button>
+</div>
+
+</div>
+
+<script>
+
+(function () {
+
+    const stampingMaterial =
+        document.getElementById(
+            "stamping_material"
+        );
+
+    const lfY =
+        document.getElementById(
+            "lf_y"
+        );
+
+    const lfT =
+        document.getElementById(
+            "lf_t"
+        );
+
+
+    function updateLFValues() {
+
+        if (!stampingMaterial) {
+            return;
+        }
+
+        let lf_y = 0;
+        let lf_t = 0;
+
+
+        switch (stampingMaterial.value) {
+
+            case "CRC":
+
+                lf_y = 22;
+                lf_t = 22;
+
+                break;
+
+
+            case "CRNO":
+
+                lf_y = 8;
+                lf_t = 8;
+
+                break;
+
+
+            case "M-47":
+
+                lf_y = 2;
+                lf_t = 2;
+
+                break;
+
+        }
+
+
+        if (lfY) {
+            lfY.textContent = lf_y;
+        }
+
+
+        if (lfT) {
+            lfT.textContent = lf_t;
+        }
+
+
+        sessionStorage.setItem(
+            "stamping_lf_y",
+            lf_y
+        );
+
+        sessionStorage.setItem(
+            "stamping_lf_t",
+            lf_t
+        );
+
+    }
+
+
+    if (stampingMaterial) {
+
+        stampingMaterial.addEventListener(
+            "change",
+            updateLFValues
+        );
+
+        updateLFValues();
+
+    }
+
+
+    /*
+     * Prevent number-input scrolling.
+     */
+
+    document.addEventListener(
+        "wheel",
+        (event) => {
+
+            if (
+                document.activeElement &&
+                document.activeElement.type ===
+                "number"
+            ) {
+
+                document.activeElement.blur();
+
+            }
+
+        },
+        {
+            passive: true
+        }
+    );
+
+})();
+
+</script>

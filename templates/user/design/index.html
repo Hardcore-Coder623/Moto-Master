@@ -14,6 +14,29 @@
 
 
 <!-- =========================================
+     DEMO LIMIT (no active subscription)
+     4 design reports in total, all phases together
+========================================== -->
+
+{% if access and access.demo %}
+<div class="design-demo-banner{% if access.left <= 0 %} is-used-up{% endif %}"
+     id="designDemoBanner"
+     data-limit="{{ access.limit }}"
+     data-left="{{ access.left }}"
+     role="status">
+    <strong>Demo mode</strong>
+    <span id="designDemoText">
+        {% if access.left > 0 %}
+            {{ access.left }} of {{ access.limit }} design reports left (total for Single, Two and Three Phase).
+        {% else %}
+            You have used all {{ access.limit }} demo design reports. Choose a plan to keep creating designs.
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+
+<!-- =========================================
      STEP 1 — PHASE SELECTION
 ========================================== -->
 

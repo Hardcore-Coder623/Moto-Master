@@ -1,3 +1,41 @@
+/* =====================================================
+   ONE LOGIN PER ACCOUNT
+   If this account logs in on another device, the server
+   answers 401 + X-Session-Replaced. Send the user to the
+   login screen with a message instead of failing silently.
+===================================================== */
+
+(function () {
+
+    if (window.motoMasterFetchGuard) {
+        return;
+    }
+
+    window.motoMasterFetchGuard = true;
+
+    const realFetch = window.fetch.bind(window);
+    let leaving = false;
+
+    window.fetch = async function (...args) {
+
+        const response = await realFetch(...args);
+
+        if (response.status === 401 &&
+            response.headers.get("X-Session-Replaced") === "1" &&
+            !leaving) {
+
+            leaving = true;
+            window.location.href = "/?reason=other_device";
+
+        }
+
+        return response;
+
+    };
+
+})();
+
+
 document.addEventListener("DOMContentLoaded", () => {
 
     /* =====================================================

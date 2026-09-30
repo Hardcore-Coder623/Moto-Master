@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, session, request, Response, jsonify
 from datetime import datetime
 
-from backend import design_store
-from backend.design_store import DesignError
+from backend import design_store, demo
+from backend.design_store import DesignError, DemoLimitError
 
 design_bp = Blueprint(
     "design",
@@ -17,7 +17,8 @@ def design_index():
     if "user_id" not in session:
         return redirect(url_for("home"))
 
-    return render_template("user/design/index.html")
+    access = demo.safe_access(design_store.get_db_connection, session["user_id"])
+    return render_template("user/design/index.html", access=access)
 
 
 @design_bp.route("/content")
@@ -26,7 +27,24 @@ def design_content():
     if "user_id" not in session:
         return "", 401
 
-    return render_template("user/design/index.html")
+    access = demo.safe_access(design_store.get_db_connection, session["user_id"])
+    return render_template("user/design/index.html", access=access)
+
+
+@design_bp.route("/api/access", methods=["GET"])
+def api_access():
+    """Demo status: {"demo": true, "limit": 4, "used": 1, "left": 3}"""
+
+    if "user_id" not in session:
+        return _json_error("Please log in again.", 401)
+
+    try:
+        access = demo.load_access(design_store.get_db_connection, session["user_id"])
+    except Exception as error:
+        print("DEMO ACCESS ERROR:", error)
+        return _json_error("Could not check your plan.", 500)
+
+    return jsonify({"success": True, **access})
 
 
 @design_bp.route("/form/<phase>/<form_name>")
@@ -66,6 +84,18 @@ def design_report():
         return "Unauthorized", 401
 
     data = request.get_json(force=True, silent=True) or {}
+
+    # Demo users only get a report right after a successful save used
+    # one of their demo reports (the save leaves a one-time ticket).
+    ticket = session.pop("report_ticket", None)
+    if not ticket:
+        try:
+            access = demo.load_access(design_store.get_db_connection, session["user_id"])
+        except Exception as error:
+            print("DEMO ACCESS ERROR:", error)
+            return "Could not check your plan. Please try again.", 500
+        if access["demo"]:
+            return demo.DEMO_LIMIT_MESSAGE, 403
 
     return Response(build_report_html(data), mimetype="text/html")
 
@@ -221,11 +251,16 @@ def api_save_design():
 
     try:
         result = design_store.save_design(session["user_id"], payload)
+    except DemoLimitError as error:
+        return jsonify({"success": False, "code": "demo_limit", "message": str(error)}), 403
     except DesignError as error:
         return _json_error(str(error))
     except Exception as error:  # database down, etc.
         print("DESIGN SAVE ERROR:", error)
         return _json_error("Could not reach the database. Your values are kept in this browser.", 500)
+
+    if result.get("report_id"):
+        session["report_ticket"] = result["report_id"]
 
     return jsonify({"success": True, **result})
 

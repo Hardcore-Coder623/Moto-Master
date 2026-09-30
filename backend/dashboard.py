@@ -2,6 +2,8 @@
 import os
 import psycopg2
 
+from backend import demo
+
 from flask import (
     Blueprint,
     render_template,
@@ -105,58 +107,44 @@ def dashboard():
 
 
         # ==========================================
-        # TOTAL DESIGNS
+        # TOTALS (designs, calculations, reports)
+        # One query: the database is remote, so every
+        # round trip adds to the page load time.
+        # Calculations = internal count only.
         # ==========================================
 
         cursor.execute(
             """
-            SELECT COUNT(*)
-            FROM designs
-            WHERE user_id = %s
+            SELECT
+                (SELECT COUNT(*) FROM designs WHERE user_id = %s),
+                (SELECT COUNT(*) FROM calculations c
+                    JOIN designs d ON d.id = c.design_id
+                    WHERE d.user_id = %s),
+                (SELECT COUNT(*) FROM reports r
+                    JOIN designs d ON d.id = r.design_id
+                    WHERE d.user_id = %s)
             """,
-            (user_id,)
+            (user_id, user_id, user_id)
         )
 
-        total_designs = cursor.fetchone()[0]
+        (
+            total_designs,
+            total_calculations,
+            total_reports
+        ) = cursor.fetchone()
 
 
         # ==========================================
-        # TOTAL CALCULATIONS
-        #
-        # Internal database count only.
-        # No user-facing Calculations tab.
+        # DEMO ACCESS (same connection)
         # ==========================================
 
-        cursor.execute(
-            """
-            SELECT COUNT(*)
-            FROM calculations c
-            INNER JOIN designs d
-                ON c.design_id = d.id
-            WHERE d.user_id = %s
-            """,
-            (user_id,)
-        )
-
-        total_calculations = cursor.fetchone()[0]
-
-
-        # ==========================================
-        # TOTAL REPORTS
-        # ==========================================
-
-        cursor.execute(
-            """
-            SELECT COUNT(*)
-            FROM reports r
-            INNER JOIN designs d
-                ON r.design_id = d.id
-            WHERE d.user_id = %s
-            """,
-            (user_id,)
-        )
-
-        total_reports = cursor.fetchone()[0]
+        try:
+            demo_access = demo.get_access(cursor, user_id)
+            conn.commit()
+        except psycopg2.Error as error:
+            conn.rollback()
+            print("DEMO ACCESS ERROR:", error)
+            demo_access = None
 
 
         # ==========================================
@@ -328,7 +316,9 @@ def dashboard():
 
             recent_designs=recent_designs,
 
-            recent_reports=recent_reports
+            recent_reports=recent_reports,
+
+            demo_access=demo_access
 
         )
 

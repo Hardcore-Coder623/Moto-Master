@@ -136,11 +136,15 @@
                 {% else %}
 
                     <strong class="stat-plan">
-                        No Plan
+                        {% if demo_access and demo_access.demo %}Demo{% else %}No Plan{% endif %}
                     </strong>
 
                     <small class="status-inactive">
-                        Inactive
+                        {% if demo_access and demo_access.demo %}
+                            {{ demo_access.left }} / {{ demo_access.limit }} reports left
+                        {% else %}
+                            Inactive
+                        {% endif %}
                     </small>
 
                 {% endif %}
@@ -395,9 +399,17 @@
                         No active subscription
                     </h4>
 
+                    {% if demo_access and demo_access.demo %}
+                    <p>
+                        Demo: {{ demo_access.left }} of {{ demo_access.limit }} design reports left
+                        (total for all phases).
+                        {% if demo_access.left <= 0 %}Choose a plan to keep creating designs.{% endif %}
+                    </p>
+                    {% else %}
                     <p>
                         Choose a plan to start creating designs.
                     </p>
+                    {% endif %}
 
                     <a href="#"
                        class="dashboard-small-button"
