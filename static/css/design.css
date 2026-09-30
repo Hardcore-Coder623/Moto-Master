@@ -1134,3 +1134,72 @@ color: #b42318;
 .profile-message.is-success {
 color: #067647;
 }
+
+
+/* =====================================================
+COMBINE REPORTS
+===================================================== */
+
+.combine-bar {
+position: sticky;
+top: 0;
+z-index: 5;
+
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+gap: 12px 18px;
+
+margin-bottom: 16px;
+padding: 14px 18px;
+
+border: 1px solid #e5eaf2;
+border-radius: 12px;
+background: #ffffff;
+box-shadow: 0 4px 14px rgba(6, 21, 47, 0.06);
+}
+
+.combine-select-all {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+color: #06152f;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+}
+
+.combine-hint {
+flex: 1;
+min-width: 200px;
+color: #344054;
+font-size: 13px;
+}
+
+.combine-bar .design-next-button {
+min-width: 0;
+height: 40px;
+}
+
+.combine-check,
+.combine-select-all input {
+width: 18px;
+height: 18px;
+margin: 0;
+accent-color: #06152f;
+cursor: pointer;
+flex-shrink: 0;
+align-self: center;
+}
+
+.my-design-row.is-selected {
+background: #f6f8fb;
+box-shadow: inset 3px 0 0 #06152f;
+padding-left: 12px;
+}
+
+@media (max-width: 800px) {
+.combine-bar .design-next-button {
+    width: 100%;
+}
+}

@@ -1092,3 +1092,10 @@ textarea {
     background: #f1f5fb;
     outline: none;
 }
+
+
+/* "Combine" shortcut next to View All in Recent Reports */
+.dashboard-panel-header > a.panel-combine-link {
+    margin-left: auto;
+    margin-right: 14px;
+}

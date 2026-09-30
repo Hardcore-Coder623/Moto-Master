@@ -21,6 +21,19 @@
 
     {% else %}
 
+        {% if reports | length > 1 %}
+        <div class="combine-bar" id="combineBar">
+            <label class="combine-select-all">
+                <input type="checkbox" id="combineSelectAll">
+                Select all
+            </label>
+            <span class="combine-hint" id="combineHint">Tick 2 or more reports to combine their performance into one report.</span>
+            <button type="button" class="design-next-button" id="combineButton" data-mm-action="combine" disabled>
+                Combine selected
+            </button>
+        </div>
+        {% endif %}
+
         <section class="design-section my-designs-list">
 
             {% for r in reports %}
@@ -30,6 +43,10 @@
                 <div class="my-design-main">
 
                     <div class="my-design-title">
+                        {% if reports | length > 1 %}
+                        <input type="checkbox" class="combine-check" value="{{ r.id }}"
+                               aria-label="Select report {{ r.design_name }} for combining">
+                        {% endif %}
                         <strong>{{ r.design_name }}</strong>
                         {% if r.design_no %}<span class="my-design-no">#{{ r.design_no }}</span>{% endif %}
                     </div>

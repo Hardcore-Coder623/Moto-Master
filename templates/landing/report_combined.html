@@ -1,0 +1,394 @@
+{% macro fmt(value, digits=2) -%}
+    {%- if value is none -%}<span class="mm-na">N/A</span>{%- else -%}{{ '%.*f' | format(digits, value) }}{%- endif -%}
+{%- endmacro %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Combined Performance Report - {{ rows | length }} designs</title>
+{% include 'landing/report_styles.html' %}
+<style>
+/* ---------- Combined report: A4 landscape, grows to more pages if needed ---------- */
+
+.mm-report.is-combined {
+    --page-w: 297mm;
+    --page-h: 210mm;
+}
+
+.mm-report.is-combined .mm-sheet {
+    height: auto;
+    min-height: var(--page-h);
+    overflow: visible;
+}
+
+.mm-report .mm-highlights {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 3mm;
+    margin-bottom: 5mm;
+}
+
+.mm-report .mm-highlight-name {
+    margin-top: 1mm;
+    color: var(--text-muted);
+    font-size: 0.9em;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mm-report .mm-stat.is-primary .mm-highlight-name {
+    color: var(--on-dark);
+}
+
+.mm-report .mm-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 2.5mm;
+}
+
+.mm-report .mm-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+}
+
+.mm-report .mm-table th,
+.mm-report .mm-table td {
+    padding: 2.2mm 2.5mm;
+    border-bottom: 1px solid var(--line);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.mm-report .mm-table th:nth-child(-n+3),
+.mm-report .mm-table td:nth-child(-n+3) {
+    text-align: left;
+}
+
+.mm-report .mm-table thead th {
+    color: var(--white);
+    background: var(--black);
+    font-size: 0.82em;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.mm-report .mm-table thead th .mm-th-unit {
+    display: block;
+    color: var(--on-dark);
+    font-size: 0.9em;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.mm-report .mm-table tbody tr:nth-child(even) td {
+    background: var(--tile-bg);
+}
+
+.mm-report .mm-table tbody tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+.mm-report .mm-table td {
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+.mm-report .mm-design-cell strong {
+    display: block;
+    color: var(--text-strong);
+    font-weight: 800;
+}
+
+.mm-report .mm-design-cell span {
+    color: var(--text-muted);
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.mm-report .mm-best {
+    display: inline-block;
+    padding: 0.4mm 2mm;
+    border-radius: 999px;
+    color: var(--white);
+    background: var(--black);
+}
+
+.mm-report .mm-eff {
+    display: inline-flex;
+    align-items: center;
+    gap: 2mm;
+}
+
+.mm-report .mm-eff-bar {
+    width: 16mm;
+    height: 1.6mm;
+    border-radius: 1mm;
+    background: var(--line);
+    overflow: hidden;
+}
+
+.mm-report .mm-eff-bar i {
+    display: block;
+    height: 100%;
+    background: var(--black);
+}
+
+.mm-report .mm-table tfoot td {
+    color: var(--text-muted);
+    font-weight: 700;
+    background: #eef0f3;
+    border-bottom: 0;
+}
+
+.mm-report .mm-table tfoot tr:first-child td {
+    border-top: 2px solid var(--black);
+}
+
+.mm-report .mm-note {
+    margin-top: 3mm;
+    color: var(--text-muted);
+    font-size: 0.9em;
+}
+
+.mm-report .mm-error {
+    padding: 6mm;
+    border: 1px solid var(--border);
+    border-radius: 2.5mm;
+    color: var(--text-strong);
+    font-weight: 600;
+}
+
+@media screen and (max-width: 840px) {
+    .mm-report .mm-highlights {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@page {
+    size: A4 landscape;
+    margin: 8mm;
+}
+
+@media print {
+    .mm-report.is-combined {
+        font-size: 11px;
+    }
+
+    .mm-report.is-combined .mm-header {
+        padding: 4mm 5mm;
+    }
+
+    .mm-report.is-combined .mm-header-top {
+        padding-bottom: 2.5mm;
+        margin-bottom: 2.5mm;
+    }
+
+    .mm-report.is-combined .mm-body {
+        padding-top: 4mm;
+    }
+
+    .mm-report.is-combined .mm-highlights {
+        margin-bottom: 4mm;
+    }
+
+    .mm-report.is-combined .mm-stat {
+        padding: 2.2mm 3.5mm;
+    }
+
+    .mm-report.is-combined .mm-table th,
+    .mm-report.is-combined .mm-table td {
+        padding: 1.8mm 2.5mm;
+    }
+
+    .mm-report.is-combined .mm-footer {
+        margin-top: 3mm;
+        padding-top: 2mm;
+    }
+
+    .mm-report.is-combined .mm-sheet {
+        width: auto;
+        height: auto;
+        min-height: 0;
+        padding: 0;
+    }
+
+    .mm-report .mm-table-wrap {
+        overflow: visible;
+    }
+}
+</style>
+</head>
+<body style="margin:0">
+
+<div class="mm-report is-combined">
+
+    <!-- Toolbar (hidden on print) -->
+    <div class="mm-toolbar">
+        <div class="mm-toolbar-group">
+            <a class="mm-btn mm-btn-outline" href="/dashboard?page=reports">&#8592; Back to Reports</a>
+            <a class="mm-btn mm-btn-outline mm-dashboard-link" href="/dashboard">Dashboard</a>
+        </div>
+        <button type="button" class="mm-btn mm-btn-primary" id="btnPrint" onclick="window.print()">Print / Save PDF</button>
+    </div>
+
+    <div class="mm-sheet">
+
+        <!-- Header -->
+        <header class="mm-header">
+            <div class="mm-header-top">
+                <div class="mm-brand">
+                    <div class="mm-brand-mark">M</div>
+                    <div>Moto <strong>Master</strong></div>
+                </div>
+                <div class="mm-date">Date: <strong>{{ current_date }}</strong></div>
+            </div>
+
+            <div class="mm-kicker">Combined Performance Report</div>
+            <h1 class="mm-title">
+                {% if rows %}{{ rows | length }} designs compared{% else %}No reports selected{% endif %}
+            </h1>
+
+            {% if rows %}
+            <div class="mm-meta">
+                {% for label in rows | map(attribute='phase_label') | unique %}
+                    <span class="mm-chip">{{ label }}</span>
+                {% endfor %}
+                {% set dates = rows | map(attribute='date') | list %}
+                <span class="mm-chip">Reports from <strong>{{ (dates | min).strftime('%d %b %Y') }}</strong>
+                    to <strong>{{ (dates | max).strftime('%d %b %Y') }}</strong></span>
+            </div>
+            {% endif %}
+        </header>
+
+        <main class="mm-body">
+
+        {% if error %}
+
+            <div class="mm-error">{{ error }}</div>
+
+        {% else %}
+
+            <!-- Highlights -->
+            <div class="mm-section-title">Highlights</div>
+
+            {% macro highlight(key, label, unit, primary=false) -%}
+                {%- set info = summary[key] -%}
+                {%- if info and info.best is not none -%}
+                    {%- for r in rows if r.metrics[key] == info.best -%}
+                        {%- if loop.first -%}
+                        <div class="mm-stat{% if primary %} is-primary{% endif %}">
+                            <div class="mm-stat-label">{{ label }}</div>
+                            <div class="mm-stat-value">{{ '%.2f' | format(info.best) }}<span class="mm-stat-unit">{{ unit }}</span></div>
+                            <div class="mm-highlight-name">{{ r.design_name }}{% if r.design_no %} #{{ r.design_no }}{% endif %}{% if loop.length > 1 %} (+{{ loop.length - 1 }} tied){% endif %}</div>
+                        </div>
+                        {%- endif -%}
+                    {%- endfor -%}
+                {%- else -%}
+                    <div class="mm-stat">
+                        <div class="mm-stat-label">{{ label }}</div>
+                        <div class="mm-stat-value">N/A</div>
+                    </div>
+                {%- endif -%}
+            {%- endmacro %}
+
+            <div class="mm-highlights">
+                {{ highlight('final_efficiency', 'Best efficiency', '%', primary=true) }}
+                {{ highlight('slip', 'Lowest slip', '%') }}
+                {{ highlight('temp', 'Lowest temperature rise', '°C') }}
+                {{ highlight('torque', 'Highest torque', 'Nm') }}
+            </div>
+
+            <!-- Side-by-side performance -->
+            <div class="mm-section-title">Performance comparison</div>
+
+            <div class="mm-table-wrap">
+                <table class="mm-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Design</th>
+                            <th>Phase</th>
+                            <th>HP</th>
+                            <th>Voltage<span class="mm-th-unit">V</span></th>
+                            {% for key, label, unit, better in metrics %}
+                                <th>{{ label }}<span class="mm-th-unit">{{ unit }}</span></th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for r in rows %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td class="mm-design-cell">
+                                <strong>{{ r.design_name }}</strong>
+                                <span>{% if r.design_no %}#{{ r.design_no }} · {% endif %}{{ r.date.strftime('%d %b %Y') }}</span>
+                            </td>
+                            <td>{{ r.phase_label }}</td>
+                            <td>{{ fmt(r.hp) }}</td>
+                            <td>{{ fmt(r.voltage, 0) }}</td>
+
+                            {% for key, label, unit, better in metrics %}
+                                {% set value = r.metrics[key] %}
+                                {% set info = summary[key] %}
+                                <td>
+                                    {% if key == 'final_efficiency' and value is not none %}
+                                        <span class="mm-eff">
+                                            <span class="mm-eff-bar"><i style="width: {{ [[value, 0] | max, 100] | min }}%"></i></span>
+                                            {% if info and info.best is not none and value == info.best and rows | length > 1 %}
+                                                <span class="mm-best">{{ fmt(value) }}</span>
+                                            {% else %}{{ fmt(value) }}{% endif %}
+                                        </span>
+                                    {% elif value is not none and info and info.best is not none and value == info.best %}
+                                        <span class="mm-best">{{ fmt(value) }}</span>
+                                    {% else %}
+                                        {{ fmt(value) }}
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                    <tfoot>
+                        {% for stat_key, stat_label in [('avg', 'Average'), ('min', 'Minimum'), ('max', 'Maximum')] %}
+                        <tr>
+                            <td></td>
+                            <td colspan="4">{{ stat_label }}</td>
+                            {% for key, label, unit, better in metrics %}
+                                <td>{% if summary[key] %}{{ fmt(summary[key][stat_key]) }}{% else %}<span class="mm-na">N/A</span>{% endif %}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tfoot>
+                </table>
+            </div>
+
+            <p class="mm-note">
+                Black highlight = best value in that column (highest efficiency and torque; lowest slip and temperature rise).
+                Current is the phase current for three-phase designs and the main-winding current for single / two-phase designs.
+                Each row uses the values saved with that report.
+            </p>
+
+        {% endif %}
+
+        </main>
+
+        <footer class="mm-footer">
+            <span><strong>Moto Master</strong> · Motor Design Software</span>
+            <span>Generated {{ current_date }}</span>
+        </footer>
+
+    </div>
+
+</div>
+
+</body>
+</html>

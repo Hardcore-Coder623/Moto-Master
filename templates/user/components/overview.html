@@ -434,6 +434,15 @@
 
                 </div>
 
+                {% if total_reports and total_reports > 1 %}
+                <a href="#"
+                   id="combineReportsLink"
+                   class="panel-combine-link"
+                   title="Combine several reports into one performance report">
+                    Combine
+                </a>
+                {% endif %}
+
                 <a href="#"
                    id="viewAllReports">
 

@@ -710,3 +710,116 @@ def delete_report(user_id, report_id):
                 return cur.rowcount > 0
     finally:
         conn.close()
+
+
+# =========================================================
+# COMBINED PERFORMANCE REPORT
+# =========================================================
+
+COMBINED_METRICS = [
+    # key, label, unit, better ("high" / "low" / None)
+    ("final_efficiency", "Efficiency",   "%",  "high"),
+    ("i_ph",             "Current",      "A",  None),
+    ("slip",             "Slip",         "%",  "low"),
+    ("temp",             "Temp. rise",   "°C", "low"),
+    ("torque",           "Torque",       "Nm", "high"),
+    ("air_gap",          "Air gap",      "mm", None),
+    ("statorwt",         "Stator wt",    "kg", None),
+    ("rotorwt",          "Rotor wt",     "kg", None),
+]
+
+MAX_COMBINED = 20
+
+
+def load_combined_reports(user_id, report_ids):
+    """
+    Performance section of several reports, in the order given.
+    Only the user's own reports are returned.
+    """
+    ids = []
+    for value in report_ids:
+        try:
+            number = int(value)
+        except (TypeError, ValueError):
+            continue
+        if number > 0 and number not in ids:
+            ids.append(number)
+
+    ids = ids[:MAX_COMBINED]
+    if not ids:
+        return []
+
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT
+                    r.id AS report_id, r.created_at AS report_date,
+                    d.id AS design_id, d.phase,
+                    c.*
+                FROM reports r
+                JOIN designs d      ON d.id = r.design_id
+                JOIN calculations c ON c.id = r.calculation_id
+                WHERE d.user_id = %s
+                  AND r.id = ANY(%s)
+                """,
+                (user_id, ids),
+            )
+            found = {row["report_id"]: row for row in cur.fetchall()}
+    finally:
+        conn.close()
+
+    rows = []
+    for report_id in ids:
+        row = found.get(report_id)
+        if not row:
+            continue
+
+        snapshot = row.get("inputs_snapshot") or {}
+        design = snapshot.get("design") or {}
+        main = snapshot.get("main_data") or {}
+        phase = snapshot.get("phase") or row["phase"]
+
+        metrics = {}
+        for key, _, _, _ in COMBINED_METRICS:
+            value = row.get(key)
+            metrics[key] = float(value) if value is not None else None
+
+        rows.append({
+            "report_id": report_id,
+            "design_id": row["design_id"],
+            "design_no": design.get("design_no") or "",
+            "design_name": design.get("design_name") or "Untitled design",
+            "phase": phase,
+            "phase_label": PHASE_LABELS.get(phase, phase),
+            "hp": main.get("hp"),
+            "voltage": main.get("voltage"),
+            "capacitor": main.get("capacitor"),
+            "date": row["report_date"],
+            "metrics": metrics,
+        })
+
+    return rows
+
+
+def summarise_combined(rows):
+    """Best / average / min / max per metric, and which rows are best."""
+    summary = {}
+    for key, _, _, better in COMBINED_METRICS:
+        values = [r["metrics"][key] for r in rows if r["metrics"][key] is not None]
+        if not values:
+            summary[key] = None
+            continue
+        info = {
+            "min": min(values),
+            "max": max(values),
+            "avg": sum(values) / len(values),
+            "best": None,
+        }
+        if better == "high":
+            info["best"] = info["max"]
+        elif better == "low":
+            info["best"] = info["min"]
+        summary[key] = info
+    return summary

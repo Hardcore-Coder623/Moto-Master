@@ -15,7 +15,10 @@
 
     <!-- Toolbar (hidden on print) -->
     <div class="mm-toolbar">
-        <button type="button" class="mm-btn mm-btn-outline back-button" onclick="history.back()">&#8592; Back</button>
+        <div class="mm-toolbar-group">
+            <button type="button" class="mm-btn mm-btn-outline back-button" onclick="history.back()">&#8592; Back</button>
+            <a class="mm-btn mm-btn-outline mm-dashboard-link" href="/dashboard">Dashboard</a>
+        </div>
         <button type="button" class="mm-btn mm-btn-primary" id="btnPrint" onclick="window.print()">Print / Save PDF</button>
     </div>
 

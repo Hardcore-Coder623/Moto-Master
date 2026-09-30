@@ -393,3 +393,37 @@ def api_delete_report(report_id):
         return _json_error("Report not found.", 404)
 
     return jsonify({"success": True})
+
+
+@design_bp.route("/reports/combined", methods=["GET"])
+def combined_report():
+    """One performance report built from several saved reports: ?ids=3,5,8"""
+
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    raw_ids = request.args.get("ids", "")
+    ids = [part.strip() for part in raw_ids.split(",") if part.strip()]
+
+    try:
+        rows = design_store.load_combined_reports(session["user_id"], ids)
+    except Exception as error:
+        print("COMBINED REPORT ERROR:", error)
+        return "Could not build the combined report.", 500
+
+    if len(rows) < 2:
+        return render_template(
+            "landing/report_combined.html",
+            rows=rows, summary={}, metrics=design_store.COMBINED_METRICS,
+            current_date=datetime.now().strftime("%d/%m/%Y"),
+            error="Select at least two of your reports to combine.",
+        ), 400
+
+    return render_template(
+        "landing/report_combined.html",
+        rows=rows,
+        summary=design_store.summarise_combined(rows),
+        metrics=design_store.COMBINED_METRICS,
+        current_date=datetime.now().strftime("%d/%m/%Y"),
+        error=None,
+    )

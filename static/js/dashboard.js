@@ -551,6 +551,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
+            if (action === "combine") {
+
+                event.preventDefault();
+
+                const ids =
+                    Array.from(dashboardContent.querySelectorAll(".combine-check:checked"))
+                        .map((box) => box.value);
+
+                if (ids.length >= 2) {
+                    window.location.href =
+                        "/design/reports/combined?ids=" + encodeURIComponent(ids.join(","));
+                }
+
+                return;
+            }
+
             if (action === "delete-report") {
 
                 event.preventDefault();
@@ -669,6 +685,84 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* =====================================================
+       COMBINE REPORTS: tick boxes on the Reports page
+    ===================================================== */
+
+    const MAX_COMBINE = 20;
+
+    function updateCombineState() {
+
+        const checks =
+            Array.from(dashboardContent.querySelectorAll(".combine-check"));
+
+        const selected =
+            checks.filter((box) => box.checked);
+
+        checks.forEach((box) => {
+            const row = box.closest(".my-design-row");
+            if (row) {
+                row.classList.toggle("is-selected", box.checked);
+            }
+        });
+
+        const button = document.getElementById("combineButton");
+        const hint = document.getElementById("combineHint");
+        const all = document.getElementById("combineSelectAll");
+
+        if (all) {
+            all.checked = checks.length > 0 && selected.length === checks.length;
+            all.indeterminate = selected.length > 0 && selected.length < checks.length;
+        }
+
+        if (button) {
+            button.disabled = selected.length < 2 || selected.length > MAX_COMBINE;
+            button.textContent =
+                selected.length >= 2
+                    ? "Combine " + selected.length + " reports"
+                    : "Combine selected";
+        }
+
+        if (hint) {
+            if (selected.length > MAX_COMBINE) {
+                hint.textContent = "Up to " + MAX_COMBINE + " reports can be combined at once.";
+            } else if (selected.length === 1) {
+                hint.textContent = "Tick at least one more report.";
+            } else if (selected.length >= 2) {
+                hint.textContent = selected.length + " reports selected. Their performance will be shown side by side.";
+            } else {
+                hint.textContent = "Tick 2 or more reports to combine their performance into one report.";
+            }
+        }
+
+    }
+
+
+    if (dashboardContent) {
+
+        dashboardContent.addEventListener("change", (event) => {
+
+            if (event.target.id === "combineSelectAll") {
+
+                const on = event.target.checked;
+
+                dashboardContent
+                    .querySelectorAll(".combine-check")
+                    .forEach((box, index) => { box.checked = on && index < MAX_COMBINE; });
+
+                updateCombineState();
+                return;
+            }
+
+            if (event.target.classList.contains("combine-check")) {
+                updateCombineState();
+            }
+
+        });
+
+    }
+
+
     /* Keyboard: Enter / Space on clickable rows */
 
     if (dashboardContent) {
@@ -695,7 +789,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    [reportsMenu, viewAllReports].forEach((element) => {
+    [reportsMenu, viewAllReports, document.getElementById("combineReportsLink")].forEach((element) => {
 
         if (element) {
             element.addEventListener("click", loadReports);
@@ -832,6 +926,35 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
     }
+
+
+    /* =====================================================
+       OPEN A PAGE FROM THE ADDRESS BAR
+       /dashboard?page=reports | designs | profile | new-design
+    ===================================================== */
+
+    (function openRequestedPage() {
+
+        const params = new URLSearchParams(window.location.search);
+        const page = params.get("page");
+
+        const pages = {
+            "reports": loadReports,
+            "designs": loadMyDesigns,
+            "profile": loadProfile,
+            "new-design": () => startNewDesign()
+        };
+
+        if (page && pages[page]) {
+
+            pages[page]();
+
+            /* keep the address clean so a refresh shows the dashboard */
+            window.history.replaceState({}, "", window.location.pathname);
+
+        }
+
+    })();
 
 
     /* =====================================================
