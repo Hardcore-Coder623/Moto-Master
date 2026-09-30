@@ -218,7 +218,36 @@ FRIENDLY_CONSTRAINTS = {
 }
 
 
+# Names PostgreSQL gives the inline CHECKs in the compact design SQL
+FRIENDLY_CONSTRAINTS.update({
+    "design_main_data_frequency_check":      FRIENDLY_CONSTRAINTS["main_data_frequency_check"],
+    "design_main_data_pole_check":           FRIENDLY_CONSTRAINTS["main_data_pole_check"],
+    "design_stamping_data_material_check":   FRIENDLY_CONSTRAINTS["stamping_material_check"],
+    "design_stamping_data_stamping_material_check": FRIENDLY_CONSTRAINTS["stamping_steel_check"],
+    "design_stamping_data_shape_check":      FRIENDLY_CONSTRAINTS["stamping_shape_check"],
+    "design_winding_data_efficiency_check":  "Efficiency must be between 0 and 100%.",
+    "designs_wire_type_check":               FRIENDLY_CONSTRAINTS["designs_wire_type_check"],
+    "designs_mechanical_component_check":    FRIENDLY_CONSTRAINTS["designs_mechanical_check"],
+})
+
+
 def friendly_db_error(error):
+    name = getattr(getattr(error, "diag", None), "constraint_name", None) or ""
+    if name not in FRIENDLY_CONSTRAINTS and name.endswith("_check"):
+        table_hint = {
+            "design_main_data_": "Main Data",
+            "design_stamping_data_": "Stamping",
+            "design_rotor_data_": "Rotor",
+            "design_winding_data_": "Winding",
+        }
+        for prefix, form in table_hint.items():
+            if name.startswith(prefix):
+                field = name[len(prefix):-len("_check")]
+                return f"{form}: '{field}' must be greater than 0."
+    return _friendly_db_error(error)
+
+
+def _friendly_db_error(error):
     name = getattr(getattr(error, "diag", None), "constraint_name", None)
     if name in FRIENDLY_CONSTRAINTS:
         return FRIENDLY_CONSTRAINTS[name]
