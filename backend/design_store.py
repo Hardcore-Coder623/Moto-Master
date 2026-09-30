@@ -396,14 +396,19 @@ def save_design(user_id, payload):
 
                     cur.execute(
                         """
-                        INSERT INTO reports (design_id, calculation_id, report_name, file_url)
-                        VALUES (%s, %s, %s, %s)
+                        INSERT INTO reports (design_id, calculation_id, report_name)
+                        VALUES (%s, %s, %s)
                         RETURNING id
                         """,
-                        (design_id, calculation_id, report_name[:200],
-                         f"/design/report/{design_id}"),
+                        (design_id, calculation_id, report_name[:200]),
                     )
-                    result["report_id"] = cur.fetchone()[0]
+                    report_id = cur.fetchone()[0]
+
+                    cur.execute(
+                        "UPDATE reports SET file_url = %s WHERE id = %s",
+                        (f"/design/reports/{report_id}", report_id),
+                    )
+                    result["report_id"] = report_id
                     result["calculation_id"] = calculation_id
 
                     cur.execute(
@@ -533,73 +538,72 @@ def delete_design(user_id, design_id):
         conn.close()
 
 
-def load_report_data(user_id, design_id):
+def _report_from_calculation(phase, snapshot, calc):
     """
-    Latest calculation of a design, shaped like the JSON that
-    design.js collectDesignData() posts to /design/report.
+    Build the data dict build_report_html() expects, using the form
+    values saved WITH this calculation (so an old report never changes).
     """
-    summary, values = load_design_values(user_id, design_id)
-    if not summary:
-        return None
+    snapshot = snapshot or {}
+    design = snapshot.get("design") or {}
+    main = snapshot.get("main_data") or {}
+    stamping = snapshot.get("stamping_data") or {}
+    rotor = snapshot.get("rotor_data") or {}
+    winding = snapshot.get("winding_data") or {}
 
-    conn = get_db_connection()
-    try:
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
-            cur.execute(
-                """
-                SELECT * FROM calculations
-                WHERE design_id = %s
-                ORDER BY created_at DESC
-                LIMIT 1
-                """,
-                (design_id,),
-            )
-            calc = cur.fetchone()
-    finally:
-        conn.close()
-
-    if not calc:
-        return None
-
-    def v(*keys):
-        for key in keys:
-            if values.get(key) not in (None, ""):
-                return values[key]
-        return ""
+    def t(value):
+        text = _to_text(value)
+        return text if text is not None else ""
 
     def c(column):
         text = _to_text(calc.get(column))
         return text if text is not None else "N/A"
 
+    raw_date = design.get("design_date")
+    try:
+        shown_date = datetime.strptime(raw_date, "%Y-%m-%d").strftime("%d/%m/%Y") if raw_date else ""
+    except ValueError:
+        shown_date = raw_date
+
+    if not shown_date and calc.get("created_at"):
+        shown_date = calc["created_at"].strftime("%d/%m/%Y")
+
     return {
-        "phase": summary["phase"],
+        "phase": snapshot.get("phase") or phase,
         "main_data": {
-            "design_no": v("design_no"),
-            "design_name": v("design_name"),
-            "design_date": datetime.strptime(v("date"), "%Y-%m-%d").strftime("%d/%m/%Y") if v("date") else "",
-            "connection": v("connection"),
-            "voltage": v("voltage"), "power": v("power"), "hp": v("hp"),
-            "frequency": v("frequency"), "rpm": v("rpm"), "pole": v("pole"),
-            "uph": v("uph"), "capacitor": v("capacitor"),
+            "design_no": t(design.get("design_no")),
+            "design_name": t(design.get("design_name")),
+            "design_date": shown_date,
+            "connection": t(main.get("connection")),
+            "voltage": t(main.get("voltage")),
+            "power": t(main.get("power")),
+            "hp": t(main.get("hp")),
+            "frequency": t(main.get("frequency")),
+            "rpm": t(main.get("rpm")),
+            "pole": t(main.get("pole")),
+            "uph": t(main.get("uph")),
+            "capacitor": t(main.get("capacitor")),
         },
         "stamping_data": {
-            "stamping_material": v("stamping_material"),
-            "material": v("material"),
-            "d0": v("d0"), "dia": v("dia"), "N": v("N"),
+            "stamping_material": t(stamping.get("stamping_material")),
+            "material": t(stamping.get("material")),
+            "d0": t(stamping.get("d0")),
+            "dia": t(stamping.get("dia")),
+            "N": t(stamping.get("n")),
         },
         "rotor_data": {
-            "rng_wt": v("rng_wt"), "rng_ht": v("rng_ht"),
+            "rng_wt": t(rotor.get("rng_wt")),
+            "rng_ht": t(rotor.get("rng_ht")),
         },
         "winding_data": {
             "statorwt": c("statorwt"),
             "rotorwt": c("rotorwt"),
-            "final_stack_length": v("final_stack_length"),
-            "insulation_dia": v("insulation_dia"),
-            "actual_use_dia": v("actual_use_dia"),
-            "final_turns": v("final_turns"),
-            "insulation_dia_aux": v("insulation_dia_aux"),
-            "actual_use_dia_aux": v("actual_use_dia_aux"),
-            "final_turns_aux": v("final_turns_aux"),
+            "final_stack_length": t(winding.get("final_stack_length")),
+            "insulation_dia": t(winding.get("insulation_dia")),
+            "actual_use_dia": t(winding.get("actual_use_dia")),
+            "final_turns": t(winding.get("final_turns")),
+            "insulation_dia_aux": t(winding.get("insulation_dia_aux")),
+            "actual_use_dia_aux": t(winding.get("actual_use_dia_aux")),
+            "final_turns_aux": t(winding.get("final_turns_aux")),
             "I_ph": c("i_ph"),
             "I_main": c("i_ph"),
             "I_aux": c("i_aux"),
@@ -612,3 +616,97 @@ def load_report_data(user_id, design_id):
             "torque": c("torque"),
         },
     }
+
+
+def _load_calculation(user_id, where_sql, params):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(
+                f"""
+                SELECT c.*, d.phase
+                FROM calculations c
+                JOIN designs d ON d.id = c.design_id
+                WHERE d.user_id = %s AND {where_sql}
+                ORDER BY c.created_at DESC, c.id DESC
+                LIMIT 1
+                """,
+                [user_id] + list(params),
+            )
+            return cur.fetchone()
+    finally:
+        conn.close()
+
+
+def load_report_data(user_id, design_id):
+    """Report of a design's latest calculation."""
+    calc = _load_calculation(user_id, "c.design_id = %s", [design_id])
+    if not calc:
+        return None
+    return _report_from_calculation(calc["phase"], calc["inputs_snapshot"], calc)
+
+
+def load_report_data_for_report(user_id, report_id):
+    """Report exactly as it was when this report was generated."""
+    calc = _load_calculation(
+        user_id,
+        "c.id = (SELECT r.calculation_id FROM reports r WHERE r.id = %s)",
+        [report_id],
+    )
+    if not calc:
+        return None
+    return _report_from_calculation(calc["phase"], calc["inputs_snapshot"], calc)
+
+
+# =========================================================
+# REPORTS LIST / DELETE
+# =========================================================
+
+def list_reports(user_id, limit=200):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT
+                    r.id, r.report_name, r.file_url, r.created_at,
+                    d.id AS design_id, d.design_no, d.design_name, d.phase,
+                    c.final_efficiency, c.torque, c.slip
+                FROM reports r
+                JOIN designs d      ON d.id = r.design_id
+                JOIN calculations c ON c.id = r.calculation_id
+                WHERE d.user_id = %s
+                ORDER BY r.created_at DESC, r.id DESC
+                LIMIT %s
+                """,
+                (user_id, limit),
+            )
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+
+    for row in rows:
+        row["phase_label"] = PHASE_LABELS.get(row["phase"], row["phase"])
+        row["file_url"] = row["file_url"] or f"/design/reports/{row['id']}"
+    return rows
+
+
+def delete_report(user_id, report_id):
+    """Removes the report entry (the calculation history is kept)."""
+    conn = get_db_connection()
+    try:
+        with conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    """
+                    DELETE FROM reports r
+                    USING designs d
+                    WHERE r.id = %s
+                      AND d.id = r.design_id
+                      AND d.user_id = %s
+                    """,
+                    (report_id, user_id),
+                )
+                return cur.rowcount > 0
+    finally:
+        conn.close()

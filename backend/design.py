@@ -335,3 +335,61 @@ def my_designs():
         designs, error = [], "Could not load your designs."
 
     return render_template("user/design/my_designs.html", designs=designs, error=error)
+
+
+# ─────────────────────────────────────────────────────────────
+# REPORTS
+# ─────────────────────────────────────────────────────────────
+
+@design_bp.route("/reports", methods=["GET"])
+def reports_page():
+    """Reports page (loaded into the dashboard)."""
+
+    if "user_id" not in session:
+        return "", 401
+
+    try:
+        reports = design_store.list_reports(session["user_id"])
+        error = None
+    except Exception as err:
+        print("REPORTS LIST ERROR:", err)
+        reports, error = [], "Could not load your reports."
+
+    return render_template("user/reports.html", reports=reports, error=error)
+
+
+@design_bp.route("/reports/<int:report_id>", methods=["GET"])
+def view_report(report_id):
+    """One saved report, exactly as it was generated."""
+
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+
+    try:
+        data = design_store.load_report_data_for_report(session["user_id"], report_id)
+    except Exception as error:
+        print("REPORT VIEW ERROR:", error)
+        return "Could not load the report.", 500
+
+    if not data:
+        return "Report not found.", 404
+
+    return Response(build_report_html(data), mimetype="text/html")
+
+
+@design_bp.route("/api/reports/<int:report_id>", methods=["DELETE"])
+def api_delete_report(report_id):
+
+    if "user_id" not in session:
+        return _json_error("Please log in again.", 401)
+
+    try:
+        deleted = design_store.delete_report(session["user_id"], report_id)
+    except Exception as error:
+        print("REPORT DELETE ERROR:", error)
+        return _json_error("Could not delete the report.", 500)
+
+    if not deleted:
+        return _json_error("Report not found.", 404)
+
+    return jsonify({"success": True})

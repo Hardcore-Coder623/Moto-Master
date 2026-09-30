@@ -193,7 +193,12 @@
 
                     {% for design in recent_designs %}
 
-                        <div class="dashboard-list-item">
+                        <div class="dashboard-list-item is-clickable"
+                             data-design-id="{{ design.id }}"
+                             data-mm-action="edit"
+                             role="button"
+                             tabindex="0"
+                             title="Open this design">
 
                             <div class="list-item-icon">
                                 ◫

@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
        open report, delete.
     ===================================================== */
 
-    async function loadMyDesigns(event) {
+    async function loadDashboardPage(url, menuItem, loadingText, event) {
 
         if (event) {
             event.preventDefault();
@@ -435,12 +435,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         dashboardContent.innerHTML =
-            '<div style="padding:50px;text-align:center;">Loading your designs...</div>';
+            '<div style="padding:50px;text-align:center;">' + loadingText + '</div>';
 
         try {
 
             const response =
-                await fetch("/design/my-designs", { credentials: "same-origin" });
+                await fetch(url, { credentials: "same-origin" });
 
             if (!response.ok) {
                 throw new Error("HTTP " + response.status);
@@ -449,22 +449,37 @@ document.addEventListener("DOMContentLoaded", () => {
             dashboardContent.innerHTML =
                 await response.text();
 
-            setActiveMenu(designsMenu);
+            setActiveMenu(menuItem);
 
             window.scrollTo({ top: 0, behavior: "smooth" });
 
         }
         catch (error) {
 
-            console.error("My Designs loading error:", error);
+            console.error("Page loading error:", url, error);
 
             dashboardContent.innerHTML =
                 '<div style="padding:50px;text-align:center;">' +
-                '<h2>Unable to load your designs</h2>' +
+                '<h2>Unable to load this page</h2>' +
                 '<p>Please try again.</p></div>';
 
         }
 
+    }
+
+
+    function loadMyDesigns(event) {
+        return loadDashboardPage("/design/my-designs", designsMenu, "Loading your designs...", event);
+    }
+
+
+    function loadReports(event) {
+        return loadDashboardPage("/design/reports", reportsMenu, "Loading your reports...", event);
+    }
+
+
+    function loadProfile(event) {
+        return loadDashboardPage("/profile", profileMenu, "Loading your profile...", event);
     }
 
 
@@ -533,6 +548,48 @@ document.addEventListener("DOMContentLoaded", () => {
             if (action === "new") {
                 event.preventDefault();
                 startNewDesign();
+                return;
+            }
+
+            if (action === "delete-report") {
+
+                event.preventDefault();
+
+                const reportRow =
+                    button.closest("[data-report-id]");
+
+                if (!reportRow || !confirm("Delete this report? The design itself is kept.")) {
+                    return;
+                }
+
+                button.disabled = true;
+
+                try {
+
+                    const response =
+                        await fetch("/design/api/reports/" + encodeURIComponent(reportRow.dataset.reportId), {
+                            method: "DELETE",
+                            credentials: "same-origin"
+                        });
+
+                    const body =
+                        await response.json().catch(() => ({}));
+
+                    if (!response.ok || !body.success) {
+                        throw new Error(body.message || "Could not delete the report.");
+                    }
+
+                    loadReports();
+
+                }
+                catch (error) {
+
+                    alert(error.message);
+
+                    button.disabled = false;
+
+                }
+
                 return;
             }
 
@@ -612,6 +669,24 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    /* Keyboard: Enter / Space on clickable rows */
+
+    if (dashboardContent) {
+
+        dashboardContent.addEventListener("keydown", (event) => {
+
+            const row = event.target.closest('[role="button"][data-mm-action]');
+
+            if (row && (event.key === "Enter" || event.key === " ")) {
+                event.preventDefault();
+                row.click();
+            }
+
+        });
+
+    }
+
+
     [designsMenu, viewAllDesigns].forEach((element) => {
 
         if (element) {
@@ -620,6 +695,144 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
+    [reportsMenu, viewAllReports].forEach((element) => {
+
+        if (element) {
+            element.addEventListener("click", loadReports);
+        }
+
+    });
+
+    if (profileMenu) {
+        profileMenu.addEventListener("click", loadProfile);
+    }
+
+
+    /* =====================================================
+       PROFILE FORMS
+    ===================================================== */
+
+    function showFormMessage(id, message, ok) {
+
+        const box = document.getElementById(id);
+
+        if (!box) {
+            return;
+        }
+
+        box.textContent = message;
+        box.classList.toggle("is-error", !ok);
+        box.classList.toggle("is-success", !!ok);
+
+    }
+
+
+    async function postJson(url, data) {
+
+        const response =
+            await fetch(url, {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+        const body =
+            await response.json().catch(() => ({}));
+
+        return { ok: response.ok && body.success, body: body };
+
+    }
+
+
+    if (dashboardContent) {
+
+        dashboardContent.addEventListener("submit", async (event) => {
+
+            const form = event.target;
+
+            if (form.id !== "profileForm" && form.id !== "passwordForm") {
+                return;
+            }
+
+            event.preventDefault();
+
+            const submit = form.querySelector('button[type="submit"]');
+            const data = Object.fromEntries(new FormData(form).entries());
+
+            if (submit) {
+                submit.disabled = true;
+            }
+
+            try {
+
+                if (form.id === "profileForm") {
+
+                    const result = await postJson("/api/profile", data);
+
+                    showFormMessage(
+                        "profileMessage",
+                        result.body.message || (result.ok ? "Saved." : "Could not save."),
+                        result.ok
+                    );
+
+                    if (result.ok) {
+
+                        const user = result.body.user;
+
+                        /* keep the navbar and summary in step */
+                        document.querySelectorAll(".dashboard-user-info strong, #profileSummaryName")
+                            .forEach((el) => { el.textContent = user.name; });
+
+                        const handle = document.querySelector(".dashboard-user-info span");
+                        if (handle) { handle.textContent = "@" + user.username; }
+
+                        const summary = document.getElementById("profileSummaryUser");
+                        if (summary) { summary.textContent = "@" + user.username + " · " + user.email; }
+
+                        document.querySelectorAll(".dashboard-user-avatar, #profileAvatar")
+                            .forEach((el) => { el.textContent = (user.name[0] || "?").toUpperCase(); });
+
+                    }
+
+                } else {
+
+                    const result = await postJson("/api/profile/password", data);
+
+                    showFormMessage(
+                        "passwordMessage",
+                        result.body.message || (result.ok ? "Password changed." : "Could not change password."),
+                        result.ok
+                    );
+
+                    if (result.ok) {
+                        form.reset();
+                    }
+
+                }
+
+            }
+            catch (error) {
+
+                showFormMessage(
+                    form.id === "profileForm" ? "profileMessage" : "passwordMessage",
+                    "Network error. Please try again.",
+                    false
+                );
+
+            }
+            finally {
+
+                if (submit) {
+                    submit.disabled = false;
+                }
+
+            }
+
+        });
+
+    }
+
 
     /* =====================================================
        OTHER PLACEHOLDER BUTTONS
@@ -627,11 +840,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const placeholderItems = [
 
-        reportsMenu,
         subscriptionMenu,
         paymentsMenu,
-        profileMenu,
-        viewAllReports,
         manageSubscription,
         choosePlan
 

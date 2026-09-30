@@ -1071,3 +1071,66 @@ transform: translateY(0);
 .design-save-status.is-error {
 background: #b42318;
 }
+
+/* =====================================================
+PROFILE
+===================================================== */
+
+.profile-summary {
+display: flex;
+align-items: center;
+gap: 18px;
+}
+
+.profile-avatar {
+width: 56px;
+height: 56px;
+flex-shrink: 0;
+
+display: grid;
+place-items: center;
+
+border-radius: 50%;
+background: #06152f;
+color: #ffffff;
+
+font-size: 22px;
+font-weight: 700;
+}
+
+.profile-summary-text {
+display: flex;
+flex-direction: column;
+gap: 3px;
+min-width: 0;
+}
+
+.profile-summary-text strong {
+color: #06152f;
+font-size: 18px;
+}
+
+.profile-summary-text span {
+color: #344054;
+font-size: 14px;
+overflow-wrap: anywhere;
+}
+
+.profile-summary-meta {
+color: #667085 !important;
+font-size: 13px !important;
+}
+
+.profile-message {
+min-height: 20px;
+margin: 14px 0 0;
+font-size: 14px;
+}
+
+.profile-message.is-error {
+color: #b42318;
+}
+
+.profile-message.is-success {
+color: #067647;
+}

@@ -1078,3 +1078,17 @@ textarea {
 
 }
 
+
+
+/* Recent designs open the design when clicked */
+.dashboard-list-item.is-clickable {
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.15s ease;
+}
+
+.dashboard-list-item.is-clickable:hover,
+.dashboard-list-item.is-clickable:focus-visible {
+    background: #f1f5fb;
+    outline: none;
+}
