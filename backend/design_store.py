@@ -714,27 +714,93 @@ def delete_report(user_id, report_id):
 
 # =========================================================
 # COMBINED PERFORMANCE REPORT
+# Layout like a design sheet: one column per design,
+# one row per value. A table holds DESIGNS_PER_TABLE designs;
+# when it is full a new table starts. Two tables per A4 page.
 # =========================================================
 
-COMBINED_METRICS = [
-    # key, label, unit, better ("high" / "low" / None)
-    ("final_efficiency", "Efficiency",   "%",  "high"),
-    ("i_ph",             "Current",      "A",  None),
-    ("slip",             "Slip",         "%",  "low"),
-    ("temp",             "Temp. rise",   "°C", "low"),
-    ("torque",           "Torque",       "Nm", "high"),
-    ("air_gap",          "Air gap",      "mm", None),
-    ("statorwt",         "Stator wt",    "kg", None),
-    ("rotorwt",          "Rotor wt",     "kg", None),
+DESIGNS_PER_TABLE = 7
+TABLES_PER_PAGE = 2
+MAX_COMBINED = DESIGNS_PER_TABLE * TABLES_PER_PAGE * 2      # 28 designs = 2 pages
+
+# group, label, source, key, digits, better ("high"/"low"/None), only_if_any
+# source: "main" / "stamping" / "rotor" / "winding" (saved form values),
+#         "calc" (calculated result), "derived"
+COMBINED_ROWS = [
+    ("rating",  "kW",               "derived",  "kw",                 2, None,   False),
+    ("rating",  "HP",               "main",     "hp",                 2, None,   False),
+    ("rating",  "Voltage (V)",      "main",     "voltage",            0, None,   False),
+    ("rating",  "Hz",               "main",     "frequency",          0, None,   False),
+    ("rating",  "Phase",            "derived",  "phase_short",        None, None, False),
+    ("rating",  "Connection",       "main",     "connection",         None, None, True),
+    ("rating",  "Capacitor (µF)",   "main",     "capacitor",          1, None,   True),
+
+    ("winding", "Stack Length (mm)", "winding", "final_stack_length", 1, None,   False),
+    ("winding", "Wire ID (mm)",      "winding", "actual_use_dia",     3, None,   False),
+    ("winding", "Wire OD (mm)",      "winding", "insulation_dia",     3, None,   False),
+    ("winding", "No. of Turns",      "winding", "final_turns",        0, None,   False),
+    ("winding", "Aux Wire ID (mm)",  "winding", "actual_use_dia_aux", 3, None,   True),
+    ("winding", "Aux Wire OD (mm)",  "winding", "insulation_dia_aux", 3, None,   True),
+    ("winding", "Aux Turns",         "winding", "final_turns_aux",    0, None,   True),
+    ("winding", "Current (A)",       "calc",    "i_ph",               2, None,   False),
+
+    ("perf",    "Efficiency %",      "calc",    "final_efficiency",   2, "high", False),
+    ("perf",    "Slip %",            "calc",    "slip",               2, "low",  False),
+    ("perf",    "Temp Rise (°C)",    "calc",    "temp",               1, "low",  False),
+    ("perf",    "Torque (Nm)",       "calc",    "torque",             2, "high", False),
+
+    ("build",   "Stator Weight Kg",  "calc",    "statorwt",           2, None,   False),
+    ("build",   "Rotor Weight Kg",   "calc",    "rotorwt",            2, None,   False),
+    ("build",   "Copper Length",     "calc",    "cu_length",          1, None,   False),
+    ("build",   "End Ring Height",   "rotor",   "rng_ht",             1, None,   False),
+    ("build",   "Air Gap (mm)",      "calc",    "air_gap",            3, None,   False),
 ]
 
-MAX_COMBINED = 20
+COMBINED_GROUPS = {
+    "rating":  "Rating",
+    "winding": "Winding",
+    "perf":    "Performance",
+    "build":   "Weights & build",
+}
+
+# lamination reference shown once per table when every design shares it
+LAM_FIELDS = [
+    ("OD",          "stamping", "d0"),
+    ("ID",          "stamping", "dia"),
+    ("Shaft Bore",  "rotor",    "shaft_diameter"),
+    ("Tws",         "stamping", "w"),
+    ("Zs",          "stamping", "n"),
+    ("Zr",          "rotor",    "m"),
+    ("Twr",         "rotor",    "v"),
+    ("As",          "stamping", "a1"),
+    ("Ar",          "rotor",    "a2"),
+]
+
+PHASE_SHORT = {"1_phase": "1-ph", "2_phase": "2-ph", "3_phase": "3-ph"}
+
+
+def _num(value):
+    if value is None or value == "":
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) else None
+
+
+def _short(value):
+    number = _num(value)
+    if number is None:
+        return None
+    text = f"{number:.3f}".rstrip("0").rstrip(".")
+    return text or "0"
 
 
 def load_combined_reports(user_id, report_ids):
     """
-    Performance section of several reports, in the order given.
-    Only the user's own reports are returned.
+    Saved values of several reports (the user's own only),
+    in the order given.
     """
     ids = []
     for value in report_ids:
@@ -770,56 +836,127 @@ def load_combined_reports(user_id, report_ids):
     finally:
         conn.close()
 
-    rows = []
+    designs = []
     for report_id in ids:
         row = found.get(report_id)
         if not row:
             continue
 
-        snapshot = row.get("inputs_snapshot") or {}
-        design = snapshot.get("design") or {}
-        main = snapshot.get("main_data") or {}
-        phase = snapshot.get("phase") or row["phase"]
+        snap = row.get("inputs_snapshot") or {}
+        design = snap.get("design") or {}
+        phase = snap.get("phase") or row["phase"]
 
-        metrics = {}
-        for key, _, _, _ in COMBINED_METRICS:
-            value = row.get(key)
-            metrics[key] = float(value) if value is not None else None
+        sources = {
+            "main": snap.get("main_data") or {},
+            "stamping": snap.get("stamping_data") or {},
+            "rotor": snap.get("rotor_data") or {},
+            "winding": snap.get("winding_data") or {},
+            "calc": row,
+        }
 
-        rows.append({
+        power = _num(sources["main"].get("power"))
+
+        derived = {
+            "kw": power / 1000 if power is not None else None,
+            "phase_short": PHASE_SHORT.get(phase, phase),
+        }
+
+        values = {}
+        for _, label, source, key, _, _, _ in COMBINED_ROWS:
+            if source == "derived":
+                values[label] = derived.get(key)
+            elif key == "connection":
+                text = sources[source].get(key)
+                values[label] = str(text) if text not in (None, "") else None
+            else:
+                values[label] = _num(sources[source].get(key))
+
+        lam = tuple(
+            (name, _short(sources[source].get(key)))
+            for name, source, key in LAM_FIELDS
+        )
+
+        designs.append({
             "report_id": report_id,
             "design_id": row["design_id"],
             "design_no": design.get("design_no") or "",
             "design_name": design.get("design_name") or "Untitled design",
             "phase": phase,
             "phase_label": PHASE_LABELS.get(phase, phase),
-            "hp": main.get("hp"),
-            "voltage": main.get("voltage"),
-            "capacitor": main.get("capacitor"),
             "date": row["report_date"],
-            "metrics": metrics,
+            "values": values,
+            "lam": lam,
         })
 
-    return rows
+    return designs
 
 
-def summarise_combined(rows):
-    """Best / average / min / max per metric, and which rows are best."""
-    summary = {}
-    for key, _, _, better in COMBINED_METRICS:
-        values = [r["metrics"][key] for r in rows if r["metrics"][key] is not None]
-        if not values:
-            summary[key] = None
-            continue
-        info = {
-            "min": min(values),
-            "max": max(values),
-            "avg": sum(values) / len(values),
-            "best": None,
-        }
-        if better == "high":
-            info["best"] = info["max"]
-        elif better == "low":
-            info["best"] = info["min"]
-        summary[key] = info
-    return summary
+def build_combined_pages(designs):
+    """
+    Split designs into tables (DESIGNS_PER_TABLE columns each) and
+    tables into pages (TABLES_PER_PAGE each). Works out which rows to
+    show per table, the shared lamination text, and the best values.
+    """
+
+    # best value per "better" row, across every combined design
+    best = {}
+    for _, label, _, _, _, better, _ in COMBINED_ROWS:
+        values = [d["values"][label] for d in designs if d["values"][label] is not None]
+        if better and len(values) > 1:
+            best[label] = max(values) if better == "high" else min(values)
+
+    tables = []
+    for start in range(0, len(designs), DESIGNS_PER_TABLE):
+        chunk = designs[start:start + DESIGNS_PER_TABLE]
+
+        rows = []
+        for group, label, source, key, digits, better, only_if_any in COMBINED_ROWS:
+            if only_if_any and all(d["values"][label] in (None, "") for d in chunk):
+                continue
+            cells = []
+            for d in chunk:
+                value = d["values"][label]
+                if value is None or value == "":
+                    text = "—"
+                elif digits is None or isinstance(value, str):
+                    text = str(value)
+                else:
+                    text = f"{value:.{digits}f}"
+                cells.append({
+                    "text": text,
+                    "best": label in best and value is not None and value == best[label],
+                })
+            cells += [None] * (DESIGNS_PER_TABLE - len(chunk))     # keep every table the same width
+            rows.append({"group": group, "label": label, "cells": cells})
+
+        # mark first row of each group (for the group label)
+        previous = None
+        for row in rows:
+            row["group_start"] = row["group"] != previous
+            previous = row["group"]
+
+        lam_values = {d["lam"] for d in chunk}
+        lam_text = None
+        if len(lam_values) == 1:
+            parts = [f"{name} {value}" for name, value in chunk[0]["lam"] if value is not None]
+            lam_text = " ".join(parts) or None
+
+        tables.append({
+            "number": len(tables) + 1,
+            "first": start + 1,
+            "last": start + len(chunk),
+            "designs": chunk + [None] * (DESIGNS_PER_TABLE - len(chunk)),
+            "rows": rows,
+            "lam_text": lam_text,
+            "lam_per_design": None if lam_text else [
+                (" ".join(f"{n} {v}" for n, v in d["lam"][:2] if v is not None) if d else "")
+                for d in chunk + [None] * (DESIGNS_PER_TABLE - len(chunk))
+            ],
+        })
+
+    pages = [
+        tables[i:i + TABLES_PER_PAGE]
+        for i in range(0, len(tables), TABLES_PER_PAGE)
+    ]
+
+    return pages, len(tables)

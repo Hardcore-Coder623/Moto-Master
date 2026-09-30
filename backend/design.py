@@ -397,7 +397,11 @@ def api_delete_report(report_id):
 
 @design_bp.route("/reports/combined", methods=["GET"])
 def combined_report():
-    """One performance report built from several saved reports: ?ids=3,5,8"""
+    """
+    One report built from several saved reports: ?ids=3,5,8
+    Designs are columns; a table holds 7 designs and a new table
+    starts when it is full; two tables per A4 page.
+    """
 
     if "user_id" not in session:
         return redirect(url_for("home"))
@@ -406,24 +410,31 @@ def combined_report():
     ids = [part.strip() for part in raw_ids.split(",") if part.strip()]
 
     try:
-        rows = design_store.load_combined_reports(session["user_id"], ids)
+        designs = design_store.load_combined_reports(session["user_id"], ids)
     except Exception as error:
         print("COMBINED REPORT ERROR:", error)
         return "Could not build the combined report.", 500
 
-    if len(rows) < 2:
+    current_date = datetime.now().strftime("%d/%m/%Y")
+
+    if len(designs) < 2:
         return render_template(
             "landing/report_combined.html",
-            rows=rows, summary={}, metrics=design_store.COMBINED_METRICS,
-            current_date=datetime.now().strftime("%d/%m/%Y"),
+            designs=designs, pages=[], table_count=0,
+            groups=design_store.COMBINED_GROUPS,
+            current_date=current_date,
             error="Select at least two of your reports to combine.",
         ), 400
 
+    pages, table_count = design_store.build_combined_pages(designs)
+
     return render_template(
         "landing/report_combined.html",
-        rows=rows,
-        summary=design_store.summarise_combined(rows),
-        metrics=design_store.COMBINED_METRICS,
-        current_date=datetime.now().strftime("%d/%m/%Y"),
+        designs=designs,
+        pages=pages,
+        table_count=table_count,
+        groups=design_store.COMBINED_GROUPS,
+        per_table=design_store.DESIGNS_PER_TABLE,
+        current_date=current_date,
         error=None,
     )

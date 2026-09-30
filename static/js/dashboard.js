@@ -689,7 +689,7 @@ document.addEventListener("DOMContentLoaded", () => {
        COMBINE REPORTS: tick boxes on the Reports page
     ===================================================== */
 
-    const MAX_COMBINE = 20;
+    const MAX_COMBINE = 28;
 
     function updateCombineState() {
 
