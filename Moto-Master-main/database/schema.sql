@@ -48,9 +48,9 @@ CREATE TABLE users (
     -- reports in total, all phases together. Never goes down.
     demo_reports_used INTEGER NOT NULL DEFAULT 0,
 
-    -- TRUE = demo account (default for new registrations),
-    -- FALSE = full access. See backend/account.py.
-    is_demo BOOLEAN NOT NULL DEFAULT TRUE,
+    -- TRUE only for accounts created with "Try Free Demo"
+    -- (only these get the 4-report limit; others are unlimited).
+    is_demo BOOLEAN NOT NULL DEFAULT FALSE,
 
     -- One active login per account: token of the current login.
     session_token VARCHAR(64),

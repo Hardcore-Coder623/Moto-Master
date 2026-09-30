@@ -1,10 +1,11 @@
 """
 MOTO MASTER - demo access
 
-Who is DEMO and who has FULL ACCESS is decided in backend/account.py
-(users.is_demo, role and subscriptions). This file keeps the demo
-report counter.
-A demo user can generate DEMO_REPORT_LIMIT design reports in TOTAL
+Only accounts created through "Try Free Demo" are DEMO accounts
+(users.is_demo = true). Every other account has unlimited designs.
+
+A demo account without an active subscription can generate
+DEMO_REPORT_LIMIT design reports in TOTAL
 (1-phase + 2-phase + 3-phase together, not per phase).
 
 The count is kept in users.demo_reports_used and only ever goes up,
@@ -14,12 +15,13 @@ reports. Admins and users with an active subscription have no limit.
 
 import psycopg2
 
-from backend import account
 
+DEMO_REPORT_LIMIT = 4
 
-DEMO_REPORT_LIMIT = account.DEMO_REPORT_LIMIT
-
-DEMO_LIMIT_MESSAGE = account.DEMO_LIMIT_MESSAGE
+DEMO_LIMIT_MESSAGE = (
+    f"Demo limit reached: you have used all {DEMO_REPORT_LIMIT} demo design reports. "
+    "Choose a plan to keep creating designs."
+)
 
 _column_ready = False
 
@@ -60,6 +62,20 @@ def ensure_demo_column(cur):
             """
         )
 
+    # users.is_demo: true only for accounts made with "Try Free Demo".
+    # Existing accounts get false = unlimited designs.
+    cur.execute(
+        """
+        SELECT 1 FROM information_schema.columns
+        WHERE table_name = 'users' AND column_name = 'is_demo'
+        """
+    )
+    if not cur.fetchone():
+        cur.execute(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS is_demo BOOLEAN NOT NULL DEFAULT FALSE"
+        )
+        cur.connection.commit()
+
     if row is None or row[0] != DEMO_COLUMN_VERSION:
         cur.execute("UPDATE users SET demo_reports_used = 0")
         cur.execute(
@@ -72,18 +88,42 @@ def ensure_demo_column(cur):
 
 def get_access(cur, user_id, lock=False):
     """
-    {"demo": bool, "limit": 4, "used": n, "left": n, "type": ..., ...}
-    The decision (demo / full / admin) is made in backend/account.py.
+    {"demo": bool, "limit": 4, "used": n, "left": n}  - one query.
+    Demo = account made with "Try Free Demo", not admin, and no active,
+    unexpired subscription. Everyone else has no limit.
+    lock=True locks the user row until the transaction ends, so two
+    reports generated at the same moment cannot both use the last slot.
     """
-    acc = account.get_account(cur, user_id, lock=lock)
-    if acc is None:
-        return {
-            "user_id": user_id, "type": "demo", "label": "Demo",
-            "full_access": False, "demo": True,
-            "limit": DEMO_REPORT_LIMIT, "used": 0, "left": 0,
-            "subscription_active": False,
-        }
-    return acc
+    ensure_demo_column(cur)
+
+    cur.execute(
+        """
+        SELECT
+            u.demo_reports_used,
+            NOT u.is_demo OR u.role = 'admin' OR EXISTS (
+                SELECT 1 FROM subscriptions s
+                WHERE s.user_id = u.id
+                  AND s.status = 'active'
+                  AND (s.end_date IS NULL OR s.end_date > CURRENT_TIMESTAMP)
+            )
+        FROM users u
+        WHERE u.id = %s
+        """
+        + (" FOR UPDATE OF u" if lock else ""),
+        (user_id,),
+    )
+    row = cur.fetchone()
+    used, full_access = (row[0], row[1]) if row else (0, False)
+
+    if full_access:
+        return {"demo": False, "limit": None, "used": used, "left": None}
+
+    return {
+        "demo": True,
+        "limit": DEMO_REPORT_LIMIT,
+        "used": used,
+        "left": max(0, DEMO_REPORT_LIMIT - used),
+    }
 
 
 def record_demo_report(cur, user_id):

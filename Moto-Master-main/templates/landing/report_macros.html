@@ -1,0 +1,41 @@
+{# Shared building blocks for the design reports. #}
+
+{% macro is_empty(value) -%}
+    {{- 'yes' if value is none or value|string|trim in ('', 'N/A', '—', 'None') else '' -}}
+{%- endmacro %}
+
+
+{# One label / value line inside a card. The unit is hidden when there is no value. #}
+{% macro row(label, value, unit='') -%}
+<div class="mm-row">
+    <span class="mm-row-label">{{ label }}</span>
+    <span class="mm-row-value">
+        {%- if is_empty(value) -%}
+            <span class="mm-na">N/A</span>
+        {%- else -%}
+            {{ value }}{% if unit %}<span class="mm-unit">{{ unit }}</span>{% endif %}
+        {%- endif -%}
+    </span>
+</div>
+{%- endmacro %}
+
+
+{# A performance tile. #}
+{% macro stat(label, value, unit='', primary=false) -%}
+<div class="mm-stat{% if primary %} is-primary{% endif %}">
+    <div class="mm-stat-label">{{ label }}</div>
+    <div class="mm-stat-value">
+        {%- if is_empty(value) -%}
+            N/A
+        {%- else -%}
+            {{ value }}{% if unit %}<span class="mm-stat-unit">{{ unit }}</span>{% endif %}
+        {%- endif -%}
+    </div>
+</div>
+{%- endmacro %}
+
+
+{# Round a numeric value, pass anything else through. #}
+{% macro num(value, digits=2) -%}
+    {%- if is_empty(value) -%}N/A{%- else -%}{{ value | float | round(digits) }}{%- endif -%}
+{%- endmacro %}

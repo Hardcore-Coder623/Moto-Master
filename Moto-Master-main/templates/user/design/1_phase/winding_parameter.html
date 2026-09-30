@@ -1,0 +1,4861 @@
+<div class="design-parameter-form">
+
+    <div class="winding-layout">
+    
+        <!-- =========================================
+             LEFT PANEL - WINDING PARAMETERS
+        ========================================== -->
+    
+        <div class="winding-form-panel">
+    
+            <div class="winding-top">
+
+            <h2>Winding & Stack Parameters</h2>
+
+            <aside class="winding-constants" id="windingConstants" aria-label="Calculation constants">
+                <div class="wc-head">
+                    <strong>Calculation constants</strong>
+                    <button type="button" class="wc-reset" id="wcReset" title="Use default values">Reset</button>
+                </div>
+                <div class="wc-grid">
+                    <label class="wc-field" for="wc_fill_factor">
+                        <span>Slot fill factor</span>
+                        <input type="number" id="wc_fill_factor" step="0.01" min="0.05" max="1" inputmode="decimal">
+                    </label>
+                    <label class="wc-field" for="wc_flux_density">
+                        <span>B (flux density)</span>
+                        <input type="number" id="wc_flux_density" step="0.01" min="0.05" max="3" inputmode="decimal">
+                    </label>
+                    <label class="wc-field" for="wc_lf">
+                        <span>LF (tooth loss)</span>
+                        <input type="number" id="wc_lf" step="0.1" min="0" max="100" inputmode="decimal">
+                    </label>
+                    <label class="wc-field" for="wc_ly">
+                        <span>LY (yoke loss)</span>
+                        <input type="number" id="wc_ly" step="0.1" min="0" max="100" inputmode="decimal">
+                    </label>
+                </div>
+                <p class="wc-status" id="wcStatus">Empty = default value</p>
+            </aside>
+
+            </div>
+
+            <div id="windingCalcStatus" class="winding-calc-status" role="status" aria-live="polite"></div>
+    
+    
+            <!-- =====================================
+                 BASIC PARAMETERS
+            ====================================== -->
+    
+            <div class="winding-section">
+    
+                <h3>Basic Parameters</h3>
+    
+                <div class="design-form-grid">
+    
+                    <div class="design-input-group">
+                        <label for="current_density">
+                            Current Density (A/mm²)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="current_density"
+                            name="current_density"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="efficiency">
+                            Recommended Efficiency (%)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="efficiency"
+                            name="efficiency"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+                </div>
+    
+            </div>
+    
+    
+            <!-- =====================================
+                 MAIN WINDING
+            ====================================== -->
+    
+            <div class="winding-section">
+    
+                <h3>Main Winding</h3>
+    
+                <div class="design-form-grid">
+    
+                    <div class="design-input-group">
+                        <label for="I_main">
+                            I Main (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="I_main"
+                            name="I_main"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="insulation_dia">
+                            Insulation Diameter (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="insulation_dia"
+                            name="insulation_dia"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="recommended_dia">
+                            Recommended Diameter (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="recommended_dia"
+                            name="recommended_dia"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="actual_use_dia">
+                            Actual Use Diameter (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="actual_use_dia"
+                            name="actual_use_dia"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="recommended_turns">
+                            Recommended Turns
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="recommended_turns"
+                            name="recommended_turns"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="final_turns">
+                            Final Turns
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="final_turns"
+                            name="final_turns"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+                </div>
+    
+            </div>
+    
+    
+            <!-- =====================================
+                 AUXILIARY WINDING
+            ====================================== -->
+    
+            <div class="winding-section">
+    
+                <h3>Auxiliary Winding</h3>
+    
+                <div class="design-form-grid">
+    
+                    <div class="design-input-group">
+                        <label for="I_aux">
+                            I Aux (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="I_aux"
+                            name="I_aux"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="insulation_dia_aux">
+                            Insulation Diameter (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="insulation_dia_aux"
+                            name="insulation_dia_aux"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="recommended_dia_aux">
+                            Recommended Diameter (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="recommended_dia_aux"
+                            name="recommended_dia_aux"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="actual_use_dia_aux">
+                            Actual Use Diameter (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="actual_use_dia_aux"
+                            name="actual_use_dia_aux"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="recommended_turns_aux">
+                            Recommended Turns
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="recommended_turns_aux"
+                            name="recommended_turns_aux"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="final_turns_aux">
+                            Final Turns
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="final_turns_aux"
+                            name="final_turns_aux"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+                </div>
+    
+            </div>
+    
+    
+            <!-- =====================================
+                 STACK & MISC PARAMETERS
+            ====================================== -->
+    
+            <div class="winding-section">
+    
+                <h3>Stack & Misc Parameters</h3>
+    
+                <div class="design-form-grid">
+    
+                    <div class="design-input-group">
+                        <label for="recommended_stack_length">
+                            Recommended Stack Length (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="recommended_stack_length"
+                            name="recommended_stack_length"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="final_stack_length">
+                            Final Stack Length (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="final_stack_length"
+                            name="final_stack_length"
+                            step="any"
+                            required
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="slip">
+                            Slip (%)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="slip"
+                            name="slip"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="temp">
+                            Temperature (°C)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="temp"
+                            name="temp"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="statorwt">
+                            Stator Weight (kg)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="statorwt"
+                            name="statorwt"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="rotorwt">
+                            Rotor Weight (kg)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="rotorwt"
+                            name="rotorwt"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="cu_length">
+                            Copper Length (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="cu_length"
+                            name="cu_length"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="air_gap">
+                            Air Gap (mm)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="air_gap"
+                            name="air_gap"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="final_efficiency">
+                            Final Efficiency (%)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="final_efficiency"
+                            name="final_efficiency"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="angle">
+                            Angle (degrees)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="angle"
+                            name="angle"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+    
+                    <div class="design-input-group">
+                        <label for="torque">
+                            Torque (N-m)
+                        </label>
+    
+                        <input
+                            type="number"
+                            id="torque"
+                            name="torque"
+                            step="any"
+                            required
+                            readonly
+                        >
+                    </div>
+    
+                </div>
+    
+            </div>
+    
+        </div>
+    
+    
+        <!-- =========================================
+             RIGHT PANEL - SWG CALCULATORS
+        ========================================== -->
+    
+        <div class="winding-calculator-panel">
+    
+            <!-- SINGLE GAUGE -->
+    
+            <div class="swg-calculator">
+    
+                <h2>
+                    Single-Gauge SWG Calculator
+                </h2>
+    
+    
+                <div class="design-input-group">
+    
+                    <label for="num_wires">
+                        Number of wires
+                    </label>
+    
+                    <input
+                        type="number"
+                        id="num_wires"
+                        min="1"
+                        value="2"
+                    >
+    
+                </div>
+    
+    
+                <div class="design-input-group">
+    
+                    <label for="wire_gauge">
+                        Wire gauge (SWG)
+                    </label>
+    
+                    <select id="wire_gauge"></select>
+    
+                </div>
+    
+    
+                <div class="design-input-group">
+    
+                    <label for="effective_gauge">
+                        Effective gauge (SWG)
+                    </label>
+    
+                    <select id="effective_gauge"></select>
+    
+                </div>
+    
+    
+                <div class="swg-results">
+    
+                    <h3>
+                        Results
+                    </h3>
+    
+                    <p id="result1"></p>
+    
+                    <p id="result2"></p>
+    
+                </div>
+    
+            </div>
+    
+    
+            <!-- MULTI GAUGE -->
+    
+            <div class="swg-calculator">
+    
+                <h2>
+                    Multi-Gauge SWG Calculator
+                </h2>
+    
+    
+                <table class="swg-table">
+    
+                    <thead>
+    
+                        <tr>
+    
+                            <th>
+                                Number of Wires
+                            </th>
+    
+                            <th>
+                                Wire Gauge (SWG)
+                            </th>
+    
+                        </tr>
+    
+                    </thead>
+    
+    
+                    <tbody id="multi_table_body">
+    
+                        <tr>
+    
+                            <td>
+                                <input
+                                    type="number"
+                                    class="multi_num"
+                                    value="0"
+                                    min="0"
+                                >
+                            </td>
+    
+                            <td>
+                                <select
+                                    class="multi_gauge"
+                                ></select>
+                            </td>
+    
+                        </tr>
+    
+    
+                        <tr>
+    
+                            <td>
+                                <input
+                                    type="number"
+                                    class="multi_num"
+                                    value="0"
+                                    min="0"
+                                >
+                            </td>
+    
+                            <td>
+                                <select
+                                    class="multi_gauge"
+                                ></select>
+                            </td>
+    
+                        </tr>
+    
+    
+                        <tr>
+    
+                            <td>
+                                <input
+                                    type="number"
+                                    class="multi_num"
+                                    value="0"
+                                    min="0"
+                                >
+                            </td>
+    
+                            <td>
+                                <select
+                                    class="multi_gauge"
+                                ></select>
+                            </td>
+    
+                        </tr>
+    
+    
+                        <tr>
+    
+                            <td>
+                                <input
+                                    type="number"
+                                    class="multi_num"
+                                    value="0"
+                                    min="0"
+                                >
+                            </td>
+    
+                            <td>
+                                <select
+                                    class="multi_gauge"
+                                ></select>
+                            </td>
+    
+                        </tr>
+    
+                    </tbody>
+    
+                </table>
+    
+    
+                <p class="multi-effective">
+    
+                    Effective gauge:
+    
+                    <strong id="multi_effective_gauge">
+                        0
+                    </strong>
+    
+                </p>
+    
+            </div>
+    
+    
+            <!-- NOTE -->
+    
+            <div class="swg-note">
+    
+                <h3>
+                    Uses
+                </h3>
+    
+                <p>
+                    To determine the effective SWG gauge
+                    of multiple small wires of a particular
+                    gauge.
+                </p>
+    
+                <p>
+                    To find how many smaller wires are
+                    needed to replace a single larger wire,
+                    select the smaller gauge and desired
+                    effective gauge.
+                </p>
+    
+            </div>
+    
+        </div>
+    
+    </div>
+    
+    </div>
+    
+    <div class="design-action">
+        <button type="button" class="design-back-button" id="windingBack">
+            Back
+        </button>
+        <button type="button" class="design-submit-button" id="submitDesign">
+            Continue
+        </button>
+    </div>
+    <script>
+        (function () {
+        
+            "use strict";
+
+            /* Calculation constants box (Slot fill factor, B, LF, LY). */
+            /* =====================================================
+               CALCULATION LOG
+               Open the browser DevTools (F12) → Console.
+               Set CALC_LOG = false to turn the full value list off.
+            ===================================================== */
+
+            const CALC_LOG = true;
+
+            function fmtLog(value) {
+                if (typeof value === "number") {
+                    if (!Number.isFinite(value)) {
+                        return String(value);
+                    }
+                    return String(Math.round(value * 1e6) / 1e6);
+                }
+                return JSON.stringify(value);
+            }
+
+            /* All log output uses console.log, so nothing is hidden by the
+               console's level filter. CALC_VALUES collects every value of the
+               current calculation and is printed as one object at the end. */
+
+            let CALC_VALUES = {};
+
+            function logGroup(title) {
+                if (CALC_LOG) {
+                    CALC_VALUES = {};
+                    console.log("");
+                    console.log("========== [1-PHASE] " + title + " ==========");
+                }
+            }
+
+            function logEnd() {
+                if (CALC_LOG) {
+                    console.log("---------- end ----------");
+                }
+            }
+
+            function logVal(name, value, formula) {
+                if (CALC_LOG) {
+                    CALC_VALUES[name.trim()] = value;
+                    console.log(
+                        name.padEnd(24) + "= " + fmtLog(value) +
+                        (formula ? "    <- " + formula : "")
+                    );
+                }
+            }
+
+            function logStop(reason) {
+                if (CALC_LOG) {
+                    console.log("STOPPED: " + reason);
+                }
+            }
+
+            function logAll(title) {
+                if (CALC_LOG) {
+                    console.log("[1-PHASE] " + title + " (all values):", Object.assign({}, CALC_VALUES));
+                }
+            }
+
+            function windingConstants() {
+                if (window.MotoMasterConstants) {
+                    return window.MotoMasterConstants.values();
+                }
+                return {
+                    fill: 0.47,
+                    b: 0.47,
+                    lf: Number(sessionStorage.getItem("stamping_lf_t")) || 0,
+                    ly: Number(sessionStorage.getItem("stamping_lf_y")) || 0
+                };
+            }
+        
+            console.log("========================================");
+            console.log("MOTO MASTER - WINDING CALCULATION START");
+            console.log("========================================");
+        
+        
+            /* =========================================================
+               HELPER FUNCTIONS
+            ========================================================= */
+        
+            function getSessionNumber(key) {
+        
+                const raw = sessionStorage.getItem(key);
+        
+                if (
+                    raw === null ||
+                    String(raw).trim() === ""
+                ) {
+                    console.log("[SESSION EMPTY]", key);
+                    return NaN;
+                }
+        
+                const value = Number(raw);
+        
+                if (!Number.isFinite(value)) {
+        
+                    console.log(
+                        "[SESSION INVALID]",
+                        key,
+                        raw
+                    );
+        
+                    return NaN;
+                }
+        
+                return value;
+            }
+        
+        
+            function getInputNumber(id) {
+        
+                const element =
+                    document.getElementById(id);
+        
+                if (!element) {
+        
+                    console.log(
+                        "[ELEMENT NOT FOUND]",
+                        id
+                    );
+        
+                    return NaN;
+                }
+        
+                const raw =
+                    String(element.value).trim();
+        
+                if (raw === "") {
+                    return NaN;
+                }
+        
+                const value =
+                    Number(raw);
+        
+                if (!Number.isFinite(value)) {
+        
+                    console.log(
+                        "[INPUT INVALID]",
+                        id,
+                        raw
+                    );
+        
+                    return NaN;
+                }
+        
+                return value;
+            }
+        
+        
+            function setCalculatedValue(
+                id,
+                value,
+                decimals
+            ) {
+        
+                const input =
+                    document.getElementById(id);
+        
+                if (!input) {
+        
+                    console.log(
+                        "[OUTPUT ELEMENT NOT FOUND]",
+                        id
+                    );
+        
+                    return false;
+                }
+        
+        
+                if (!Number.isFinite(value)) {
+        
+                    console.log(
+                        "[OUTPUT INVALID]",
+                        id,
+                        value
+                    );
+        
+                    input.value = "";
+        
+                    return false;
+                }
+        
+        
+                input.value =
+                    Number(value).toFixed(decimals);
+        
+        
+                console.log(
+                    "[OUTPUT SET]",
+                    id,
+                    "=",
+                    input.value
+                );
+        
+        
+                return true;
+            }
+        
+        
+            function saveWindingValue(
+                key,
+                value
+            ) {
+        
+                if (
+                    value === undefined ||
+                    value === null ||
+                    value === ""
+                ) {
+                    return;
+                }
+        
+        
+                const numeric =
+                    Number(value);
+        
+        
+                /*
+                 * NEVER save NaN or Infinity.
+                 */
+        
+                if (
+                    typeof value === "number" &&
+                    !Number.isFinite(value)
+                ) {
+        
+                    console.log(
+                        "[SESSION NOT SAVED - INVALID]",
+                        key,
+                        value
+                    );
+        
+                    return;
+                }
+        
+        
+                if (
+                    typeof value === "string" &&
+                    value.trim() !== "" &&
+                    !Number.isNaN(numeric) &&
+                    !Number.isFinite(numeric)
+                ) {
+        
+                    console.log(
+                        "[SESSION NOT SAVED - INVALID]",
+                        key,
+                        value
+                    );
+        
+                    return;
+                }
+        
+        
+                sessionStorage.setItem(
+                    key,
+                    String(value)
+                );
+        
+            }
+        
+        
+            /* =========================================================
+               CALCULATION STATUS (shown to the user)
+            ========================================================= */
+
+            const FIELD_LABELS = {
+                hp: "HP (Main Data)",
+                uph: "UPH (Main Data)",
+                frequency: "Frequency (Main Data)",
+                pole: "Pole (Main Data)",
+                dia: "Dia (Stamping)",
+                d0: "D0 (Stamping)",
+                N: "N (Stamping)",
+                Y: "Y (Stamping)",
+                W: "W (Stamping)",
+                W2: "W2 (Stamping)",
+                A1: "A1 (Stamping)",
+                a: "a (Stamping)",
+                b: "b (Stamping)",
+                c: "c (Stamping)",
+                d: "d (Stamping)",
+                e: "e (Stamping)",
+                dw: "dw (Stamping)",
+                M: "M (Rotor)",
+                V: "V (Rotor)",
+                V2: "V2 (Rotor)",
+                X: "X (Rotor)",
+                A2: "A2 (Rotor)",
+                rng_wt: "RNG WT (Rotor)",
+                rng_ht: "RNG HT (Rotor)",
+                ra: "RA (Rotor)",
+                rb: "RB (Rotor)",
+                rc: "RC (Rotor)",
+                rd: "RD (Rotor)",
+                re: "RE (Rotor)",
+                rw: "RW (Rotor)",
+                shaft_diameter: "Shaft Diameter (Rotor)"
+            };
+
+
+            function setStatus(message, type) {
+
+                const box =
+                    document.getElementById("windingCalcStatus");
+
+                if (!box) {
+                    return;
+                }
+
+                box.textContent = message || "";
+
+                box.className =
+                    "winding-calc-status" +
+                    (message ? " is-" + (type || "info") : "");
+
+            }
+
+
+            function getSessionText(primary, fallback) {
+
+                return (
+                    sessionStorage.getItem(primary) ||
+                    sessionStorage.getItem(fallback) ||
+                    ""
+                );
+
+            }
+
+
+            /* =========================================================
+               REQUIRED SESSION VALUES
+            ========================================================= */
+        
+            function requiredSessionValues() {
+        
+                const keys = [
+        
+                    "hp",
+                    "uph",
+        
+                    "dia",
+        
+                    "M",
+        
+                    "V",
+                    "V2",
+        
+                    "W",
+                    "W2",
+        
+                    "Y",
+        
+                    "frequency",
+        
+                    "N",
+        
+                    "X",
+        
+                    "pole",
+        
+                    "rng_wt",
+                    "rng_ht",
+        
+                    "A1",
+                    "A2",
+        
+                    "d0",
+        
+                    "shaft_diameter",
+        
+                    "re",
+                    "ra",
+                    "rb",
+                    "rc",
+                    "rd",
+        
+                    "e",
+        
+                    "rw",
+        
+                    /*
+                     * IMPORTANT:
+                     * Required for leakage reactance.
+                     */
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "dw"
+        
+                ];
+        
+        
+                const data = {};
+        
+                let valid = true;
+        
+        
+                keys.forEach(
+                    function (key) {
+        
+                        const value =
+                            getSessionNumber(key);
+        
+                        data[key] =
+                            value;
+        
+        
+                        if (
+                            !Number.isFinite(value)
+                        ) {
+        
+                            console.log(
+                                "[MISSING DEPENDENCY]",
+                                key
+                            );
+        
+                            valid = false;
+                        }
+        
+                    }
+                );
+        
+        
+                return {
+        
+                    valid: valid,
+        
+                    data: data
+        
+                };
+        
+            }
+        
+        
+            /* =========================================================
+               HTML ELEMENTS
+            ========================================================= */
+        
+            const currentDensityInput =
+                document.getElementById(
+                    "current_density"
+                );
+        
+        
+            const efficiencyInput =
+                document.getElementById(
+                    "efficiency"
+                );
+        
+        
+            const IMainInput =
+                document.getElementById(
+                    "I_main"
+                );
+        
+        
+            const recommendedDiaInput =
+                document.getElementById(
+                    "recommended_dia"
+                );
+        
+        
+            const recommendedTurnsInput =
+                document.getElementById(
+                    "recommended_turns"
+                );
+        
+        
+            const IAuxInput =
+                document.getElementById(
+                    "I_aux"
+                );
+        
+        
+            const recommendedDiaAuxInput =
+                document.getElementById(
+                    "recommended_dia_aux"
+                );
+        
+        
+            const recommendedTurnsAuxInput =
+                document.getElementById(
+                    "recommended_turns_aux"
+                );
+        
+        
+            const recommendedStackLengthInput =
+                document.getElementById(
+                    "recommended_stack_length"
+                );
+        
+        
+            const finalStackLengthInput =
+                document.getElementById(
+                    "final_stack_length"
+                );
+        
+        
+            const finalTurnsInput =
+                document.getElementById(
+                    "final_turns"
+                );
+        
+        
+            const finalTurnsAuxInput =
+                document.getElementById(
+                    "final_turns_aux"
+                );
+        
+        
+            const insulationDiaInput =
+                document.getElementById(
+                    "insulation_dia"
+                );
+        
+        
+            const insulationDiaAuxInput =
+                document.getElementById(
+                    "insulation_dia_aux"
+                );
+        
+        
+            const slipInput =
+                document.getElementById(
+                    "slip"
+                );
+        
+        
+            const tempInput =
+                document.getElementById(
+                    "temp"
+                );
+        
+        
+            const statorwtInput =
+                document.getElementById(
+                    "statorwt"
+                );
+        
+        
+            const rotorwtInput =
+                document.getElementById(
+                    "rotorwt"
+                );
+        
+        
+            const cuLengthInput =
+                document.getElementById(
+                    "cu_length"
+                );
+        
+        
+            const airGapInput =
+                document.getElementById(
+                    "air_gap"
+                );
+        
+        
+            const finalEfficiencyInput =
+                document.getElementById(
+                    "final_efficiency"
+                );
+        
+        
+            const angleInput =
+                document.getElementById(
+                    "angle"
+                );
+        
+        
+            const torqueInput =
+                document.getElementById(
+                    "torque"
+                );
+        
+        
+            /* =========================================================
+               ELEMENT CHECK
+            ========================================================= */
+        
+            console.log(
+                "[ELEMENT CHECK]"
+            );
+        
+        
+            [
+        
+                "current_density",
+                "efficiency",
+        
+                "I_main",
+        
+                "insulation_dia",
+                "recommended_dia",
+                "actual_use_dia",
+                "recommended_turns",
+                "final_turns",
+        
+                "I_aux",
+        
+                "insulation_dia_aux",
+                "recommended_dia_aux",
+                "actual_use_dia_aux",
+                "recommended_turns_aux",
+                "final_turns_aux",
+        
+                "recommended_stack_length",
+                "final_stack_length",
+        
+                "slip",
+                "temp",
+                "statorwt",
+                "rotorwt",
+                "cu_length",
+                "air_gap",
+                "final_efficiency",
+                "angle",
+                "torque"
+        
+            ].forEach(
+                function (id) {
+        
+                    if (
+                        !document.getElementById(id)
+                    ) {
+        
+                        console.log(
+                            "[ELEMENT MISSING]",
+                            id
+                        );
+        
+                    }
+        
+                }
+            );
+        
+        
+            /* =========================================================
+               MAIN + AUXILIARY WINDING
+            ========================================================= */
+        
+            function calculateMainAndAux() {
+        
+                console.log("----------------------------------------");
+                console.log(
+                    "[MAIN] calculateMainAndAux()"
+                );
+        
+        
+                const hp =
+                    getSessionNumber("hp");
+        
+        
+                const uph =
+                    getSessionNumber("uph");
+        
+        
+                const A1 =
+                    getSessionNumber("A1");
+        
+        
+                const currentDensity =
+                    getInputNumber(
+                        "current_density"
+                    );
+        
+        
+                const efficiencyPercent =
+                    getInputNumber(
+                        "efficiency"
+                    );
+        
+        
+                const efficiency =
+                    efficiencyPercent / 100;
+        
+        
+                console.log(
+                    "[MAIN] HP =",
+                    hp
+                );
+        
+        
+                console.log(
+                    "[MAIN] UPH =",
+                    uph
+                );
+        
+        
+                console.log(
+                    "[MAIN] A1 =",
+                    A1
+                );
+        
+        
+                console.log(
+                    "[MAIN] Current Density =",
+                    currentDensity
+                );
+        
+        
+                console.log(
+                    "[MAIN] Efficiency =",
+                    efficiency
+                );
+        
+        
+                if (
+        
+                    !Number.isFinite(hp) ||
+        
+                    !Number.isFinite(uph) ||
+        
+                    !Number.isFinite(A1) ||
+        
+                    !Number.isFinite(currentDensity) ||
+        
+                    !Number.isFinite(efficiency) ||
+        
+                    currentDensity <= 0 ||
+        
+                    efficiency <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[MAIN] Cannot calculate - dependency missing"
+                    );
+
+                    const missingMain = [];
+
+                    if (!Number.isFinite(hp)) missingMain.push(FIELD_LABELS.hp);
+                    if (!Number.isFinite(uph)) missingMain.push(FIELD_LABELS.uph);
+                    if (!Number.isFinite(A1)) missingMain.push(FIELD_LABELS.A1);
+                    if (!(currentDensity > 0)) missingMain.push("Current Density");
+                    if (!(efficiency > 0)) missingMain.push("Recommended Efficiency");
+
+                    setStatus(
+                        "Enter / check: " + missingMain.join(", "),
+                        "warning"
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                const pf =
+                    0.75;
+        
+        
+                const iline =
+                    (
+                        hp *
+                        746
+                    ) /
+                    (
+                        uph *
+                        efficiency *
+                        pf
+                    );
+        
+        
+                console.log(
+                    "[MAIN] Line Current =",
+                    iline
+                );
+        
+        
+                /* =====================================================
+                   MAIN
+                ===================================================== */
+        
+                const imain =
+                    0.6 *
+                    iline;
+        
+        
+                if (
+                    IMainInput
+                ) {
+        
+                    IMainInput.value =
+                        imain.toFixed(2);
+        
+                }
+        
+        
+                const qg =
+                    imain /
+                    currentDensity;
+        
+        
+                const recommendedDiameter =
+                    Math.sqrt(
+                        qg / 0.75
+                    );
+        
+        
+                if (
+                    recommendedDiaInput
+                ) {
+        
+                    recommendedDiaInput.value =
+                        recommendedDiameter.toFixed(2);
+        
+                }
+        
+        
+                const insulationDia =
+                    getInputNumber(
+                        "insulation_dia"
+                    );
+        
+        
+                if (
+        
+                    Number.isFinite(
+                        insulationDia
+                    ) &&
+        
+                    insulationDia > 0
+        
+                ) {
+        
+                    const zsMain =
+                        (
+                            windingConstants().fill *
+                            A1
+                        ) /
+                        (
+                            0.786 *
+                            insulationDia *
+                            insulationDia
+                        );
+        
+        
+                    if (
+                        recommendedTurnsInput
+                    ) {
+        
+                        recommendedTurnsInput.value =
+                            zsMain.toFixed(0);
+        
+                    }
+
+                    logGroup("Recommended turns (main)");
+                    logVal("slot fill factor", windingConstants().fill, "constants box (default 0.47)");
+                    logVal("A1", A1);
+                    logVal("insulationDia", insulationDia);
+                    logVal("zsMain", zsMain, "(fill*A1) / (0.786*insDia²)");
+                    logEnd();
+        
+                }
+        
+        
+                /* =====================================================
+                   AUXILIARY
+                ===================================================== */
+        
+                const iaux =
+                    0.35 *
+                    iline;
+        
+        
+                if (
+                    IAuxInput
+                ) {
+        
+                    IAuxInput.value =
+                        iaux.toFixed(2);
+        
+                }
+        
+        
+                const qgaux =
+                    iaux /
+                    currentDensity;
+        
+        
+                const recommendedAuxDiameter =
+                    Math.sqrt(
+                        qgaux / 0.75
+                    );
+        
+        
+                if (
+                    recommendedDiaAuxInput
+                ) {
+        
+                    recommendedDiaAuxInput.value =
+                        recommendedAuxDiameter.toFixed(2);
+        
+                }
+        
+        
+                const insulationDiaAux =
+                    getInputNumber(
+                        "insulation_dia_aux"
+                    );
+        
+        
+                if (
+        
+                    Number.isFinite(
+                        insulationDiaAux
+                    ) &&
+        
+                    insulationDiaAux > 0
+        
+                ) {
+        
+                    const zsA =
+                        (
+                            windingConstants().fill *
+                            A1
+                        ) /
+                        (
+                            0.786 *
+                            insulationDiaAux *
+                            insulationDiaAux
+                        );
+        
+        
+                    if (
+                        recommendedTurnsAuxInput
+                    ) {
+        
+                        recommendedTurnsAuxInput.value =
+                            zsA.toFixed(0);
+        
+                    }
+
+                    logGroup("Recommended turns (aux)");
+                    logVal("slot fill factor", windingConstants().fill, "constants box (default 0.47)");
+                    logVal("A1", A1);
+                    logVal("insulationDiaAux", insulationDiaAux);
+                    logVal("zsA", zsA, "(fill*A1) / (0.786*insDiaAux²)");
+                    logEnd();
+        
+                }
+        
+        
+                /*
+                 * Continue calculation.
+                 */
+        
+                calculateStackLength(
+                    imain
+                );
+        
+            }
+        
+        
+            /* =========================================================
+               MAIN CALCULATION
+            ========================================================= */
+        
+            function calculateStackLength(
+                imain
+            ) {
+        
+                console.log("----------------------------------------");
+                console.log(
+                    "[CALCULATE ALL]"
+                );
+                console.log("----------------------------------------");
+        
+        
+                const dependency =
+                    requiredSessionValues();
+
+
+                const d =
+                    dependency.data;
+
+
+                /* =====================================================
+                   DS
+                ===================================================== */
+        
+                const ds =
+                    d.dia / 1000;
+        
+        
+                console.log(
+                    "[CALC] dia =",
+                    d.dia
+                );
+        
+        
+                console.log(
+                    "[CALC] ds =",
+                    ds
+                );
+        
+        
+                if (
+        
+                    !Number.isFinite(ds) ||
+        
+                    ds <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC] Invalid ds"
+                    );
+
+                    setStatus(
+                        "Enter " + FIELD_LABELS.dia + " to calculate the stack length.",
+                        "warning"
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                const PI =
+                    Math.PI;
+        
+        
+                const B =
+                    windingConstants().b;
+        
+        
+                const rps =
+                    55;
+        
+        
+                const ks =
+                    0.9;
+        
+        
+                const efficiency =
+                    getInputNumber(
+                        "efficiency"
+                    ) / 100;
+        
+        
+                const hp =
+                    d.hp;
+        
+        
+                const uph =
+                    d.uph;
+        
+        
+                const finalTurns =
+                    getInputNumber(
+                        "final_turns"
+                    );
+        
+        
+                const finalTurnsAux =
+                    getInputNumber(
+                        "final_turns_aux"
+                    );
+        
+        
+                const finalStackLength =
+                    getInputNumber(
+                        "final_stack_length"
+                    );
+        
+        
+                const actualDia =
+                    getInputNumber(
+                        "actual_use_dia"
+                    );
+        
+        
+                console.log(
+                    "[INPUT] Final Turns =",
+                    finalTurns
+                );
+        
+        
+                console.log(
+                    "[INPUT] Final Aux Turns =",
+                    finalTurnsAux
+                );
+        
+        
+                console.log(
+                    "[INPUT] Final Stack Length =",
+                    finalStackLength
+                );
+        
+        
+                console.log(
+                    "[INPUT] Actual Diameter =",
+                    actualDia
+                );
+        
+        
+                /* =====================================================
+                   VALIDATE INPUTS
+                ===================================================== */
+        
+                if (
+        
+                    !Number.isFinite(finalTurns) ||
+        
+                    finalTurns <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC STOP] Final Turns is empty or invalid."
+                    );
+
+                    setStatus(
+                        "Enter Final Turns (Main Winding) to continue the calculation.",
+                        "info"
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                if (
+        
+                    !Number.isFinite(finalTurnsAux) ||
+        
+                    finalTurnsAux <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC STOP] Final Aux Turns is empty or invalid."
+                    );
+
+                    setStatus(
+                        "Enter Final Turns (Auxiliary Winding) to continue the calculation.",
+                        "info"
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                if (
+        
+                    !Number.isFinite(efficiency) ||
+        
+                    efficiency <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC STOP] Efficiency invalid."
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                if (
+        
+                    !Number.isFinite(imain) ||
+        
+                    imain <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC STOP] Main current invalid."
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                /* =====================================================
+                   LINE CURRENT
+                ===================================================== */
+        
+                const pf =
+                    0.75;
+        
+        
+                const iline =
+                    (
+                        hp *
+                        746
+                    ) /
+                    (
+                        uph *
+                        efficiency *
+                        pf
+                    );
+        
+        
+                console.log(
+                    "[CALC] Line Current =",
+                    iline
+                );
+        
+        
+                /* =====================================================
+                   STACK LENGTH
+                ===================================================== */
+        
+                const ac =
+                    (
+                        imain *
+                        (
+                            (
+                                finalTurns *
+                                16
+                            ) +
+                            (
+                                finalTurnsAux *
+                                8
+                            )
+                        )
+                    ) /
+                    (
+                        3.14 *
+                        ds
+                    );
+        
+        
+                const q1 =
+                    (
+                        11 *
+                        B *
+                        ac
+                    ) /
+                    1000;
+        
+        
+                const q =
+                    (
+                        hp *
+                        746
+                    ) /
+                    (
+                        efficiency *
+                        pf *
+                        1000
+                    );
+        
+        
+                const stackLength =
+                    (
+                        q /
+                        (
+                            q1 *
+                            rps *
+                            ds *
+                            ds
+                        )
+                    ) *
+                    1000;
+        
+        
+                console.log(
+                    "[CALC] Recommended Stack Length =",
+                    stackLength
+                );
+        
+        
+                setCalculatedValue(
+                    "recommended_stack_length",
+                    stackLength,
+                    2
+                );
+
+
+                if (
+        
+                    !Number.isFinite(finalStackLength) ||
+        
+                    finalStackLength <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC STOP] Final Stack Length is empty or invalid."
+                    );
+        
+        
+                    if (
+                        recommendedStackLengthInput
+                    ) {
+        
+                        console.log(
+                            "[INFO] Recommended Stack Length =",
+                            recommendedStackLengthInput.value
+                        );
+        
+                    }
+        
+                    setStatus(
+                        "Recommended stack length calculated. Enter Final Stack Length to see performance results.",
+                        "info"
+                    );
+
+                    return;
+        
+                }
+        
+        
+                if (
+        
+                    !Number.isFinite(actualDia) ||
+        
+                    actualDia <= 0
+        
+                ) {
+        
+                    console.log(
+                        "[CALC STOP] Actual Use Diameter is empty or invalid."
+                    );
+
+                    setStatus(
+                        "Enter Actual Use Diameter (Main Winding) to see performance results.",
+                        "info"
+                    );
+        
+                    return;
+        
+                }
+        
+        
+                if (
+                    !dependency.valid
+                ) {
+
+                    const missingKeys =
+                        Object.keys(d).filter(
+                            function (key) {
+                                return !Number.isFinite(d[key]);
+                            }
+                        );
+
+                    console.log(
+                        "[CALCULATE ALL] Missing session values:",
+                        missingKeys
+                    );
+
+                    debugRequiredSessionValues();
+
+                    setStatus(
+                        "Performance cannot be calculated. Missing values from previous steps: " +
+                        missingKeys
+                            .map(function (key) { return FIELD_LABELS[key] || key; })
+                            .join(", ") +
+                        ". Go Back and fill them in.",
+                        "error"
+                    );
+
+                    return;
+
+                }
+
+
+        
+        
+                /* =====================================================
+                   ORIGINAL VARIABLES
+                ===================================================== */
+        
+                const vr =
+                    d.V / 1000;
+        
+        
+                const ws =
+                    d.W / 1000;
+        
+        
+                const ys =
+                    d.Y / 1000;
+        
+        
+                const w_ht =
+                    d.W2 / 1000;
+        
+        
+                const lf_y =
+                    windingConstants().ly;
+        
+        
+                const lf_t =
+                    windingConstants().lf;
+    
+
+                   // =====================================================
+                    // WIRE TYPE → XC_85 AND X_T
+                    // =====================================================
+
+                    const selectedWireType = getSessionText("wire_type", "design_wire_type");
+
+                    let xc_85;
+                    let X_T;
+
+                    if (
+                        selectedWireType === "copper_pvc_pp" ||
+                        selectedWireType === "copper_enamel"
+                    ) {
+                        // =========================
+                        // COPPER
+                        // =========================
+                        
+                        xc_85 = 0.0239 * 320 / 360;
+                        X_T = 0.175;
+
+                    } else if (
+                        selectedWireType === "aluminium_pvc_pp" ||
+                        selectedWireType === "aluminium_enamel"
+                    ) {
+                        // =========================
+                        // ALUMINIUM
+                        // =========================
+                        
+                        xc_85 = 0.0387 * 320 / 360;
+                        X_T = 0.282;
+
+                    } else {
+                        // =========================
+                        // INVALID / NOT SELECTED
+                        // =========================
+
+                        console.log(
+                            "[WIRE TYPE] Invalid or missing wire type:",
+                            selectedWireType
+                        );
+
+                        xc_85 = 0;
+                        X_T = 0;
+                    }
+
+                    // =====================================================
+                    // DEBUG
+                    // =====================================================
+
+                    console.log("[WIRE TYPE] Selected =", selectedWireType);
+                    console.log("[WIRE TYPE] xc_85 =", xc_85);
+                    console.log("[WIRE TYPE] X_T =", X_T);
+                                                
+        
+                const m_tn =
+                    (
+                        2 *
+                        (
+                            finalStackLength /
+                            1000
+                        )
+                    ) +
+                    0.48;
+        
+        
+                const area =
+                    6 *
+                    actualDia *
+                    actualDia *
+                    0.785;
+        
+        
+                const rp_85 =
+                    area !== 0
+                        ? (
+                            xc_85 *
+                            (
+                                (
+                                    finalTurns *
+                                    16
+                                ) +
+                                (
+                                    finalTurnsAux *
+                                    8
+                                )
+                            ) *
+                            m_tn /
+                            area
+                        )
+                        : 0;
+        
+        
+                const rp_25 =
+                    260 *
+                    rp_85 /
+                    320;
+        
+        
+                const t_ph =
+                    (
+                        (
+                            finalTurns *
+                            16
+                        ) +
+                        (
+                            finalTurnsAux *
+                            8
+                        )
+                    ) /
+                    2;
+        
+        
+                /* =====================================================
+                   LOSS
+                ===================================================== */
+        
+                const t_los =
+                    7220 *
+                    (
+                        d.N *
+                        ws *
+                        (
+                            finalStackLength /
+                            1000
+                        ) *
+                        w_ht
+                    ) *
+                    (
+                        2 *
+                        lf_t
+                    );
+        
+        
+                const sy_los =
+                    7000 *
+                    (
+                        (
+                            finalStackLength /
+                            1000
+                        ) *
+                        ys *
+                        (
+                            ds +
+                            ys +
+                            (
+                                2 *
+                                w_ht
+                            )
+                        )
+                    ) *
+                    (
+                        lf_y *
+                        2
+                    );
+        
+        
+                const j_bar =
+                    d.M !== 0
+                        ? (
+                            ks *
+                            (
+                                (
+                                    finalTurns *
+                                    16
+                                ) +
+                                (
+                                    finalTurnsAux *
+                                    8
+                                )
+                            ) *
+                            iline /
+                            d.M
+                        )
+                        : 0;
+        
+        
+                /* =====================================================
+                   MATERIAL LOSS
+                ===================================================== */
+        
+                const material =
+                    sessionStorage.getItem(
+                        "material"
+                    );
+        
+        
+                let b_los =
+                    0;
+        
+        
+                if (
+                    d.A2 !== 0
+                ) {
+        
+                    if (
+                        material ===
+                        "aluminium"
+                    ) {
+        
+                        b_los =
+                            (
+                                0.031 *
+                                (
+                                    (
+                                        finalStackLength /
+                                        1000
+                                    ) +
+                                    0.005
+                                ) /
+                                d.A2
+                            ) *
+                            d.M *
+                            j_bar *
+                            j_bar;
+        
+                    }
+        
+                    else if (
+                        material ===
+                        "copper"
+                    ) {
+        
+                        b_los =
+                            (
+                                0.021 *
+                                (
+                                    (
+                                        finalStackLength /
+                                        1000
+                                    ) +
+                                    0.005
+                                ) /
+                                d.A2
+                            ) *
+                            d.M *
+                            j_bar *
+                            j_bar;
+        
+                    }
+        
+                }
+        
+        
+                /* =====================================================
+                   RANGE RESISTOR
+                ===================================================== */
+        
+                const r_tht =
+                    (
+                        d.V2 +
+                        0.8 *
+                        d.X
+                    ) /
+                    1000;
+        
+        
+                const i_rng =
+                    d.pole !== 0
+                        ? (
+                            3.1847 *
+                            d.M *
+                            j_bar /
+                            (
+                                10 *
+                                d.pole
+                            )
+                        )
+                        : 0;
+        
+        
+                const l_rng =
+                    d.pole !== 0
+                        ? (
+                            (
+                                ds -
+                                (
+                                    2 *
+                                    0.0016
+                                ) -
+                                (
+                                    d.rng_wt /
+                                    1000
+                                )
+                            ) *
+                            PI /
+                            d.pole
+                        )
+                        : 0;
+        
+        
+                const rng_r =
+                    (
+                        d.rng_ht *
+                        d.rng_wt
+                    ) !== 0
+                        ? (
+                            0.021 *
+                            l_rng /
+                            (
+                                d.rng_ht *
+                                d.rng_wt
+                            )
+                        )
+                        : 0;
+        
+        
+                const rmg_los =
+                    2 *
+                    i_rng *
+                    i_rng *
+                    rng_r;
+        
+        
+                /* =====================================================
+                   MAGNETIC
+                ===================================================== */
+        
+                const phi =
+                    (
+                        t_ph > 0 &&
+                        ks > 0 &&
+                        d.frequency > 0
+                    )
+                        ? (
+                            uph /
+                            (
+                                4.44 *
+                                d.frequency *
+                                ks *
+                                t_ph
+                            )
+                        )
+                        : 0;
+        
+        
+                const sy_s =
+                    phi /
+                    (
+                        1.9 *
+                        ys *
+                        (
+                            finalStackLength /
+                            1000
+                        )
+                    );
+        
+        
+                const st_s =
+                    1360 *
+                    phi /
+                    (
+                        9.5 *
+                        (
+                            finalStackLength /
+                            1000
+                        ) *
+                        d.N *
+                        ws *
+                        rps
+                    );
+        
+        
+                const rt_s =
+                    1360 *
+                    phi /
+                    (
+                        9.5 *
+                        (
+                            finalStackLength /
+                            1000
+                        ) *
+                        d.M *
+                        vr *
+                        rps
+                    );
+        
+        
+                const ry =
+                    d.X /
+                    1000;
+        
+        
+                const ry_s =
+                    ry !== 0
+                        ? (
+                            sy_s *
+                            ys /
+                            ry
+                        )
+                        : 0;
+        
+        
+                const tau =
+                    d.pole > 0
+                        ? (
+                            PI *
+                            ds /
+                            d.pole
+                        )
+                        : 0;
+        
+        
+                /* =====================================================
+                   ADDITIONAL CALCULATIONS
+                ===================================================== */
+        
+                const B_av =
+                    uph /
+                    (
+                        4.44 *
+                        d.frequency *
+                        ks *
+                        t_ph *
+                        (
+                            finalStackLength /
+                            1000
+                        ) *
+                        0.95 *
+                        tau
+                    );
+        
+        
+                const A =
+                    0.68;
+        
+        
+                const Q_factor =
+                    d.e /
+                    A;
+        
+        
+                const K =
+                    0.61;
+        
+        
+                const Y1 =
+                    3140 *
+                    ds /
+                    d.N;
+        
+        
+                const S =
+                    (
+                        Y1 -
+                        d.e *
+                        K
+                    ) !== 0
+                        ? (
+                            Y1 /
+                            (
+                                Y1 -
+                                d.e *
+                                K
+                            )
+                        )
+                        : 0;
+        
+        
+                const P1 =
+                    d.re /
+                    A;
+        
+        
+                const F =
+                    0.365;
+        
+        
+                const X1 =
+                    3140 *
+                    ds /
+                    d.M;
+        
+        
+                const R =
+                    (
+                        X1 -
+                        d.re -
+                        F
+                    ) !== 0
+                        ? Math.round(
+                            X1 /
+                            (
+                                X1 -
+                                d.re -
+                                F
+                            )
+                        )
+                        : 0;
+        
+        
+                const C1 =
+                    R *
+                    S;
+        
+        
+                const r_y1 =
+                    101;
+        
+        
+                const r_t1 =
+                    7050;
+        
+        
+                const s_y1 =
+                    2200;
+        
+        
+                const s_t1 =
+                    6140;
+        
+        
+                const G =
+                    800 *
+                    A *
+                    B_av *
+                    C1 /
+                    1.23;
+        
+        
+                const E =
+                    d.pole !== 0
+                        ? (
+                            s_y1 *
+                            1.047 *
+                            (
+                                ds +
+                                ys +
+                                (
+                                    2 *
+                                    w_ht
+                                )
+                            ) /
+                            d.pole
+                        )
+                        : 0;
+        
+        
+                const F2 =
+                    d.pole !== 0
+                        ? (
+                            r_y1 *
+                            1.047 *
+                            (
+                                ds -
+                                ry -
+                                (
+                                    2 *
+                                    r_tht
+                                )
+                            ) /
+                            d.pole
+                        )
+                        : 0;
+        
+        
+                const H =
+                    s_t1 *
+                    w_ht;
+        
+        
+                const J =
+                    r_t1 *
+                    r_tht;
+        
+        
+                const magspg =
+                    G +
+                    E +
+                    F2 +
+                    H +
+                    J;
+        
+        
+                const I_MAG =
+                    (
+                        ks *
+                        d.N *
+                        finalTurns
+                    ) !== 0
+                        ? (
+                            6 *
+                            0.427 *
+                            d.pole *
+                            magspg /
+                            (
+                                ks *
+                                d.N *
+                                finalTurns
+                            )
+                        )
+                        : 0;
+        
+        
+                /* =====================================================
+                   LEAKAGE REACTANCE
+                ===================================================== */
+        
+                const mu_o =
+                    1.256e-6;
+        
+        
+                /*
+                 * IMPORTANT:
+                 *
+                 * These variables must exist in sessionStorage:
+                 *
+                 * a
+                 * b
+                 * c
+                 * d
+                 * dw
+                 */
+        
+                const v1 =
+                    (
+                        2 *
+                        d.b /
+                        (
+                            d.a +
+                            d.dw
+                        )
+                    ) +
+                    (
+                        2 *
+                        d.c /
+                        (
+                            d.a +
+                            d.e
+                        )
+                    ) +
+                    (
+                        d.d /
+                        d.e
+                    );
+        
+        
+                const C2 =
+                    d.M !== 0
+                        ? (
+                            ks *
+                            ks *
+                            d.N /
+                            d.M
+                        )
+                        : 0;
+        
+        
+                const F3 =
+                    0.748;
+        
+        
+                const G1 =
+                    (
+                        2 *
+                        d.rc
+                    ) !== 0
+                        ? (
+                            0.5 *
+                            Math.acos(
+                                d.re /
+                                (
+                                    2 *
+                                    d.rc
+                                )
+                            )
+                        )
+                        : 0;
+        
+        
+                const v2 =
+                    F3 +
+                    G1;
+        
+        
+                const Q1 =
+                    d.pole !== 0
+                        ? (
+                            d.N /
+                            (
+                                3 *
+                                d.pole
+                            )
+                        )
+                        : 0;
+        
+        
+                const lambda =
+                    (
+                        v1 +
+                        C2 *
+                        v2
+                    ) *
+                    mu_o;
+        
+        
+                const pift =
+                    8 *
+                    PI *
+                    d.frequency *
+                    t_ph *
+                    t_ph;
+        
+        
+                const XS =
+                    (
+                        d.pole *
+                        Q1
+                    ) !== 0
+                        ? (
+                            pift *
+                            (
+                                finalStackLength /
+                                1000
+                            ) *
+                            lambda /
+                            (
+                                d.pole *
+                                Q1
+                            )
+                        )
+                        : 0;
+        
+        
+                /* =====================================================
+                   MORE CALCULATIONS
+                ===================================================== */
+        
+                const CF =
+                    10;
+        
+        
+                const mop =
+                    3;
+        
+        
+                const R1 =
+                    d.N !== 0
+                        ? (
+                            d.pole *
+                            CF /
+                            d.N
+                        )
+                        : 0;
+        
+        
+                const K1 =
+                    0.88;
+        
+        
+                const T =
+                    d.pole !== 0
+                        ? (
+                            PI *
+                            ds /
+                            d.pole
+                        )
+                        : 0;
+        
+        
+                const Y2 =
+                    d.N !== 0
+                        ? (
+                            PI *
+                            ds /
+                            d.N
+                        )
+                        : 0;
+        
+        
+                const ovhg_o =
+                    Y2 !== 0
+                        ? (
+                            K1 *
+                            T *
+                            T /
+                            Y2
+                        ) *
+                        1.256e-6
+                        : 0;
+        
+        
+                const X0 =
+                    (
+                        d.pole *
+                        Q1
+                    ) !== 0
+                        ? (
+                            pift *
+                            ovhg_o /
+                            (
+                                d.pole *
+                                Q1
+                            )
+                        )
+                        : 0;
+        
+        
+                const qr =
+                    d.pole !== 0
+                        ? (
+                            d.M /
+                            (
+                                3 *
+                                d.pole
+                            )
+                        )
+                        : 0;
+        
+        
+                const X_m =
+                    I_MAG !== 0
+                        ? (
+                            uph /
+                            I_MAG
+                        )
+                        : 0;
+        
+        
+                const XZ =
+                    (
+                        Q1 !== 0 &&
+                        qr !== 0
+                    )
+                        ? (
+                            5 / 6
+                        ) *
+                        (
+                            X_m /
+                            (
+                                mop *
+                                mop
+                            )
+                        ) *
+                        (
+                            (
+                                1 /
+                                (
+                                    Q1 *
+                                    Q1
+                                )
+                            ) +
+                            (
+                                1 /
+                                (
+                                    qr *
+                                    qr
+                                )
+                            )
+                        )
+                        : 0;
+        
+        
+                /* =====================================================
+                   LEAKAGE DEBUG
+                ===================================================== */
+        
+                console.log("========================================");
+                console.log("[LEAKAGE DEBUG]");
+                console.log("a =", d.a);
+                console.log("b =", d.b);
+                console.log("c =", d.c);
+                console.log("d =", d.d);
+                console.log("dw =", d.dw);
+                console.log("e =", d.e);
+                console.log("rc =", d.rc);
+        
+                console.log("v1 =", v1);
+                console.log("C2 =", C2);
+                console.log("G1 =", G1);
+                console.log("v2 =", v2);
+                console.log("Q1 =", Q1);
+                console.log("lambda =", lambda);
+                console.log("pift =", pift);
+                console.log("XS =", XS);
+                console.log("X0 =", X0);
+                console.log("I_MAG =", I_MAG);
+                console.log("X_m =", X_m);
+                console.log("qr =", qr);
+                console.log("XZ =", XZ);
+                console.log("========================================");
+        
+        
+                const XL =
+                    XS +
+                    X0 +
+                    XZ;
+        
+        
+                console.log(
+                    "[FINAL XL] =",
+                    XL
+                );
+        
+        
+                /* =====================================================
+                   FINAL CALCULATIONS
+                ===================================================== */
+        
+                const denominator =
+                    Math.pow(
+                        pf *
+                        iline,
+                        2
+                    );
+        
+        
+                const R3 =
+                    denominator !== 0
+                        ? (
+                            0.33 *
+                            (
+                                b_los +
+                                rmg_los
+                            ) /
+                            denominator
+                        )
+                        : 0;
+        
+        
+                const RR =
+                    rp_85 +
+                    R3;
+        
+        
+                const Z1 =
+                    Math.sqrt(
+                        Math.pow(
+                            rp_85,
+                            2
+                        ) +
+                        Math.pow(
+                            XL,
+                            2
+                        )
+                    );
+        
+        
+                let FK =
+                    Z1 !== 0
+                        ? RR /
+                        Z1
+                        : NaN;
+        
+        
+                /*
+                 * Floating point protection.
+                 */
+        
+                if (
+                    Number.isFinite(FK)
+                ) {
+        
+                    FK =
+                        Math.max(
+                            -1,
+                            Math.min(
+                                1,
+                                FK
+                            )
+                        );
+        
+                }
+        
+        
+                const angle =
+                    Number.isFinite(FK)
+                        ? (
+                            Math.acos(FK) *
+                            (
+                                180 /
+                                PI
+                            )
+                        )
+                        : NaN;
+        
+        
+                const torque =
+                    (
+                        rp_85 +
+                        R3
+                    ) !== 0
+                        ? (
+                            38.95 *
+                            rp_85 /
+                            (
+                                rp_85 +
+                                R3
+                            )
+                        ) /
+                        16.54
+                        : NaN;
+        
+        
+                console.log(
+                    "[ANGLE CALCULATION]"
+                );
+        
+        
+                console.log(
+                    "rp_85 =",
+                    rp_85
+                );
+        
+        
+                console.log(
+                    "R3 =",
+                    R3
+                );
+        
+        
+                console.log(
+                    "XL =",
+                    XL
+                );
+        
+        
+                console.log(
+                    "RR =",
+                    RR
+                );
+        
+        
+                console.log(
+                    "Z1 =",
+                    Z1
+                );
+        
+        
+                console.log(
+                    "FK =",
+                    FK
+                );
+        
+        
+                console.log(
+                    "ANGLE =",
+                    angle
+                );
+        
+        
+                /* =====================================================
+                   FINAL LOSSES
+                ===================================================== */
+        
+                const cu_los =
+                    imain *
+                    imain *
+                    rp_85;
+        
+        
+                // =====================================================
+                // FRICTION LOSS BASED ON MECHANICAL COMPONENT
+                // =====================================================
+
+                const mechanicalComponent =
+                    getSessionText("mechanical_component", "design_mechanical_component");
+
+                let fr_los = 0;
+
+                if (mechanicalComponent === "bush") {
+
+                    // Bush bearing
+                    fr_los =
+                        hp *
+                        746 *
+                        0.06;
+
+                } else if (mechanicalComponent === "ball_bearing") {
+
+                    // Ball bearing
+                    fr_los =
+                        hp *
+                        746 *
+                        -0.025;
+
+                } else {
+
+                    console.log(
+                        "[FRICTION LOSS] Mechanical component not selected:",
+                        mechanicalComponent
+                    );
+
+                    fr_los = 0;
+                }
+
+                console.log(
+                    "[FRICTION LOSS] Mechanical Component:",
+                    mechanicalComponent
+                );
+
+                console.log(
+                    "[FRICTION LOSS] HP:",
+                    hp
+                );
+
+                console.log(
+                    "[FRICTION LOSS] fr_los:",
+                    fr_los
+                );
+                const wl =
+                    t_los +
+                    sy_los +
+                    b_los +
+                    rmg_los +
+                    cu_los +
+                    fr_los;
+        
+        
+                const nenlstg =
+                    hp *
+                    746;
+        
+        
+                const efficiency1 =
+                    (
+                        nenlstg +
+                        wl
+                    ) !== 0
+                        ? (
+                            100 *
+                            nenlstg /
+                            (
+                                nenlstg +
+                                wl
+                            )
+                        )
+                        : 0;
+        
+        
+                /* =====================================================
+                   SLIP
+                ===================================================== */
+        
+                const kl =
+                    nenlstg !== 0
+                        ? (
+                            b_los +
+                            rmg_los
+                        ) /
+                        nenlstg
+                        : 0;
+        
+        
+                const slip =
+                    (
+                        100 *
+                        kl
+                    ) /
+                    (
+                        1 +
+                        kl
+                    );
+        
+        
+                /* =====================================================
+                   TEMPERATURE
+                ===================================================== */
+        
+                /*
+                 * FIX:
+                 *
+                 * Original code used:
+                 *
+                 * d.shaftDiameter
+                 *
+                 * But sessionStorage uses:
+                 *
+                 * shaft_diameter
+                 */
+        
+                const dsh =
+                    d.shaft_diameter /
+                    1000;
+        
+        
+                console.log(
+                    "[TEMPERATURE] shaft_diameter =",
+                    d.shaft_diameter
+                );
+        
+        
+                console.log(
+                    "[TEMPERATURE] dsh =",
+                    dsh
+                );
+        
+        
+                const zusatzlos =
+                    nenlstg *
+                    0.007;
+        
+        
+                const ovrhng =
+                    d.pole !== 0
+                        ? (
+                            PI *
+                            d.dia
+                        ) /
+                        (
+                            2000 *
+                            d.pole
+                        )
+                        : 0;
+        
+        
+                        const wireType = getSessionText("wire_type", "design_wire_type");
+                const VEL =
+                    PI *
+                    ds *
+                    rps;
+        
+        
+                const IA =
+                    (
+                        0.785 *
+                        (
+                            (
+                                d.d0 /
+                                1000
+                            ) +
+                            ds +
+                            0.01
+                        ) *
+                        (
+                            (
+                                d.d0 /
+                                1000
+                            ) -
+                            ds -
+                            0.01
+                        )
+                    ) +
+                    (
+                        PI *
+                        ds *
+                        (
+                            (
+                                finalStackLength /
+                                1000
+                            ) +
+                            ovrhng
+                        )
+                    );
+        
+        
+                const EX =
+                    IA *
+                    (
+                        1 +
+                        0.1 *
+                        VEL
+                    );
+        
+        
+                const BX =
+                    PI *
+                    (
+                        d.d0 /
+                        1000
+                    ) *
+                    (
+                        finalStackLength /
+                        1000
+                    );
+        
+        
+                const wlt =
+                    cu_los +
+                    t_los +
+                    sy_los +
+                    zusatzlos;
+        
+        
+                const temp =
+                    (
+                        EX +
+                        BX
+                    ) !== 0
+                        ? (
+                            0.03 *
+                            X_T *
+                            wlt
+                        ) /
+                        (
+                            EX +
+                            BX
+                        )
+                        : NaN;
+        
+        
+                /* =====================================================
+                   COPPER LENGTH
+                ===================================================== */
+        
+                const zs =
+                    finalTurns;
+        
+        
+                const l1 =
+                    (
+                        2 *
+                        (
+                            (
+                                finalStackLength /
+                                1000
+                            ) +
+                            0.06
+                        ) +
+                        (
+                            11 /
+                            12
+                        ) *
+                        (
+                            ds +
+                            d.W2 /
+                            1000
+                        ) *
+                        PI
+                    ) *
+                    zs *
+                    6;
+        
+        
+                const l2 =
+                    (
+                        2 *
+                        (
+                            (
+                                finalStackLength /
+                                1000
+                            ) +
+                            0.06
+                        ) +
+                        2 *
+                        (
+                            9 /
+                            12
+                        ) *
+                        (
+                            ds +
+                            d.W2 /
+                            1000
+                        ) *
+                        PI
+                    ) *
+                    zs *
+                    6;
+        
+        
+                const culength =
+                    l1 +
+                    l2;
+        
+        
+                /* =====================================================
+                   STATOR WEIGHT
+                ===================================================== */
+        
+                const Q =
+                    7850 *
+                    (
+                        (
+                            d.d0 /
+                            1000
+                        ) +
+                        ds
+                    ) *
+                    (
+                        (
+                            d.d0 /
+                            1000
+                        ) -
+                        ds
+                    ) -
+                    (
+                        d.N *
+                        d.A1 /
+                        100
+                    );
+        
+        
+                const statorwt =
+                    (
+                        780 *
+                        Q *
+                        (
+                            finalStackLength /
+                            1000
+                        ) /
+                        1000
+                    ) *
+                    0.95;
+        
+        
+                console.log("========================================");
+                console.log(
+                    "[STATOR WEIGHT]"
+                );
+        
+        
+                console.log(
+                    "d0 =",
+                    d.d0
+                );
+        
+        
+                console.log(
+                    "ds =",
+                    ds
+                );
+        
+        
+                console.log(
+                    "N =",
+                    d.N
+                );
+        
+        
+                console.log(
+                    "A1 =",
+                    d.A1
+                );
+        
+        
+                console.log(
+                    "Final Stack Length =",
+                    finalStackLength
+                );
+        
+        
+                console.log(
+                    "Q =",
+                    Q
+                );
+        
+        
+                console.log(
+                    "STATOR WEIGHT =",
+                    statorwt
+                );
+        
+        
+                console.log("========================================");
+        
+        
+                /* =====================================================
+                   ROTOR WEIGHT
+                ===================================================== */
+        
+                /*
+                 * FIX:
+                 *
+                 * Use d.shaft_diameter
+                 * instead of d.shaftDiameter.
+                 */
+        
+                const QR =
+                    7850 *
+                    (
+                        ds +
+                        dsh
+                    ) *
+                    (
+                        ds -
+                        dsh
+                    ) -
+                    (
+                        d.M *
+                        d.A2 /
+                        100
+                    );
+        
+        
+                const rotorwt =
+                    (
+                        780 *
+                        QR *
+                        (
+                            finalStackLength /
+                            1000
+                        ) /
+                        1000
+                    ) *
+                    0.95;
+        
+        
+                console.log(
+                    "[ROTOR WEIGHT]"
+                );
+        
+        
+                console.log(
+                    "shaft_diameter =",
+                    d.shaft_diameter
+                );
+        
+        
+                console.log(
+                    "dsh =",
+                    dsh
+                );
+        
+        
+                console.log(
+                    "QR =",
+                    QR
+                );
+        
+        
+                console.log(
+                    "rotorwt =",
+                    rotorwt
+                );
+        
+        
+                /* =====================================================
+                   AIR GAP
+                ===================================================== */
+        
+                const airgap =
+                    0.4 +
+                    2 *
+                    Math.sqrt(
+                        (
+                            finalStackLength /
+                            1000
+                        ) *
+                        ds
+                    );
+        
+        
+                /* =====================================================
+                   WRITE RESULTS TO FORM
+                ===================================================== */
+        
+                console.log("========================================");
+                console.log(
+                    "[WRITING RESULTS TO FORM]"
+                );
+                console.log("========================================");
+        
+        
+                setCalculatedValue(
+                    "slip",
+                    slip,
+                    3
+                );
+        
+        
+                setCalculatedValue(
+                    "temp",
+                    temp,
+                    2
+                );
+        
+        
+                setCalculatedValue(
+                    "cu_length",
+                    culength,
+                    4
+                );
+        
+        
+                setCalculatedValue(
+                    "statorwt",
+                    statorwt,
+                    2
+                );
+        
+        
+                setCalculatedValue(
+                    "rotorwt",
+                    rotorwt,
+                    2
+                );
+        
+        
+                setCalculatedValue(
+                    "air_gap",
+                    airgap,
+                    2
+                );
+        
+        
+                setCalculatedValue(
+                    "final_efficiency",
+                    efficiency1,
+                    2
+                );
+        
+        
+                setCalculatedValue(
+                    "angle",
+                    angle,
+                    2
+                );
+        
+        
+                setCalculatedValue(
+                    "torque",
+                    torque,
+                    2
+                );
+        
+        
+                /* =====================================================
+                   SAVE RESULTS
+                ===================================================== */
+        
+                if (
+                    Number.isFinite(slip)
+                ) {
+        
+                    saveWindingValue(
+                        "slip",
+                        slip.toFixed(3)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(temp)
+                ) {
+        
+                    saveWindingValue(
+                        "temp",
+                        temp.toFixed(2)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(culength)
+                ) {
+        
+                    saveWindingValue(
+                        "culength",
+                        culength.toFixed(4)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(statorwt)
+                ) {
+        
+                    saveWindingValue(
+                        "statorwt",
+                        statorwt.toFixed(2)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(rotorwt)
+                ) {
+        
+                    saveWindingValue(
+                        "rotorwt",
+                        rotorwt.toFixed(2)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(airgap)
+                ) {
+        
+                    saveWindingValue(
+                        "airgap",
+                        airgap.toFixed(2)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(efficiency1)
+                ) {
+        
+                    saveWindingValue(
+                        "efficiency1",
+                        efficiency1.toFixed(2)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(angle)
+                ) {
+        
+                    saveWindingValue(
+                        "angle",
+                        angle.toFixed(2)
+                    );
+        
+                }
+        
+        
+                if (
+                    Number.isFinite(torque)
+                ) {
+        
+                    saveWindingValue(
+                        "torque",
+                        torque.toFixed(2)
+                    );
+        
+                }
+        
+        
+                console.log("========================================");
+                logGroup("All calculation values");
+                logVal("imain", imain, "0.6 * iline");
+                logVal("iline", iline, "(hp*746) / (uph*ef*pf)");
+                logVal("efficiency (input)", efficiency, "% / 100");
+                logVal("finalTurns", finalTurns);
+                logVal("finalTurnsAux", finalTurnsAux);
+                logVal("finalStackLength", finalStackLength);
+                logVal("actualDia", actualDia);
+                logVal("ds", ds, "dia / 1000");
+                logVal("B (flux density)", B, "constants box (default 0.47)");
+                logVal("ac", ac, "imain*(zs*16 + zsA*8) / (3.14*ds)");
+                logVal("q1", q1, "(11*B*ac) / 1000");
+                logVal("q", q, "(hp*746) / (ef*pf*1000)");
+                logVal("recommendedStackLength", stackLength, "(q / (q1*rps*ds²)) * 1000");
+                logVal("lf_t (LF)", lf_t, "constants box (default = stamping)");
+                logVal("lf_y (LY)", lf_y, "constants box (default = stamping)");
+                logVal("xc_85", xc_85);
+                logVal("X_T", X_T);
+                logVal("m_tn", m_tn, "2*(stack/1000) + 0.48");
+                logVal("area", area, "6*dia²*0.785");
+                logVal("rp_85", rp_85, "xc_85*(zs*16+zsA*8)*m_tn / area");
+                logVal("t_ph", t_ph, "(zs*16 + zsA*8) / 2");
+                logVal("t_los", t_los, "7220*(N*ws*stack*w_ht)*(2*lf_t)");
+                logVal("sy_los", sy_los, "7000*(stack*ys*(ds+ys+2*w_ht))*(lf_y*2)");
+                logVal("j_bar", j_bar);
+                logVal("material", material);
+                logVal("b_los", b_los);
+                logVal("i_rng", i_rng);
+                logVal("l_rng", l_rng);
+                logVal("rng_r", rng_r);
+                logVal("rmg_los", rmg_los, "2*i_rng²*rng_r");
+                logVal("phi", phi);
+                logVal("B_av", B_av);
+                logVal("magspg", magspg);
+                logVal("I_MAG", I_MAG);
+                logVal("XS", XS);
+                logVal("X0", X0);
+                logVal("XZ", XZ);
+                logVal("XL", XL, "XS + X0 + XZ");
+                logVal("R3", R3);
+                logVal("RR", RR, "rp_85 + R3");
+                logVal("Z1", Z1, "sqrt(rp_85² + XL²)");
+                logVal("FK", FK, "RR / Z1");
+                logVal("ANGLE", angle, "acos(FK) in degrees");
+                logVal("TORQUE", torque, "(38.95*rp_85/(rp_85+R3)) / 16.54");
+                logVal("cu_los", cu_los, "imain²*rp_85");
+                logVal("mechanicalComponent", mechanicalComponent);
+                logVal("fr_los", fr_los, "hp*746*(0.06 bush / -0.025 ball bearing)");
+                logVal("wl (total loss)", wl, "t_los+sy_los+b_los+rmg_los+cu_los+fr_los");
+                logVal("nenlstg", nenlstg, "hp*746");
+                logVal("EFFICIENCY %", efficiency1, "100*nenlstg / (nenlstg+wl)");
+                logVal("kl", kl);
+                logVal("SLIP %", slip, "100*kl / (1+kl)");
+                logVal("zusatzlos", zusatzlos, "nenlstg*0.007");
+                logVal("wlt", wlt, "cu_los+t_los+sy_los+zusatzlos");
+                logVal("EX", EX);
+                logVal("BX", BX);
+                logVal("TEMP RISE", temp, "0.03*X_T*wlt / (EX+BX)");
+                logVal("CU LENGTH", culength, "l1 + l2");
+                logVal("STATOR WEIGHT", statorwt);
+                logVal("ROTOR WEIGHT", rotorwt);
+                logVal("AIR GAP", airgap, "0.4 + 2*sqrt(stack*ds)");
+                logAll("All calculation values");
+                logEnd();
+
+                console.log(
+                    "[CALCULATE ALL] COMPLETE"
+                );
+
+                setStatus(
+                    "All winding calculations are up to date.",
+                    "success"
+                );
+                console.log("========================================");
+        
+            }
+        
+        
+            /* =========================================================
+               SAVE INPUTS + RECALCULATE
+            ========================================================= */
+        
+            const windingInputIds = [
+        
+                "current_density",
+        
+                "efficiency",
+        
+                "insulation_dia",
+        
+                "actual_use_dia",
+        
+                "final_turns",
+        
+                "insulation_dia_aux",
+        
+                "actual_use_dia_aux",
+        
+                "final_turns_aux",
+        
+                "final_stack_length"
+        
+            ];
+        
+        
+            windingInputIds.forEach(
+                function (id) {
+        
+                    const input =
+                        document.getElementById(id);
+        
+        
+                    if (!input) {
+                        return;
+                    }
+        
+        
+                    input.addEventListener(
+                        "input",
+                        function () {
+        
+                            /*
+                             * Save user input.
+                             */
+        
+                            saveWindingValue(
+                                id,
+                                input.value
+                            );
+        
+        
+                            /*
+                             * Any change re-runs the whole chain:
+                             * currents -> recommended values ->
+                             * stack length -> performance.
+                             */
+
+                            calculateMainAndAux();
+
+                        }
+                    );
+        
+                }
+            );
+        
+        
+            /* =========================================================
+               LOAD SAVED VALUES
+            ========================================================= */
+        
+            windingInputIds.forEach(
+                function (id) {
+        
+                    const input =
+                        document.getElementById(id);
+        
+        
+                    if (!input) {
+                        return;
+                    }
+        
+        
+                    const saved =
+                        sessionStorage.getItem(id) ??
+                        sessionStorage.getItem("winding_" + id);
+        
+        
+                    if (
+        
+                        saved !== null &&
+        
+                        saved !== ""
+        
+                    ) {
+        
+                        input.value =
+                            saved;
+        
+                    }
+        
+                }
+            );
+        
+        
+            /* =========================================================
+               INITIAL CALCULATION
+            ========================================================= */
+
+            if (window.MotoMasterConstants) {
+                window.MotoMasterConstants.bind(calculateMainAndAux);
+            }
+
+            calculateMainAndAux();
+
+
+            /* =========================================================
+               SESSION DEBUG
+            ========================================================= */
+        
+            function debugRequiredSessionValues() {
+        
+                console.log("========================================");
+                console.log(
+                    "MOTO MASTER - SESSION DEBUG"
+                );
+                console.log("========================================");
+        
+        
+                const keys = [
+        
+                    "hp",
+                    "uph",
+        
+                    "dia",
+        
+                    "M",
+        
+                    "V",
+                    "V2",
+        
+                    "W",
+                    "W2",
+        
+                    "Y",
+        
+                    "frequency",
+        
+                    "N",
+        
+                    "X",
+        
+                    "pole",
+        
+                    "rng_wt",
+                    "rng_ht",
+        
+                    "A1",
+                    "A2",
+        
+                    "d0",
+        
+                    "shaft_diameter",
+        
+                    "re",
+                    "ra",
+                    "rb",
+                    "rc",
+                    "rd",
+        
+                    "e",
+        
+                    "rw",
+        
+                    "a",
+                    "b",
+                    "c",
+                    "d",
+                    "dw"
+        
+                ];
+        
+        
+                keys.forEach(
+                    function (key) {
+        
+                        const raw =
+                            sessionStorage.getItem(
+                                key
+                            );
+        
+        
+                        const value =
+                            Number(raw);
+        
+        
+                        if (
+                            raw === null
+                        ) {
+        
+                            console.log(
+                                "❌",
+                                key,
+                                "=",
+                                "MISSING"
+                            );
+        
+                        }
+        
+                        else if (
+                            !Number.isFinite(value)
+                        ) {
+        
+                            console.log(
+                                "❌",
+                                key,
+                                "=",
+                                raw,
+                                "(INVALID)"
+                            );
+        
+                        }
+        
+                        else {
+        
+                            console.log(
+                                "✅",
+                                key,
+                                "=",
+                                value
+                            );
+        
+                        }
+        
+                    }
+                );
+        
+        
+                console.log("========================================");
+        
+            }
+        
+        
+            /* =========================================================
+               MANUAL FIELD CHECK
+            ========================================================= */
+        
+            window.checkMotoMaster =
+                function () {
+        
+                    console.clear();
+        
+        
+                    console.log("========================================");
+                    console.log(
+                        "MOTO MASTER FIELD CHECK"
+                    );
+                    console.log("========================================");
+        
+        
+                    const fields = [
+        
+                        "current_density",
+                        "efficiency",
+        
+                        "I_main",
+        
+                        "insulation_dia",
+                        "recommended_dia",
+                        "actual_use_dia",
+                        "recommended_turns",
+                        "final_turns",
+        
+                        "I_aux",
+        
+                        "insulation_dia_aux",
+                        "recommended_dia_aux",
+                        "actual_use_dia_aux",
+                        "recommended_turns_aux",
+                        "final_turns_aux",
+        
+                        "recommended_stack_length",
+                        "final_stack_length",
+        
+                        "slip",
+                        "temp",
+                        "statorwt",
+                        "rotorwt",
+                        "cu_length",
+                        "air_gap",
+                        "final_efficiency",
+                        "angle",
+                        "torque"
+        
+                    ];
+        
+        
+                    fields.forEach(
+                        function (id) {
+        
+                            const el =
+                                document.getElementById(
+                                    id
+                                );
+        
+        
+                            if (!el) {
+        
+                                console.log(
+                                    "❌",
+                                    id,
+                                    "NOT FOUND"
+                                );
+        
+                                return;
+        
+                            }
+        
+        
+                            console.log(
+                                id,
+                                "=",
+                                el.value
+                            );
+        
+                        }
+                    );
+        
+        
+                    debugRequiredSessionValues();
+        
+                };
+        
+        
+            /* =========================================================
+               SPECIFIC LEAKAGE CHECK
+            ========================================================= */
+        
+            window.checkLeakageInputs =
+                function () {
+        
+                    console.clear();
+        
+                    console.log("========================================");
+                    console.log(
+                        "LEAKAGE REACTANCE INPUT CHECK"
+                    );
+                    console.log("========================================");
+        
+        
+                    const keys = [
+                        "a",
+                        "b",
+                        "c",
+                        "d",
+                        "dw",
+                        "e",
+                        "rc",
+                        "re",
+                        "M",
+                        "N",
+                        "pole",
+                        "frequency"
+                    ];
+        
+        
+                    keys.forEach(
+                        function (key) {
+        
+                            const raw =
+                                sessionStorage.getItem(
+                                    key
+                                );
+        
+        
+                            console.log(
+                                key,
+                                "=",
+                                raw,
+                                "| Number =",
+                                Number(raw),
+                                "| Valid =",
+                                Number.isFinite(
+                                    Number(raw)
+                                )
+                            );
+        
+                        }
+                    );
+        
+        
+                    console.log("========================================");
+        
+                };
+        
+        
+            /* =========================================================
+               MANUAL RECALCULATE
+            ========================================================= */
+        
+            window.recalculateMotoMaster =
+                function () {
+        
+                    console.log(
+                        "[MANUAL RECALCULATE]"
+                    );
+        
+        
+                    const imain =
+                        getInputNumber(
+                            "I_main"
+                        );
+        
+        
+                    if (
+                        Number.isFinite(imain)
+                    ) {
+        
+                        calculateStackLength(
+                            imain
+                        );
+        
+                    }
+        
+                    else {
+        
+                        calculateMainAndAux();
+        
+                    }
+        
+                };
+        
+        
+
+            /* =========================================================
+               SWG CALCULATOR
+            ========================================================= */
+
+            const swgData = [
+
+                { gauge: 7, diameter: 4.064 },
+                { gauge: 8, diameter: 3.658 },
+                { gauge: 9, diameter: 3.264 },
+                { gauge: 10, diameter: 2.906 },
+                { gauge: 11, diameter: 2.642 },
+                { gauge: 12, diameter: 2.337 },
+                { gauge: 13, diameter: 2.032 },
+                { gauge: 14, diameter: 1.829 },
+                { gauge: 15, diameter: 1.651 },
+                { gauge: 16, diameter: 1.626 },
+                { gauge: 17, diameter: 1.422 },
+                { gauge: 18, diameter: 1.219 },
+                { gauge: 19, diameter: 1.07 },
+                { gauge: 20, diameter: 0.914 },
+                { gauge: 21, diameter: 0.813 },
+                { gauge: 22, diameter: 0.711 },
+                { gauge: 23, diameter: 0.635 },
+                { gauge: 24, diameter: 0.559 },
+                { gauge: 25, diameter: 0.508 },
+                { gauge: 26, diameter: 0.457 },
+                { gauge: 27, diameter: 0.406 },
+                { gauge: 28, diameter: 0.355 },
+                { gauge: 29, diameter: 0.33 },
+                { gauge: 30, diameter: 0.305 },
+                { gauge: 31, diameter: 0.28 },
+                { gauge: 32, diameter: 0.254 },
+                { gauge: 33, diameter: 0.229 },
+                { gauge: 34, diameter: 0.203 },
+                { gauge: 35, diameter: 0.178 },
+                { gauge: 36, diameter: 0.152 },
+                { gauge: 37, diameter: 0.127 },
+                { gauge: 38, diameter: 0.102 },
+                { gauge: 39, diameter: 0.076 },
+                { gauge: 40, diameter: 0.064 },
+                { gauge: 41, diameter: 0.051 },
+                { gauge: 42, diameter: 0.038 },
+                { gauge: 43, diameter: 0.032 },
+                { gauge: 44, diameter: 0.025 },
+                { gauge: 45, diameter: 0.02 },
+                { gauge: 46, diameter: 0.015 },
+                { gauge: 47, diameter: 0.013 },
+                { gauge: 48, diameter: 0.01 },
+                { gauge: 49, diameter: 0.008 },
+                { gauge: 50, diameter: 0.006 }
+
+            ];
+
+
+            const swgGauges =
+                swgData.map(
+                    item => item.gauge
+                );
+
+
+            function fillSelect(selectElement) {
+
+                if (!selectElement) {
+                    return;
+                }
+
+                selectElement.innerHTML = "";
+
+                swgGauges.forEach(
+                    (gauge) => {
+
+                        const option =
+                            document.createElement(
+                                "option"
+                            );
+
+                        option.value =
+                            gauge;
+
+                        option.textContent =
+                            gauge;
+
+                        selectElement.appendChild(
+                            option
+                        );
+
+                    }
+                );
+
+            }
+
+
+            const wireGauge =
+                document.getElementById(
+                    "wire_gauge"
+                );
+
+            const effectiveGauge =
+                document.getElementById(
+                    "effective_gauge"
+                );
+
+
+            fillSelect(wireGauge);
+
+            fillSelect(effectiveGauge);
+
+
+            const multiGaugeSelects =
+                document.querySelectorAll(
+                    ".multi_gauge"
+                );
+
+
+            multiGaugeSelects.forEach(
+                (select) => {
+
+                    fillSelect(select);
+
+                }
+            );
+
+
+            function gaugeToDiameter(gauge) {
+
+                const entry =
+                    swgData.find(
+                        item =>
+                            item.gauge == gauge
+                    );
+
+                return entry
+                    ? entry.diameter
+                    : null;
+
+            }
+
+
+            function diameterToArea(diameter) {
+
+                return (
+                    Math.PI *
+                    Math.pow(
+                        diameter / 2,
+                        2
+                    )
+                );
+
+            }
+
+
+            function areaToGauge(area) {
+
+                let closest = null;
+
+                let minDiff =
+                    Infinity;
+
+
+                swgData.forEach(
+                    (item) => {
+
+                        const itemArea =
+                            diameterToArea(
+                                item.diameter
+                            );
+
+                        const diff =
+                            Math.abs(
+                                itemArea -
+                                area
+                            );
+
+
+                        if (
+                            diff <
+                            minDiff
+                        ) {
+
+                            minDiff =
+                                diff;
+
+                            closest =
+                                item.gauge;
+
+                        }
+
+                    }
+                );
+
+
+                return closest;
+
+            }
+
+
+            function updateResults() {
+
+                const numWires =
+                    Number(
+                        document.getElementById(
+                            "num_wires"
+                        )?.value
+                    );
+
+
+                const wireG =
+                    Number(
+                        wireGauge?.value
+                    );
+
+
+                const effectiveG =
+                    Number(
+                        effectiveGauge?.value
+                    );
+
+
+                const result1 =
+                    document.getElementById(
+                        "result1"
+                    );
+
+                const result2 =
+                    document.getElementById(
+                        "result2"
+                    );
+
+
+                if (
+                    numWires > 0 &&
+                    wireG
+                ) {
+
+                    const diameter =
+                        gaugeToDiameter(
+                            wireG
+                        );
+
+
+                    if (
+                        diameter !== null
+                    ) {
+
+                        const areaOne =
+                            diameterToArea(
+                                diameter
+                            );
+
+
+                        const totalArea =
+                            areaOne *
+                            numWires;
+
+
+                        const effGauge =
+                            areaToGauge(
+                                totalArea
+                            );
+
+
+                        if (result1) {
+
+                            result1.textContent =
+                                `Effective gauge of ${numWires} wires of SWG ${wireG} is approximately SWG ${effGauge}.`;
+
+                        }
+
+                    }
+
+                }
+                else if (result1) {
+
+                    result1.textContent = "";
+
+                }
+
+
+                if (
+                    effectiveG &&
+                    wireG &&
+                    effectiveG < wireG
+                ) {
+
+                    const requiredDiameter =
+                        gaugeToDiameter(
+                            effectiveG
+                        );
+
+
+                    const oneWireDiameter =
+                        gaugeToDiameter(
+                            wireG
+                        );
+
+
+                    if (
+                        requiredDiameter &&
+                        oneWireDiameter
+                    ) {
+
+                        const requiredArea =
+                            diameterToArea(
+                                requiredDiameter
+                            );
+
+
+                        const oneWireArea =
+                            diameterToArea(
+                                oneWireDiameter
+                            );
+
+
+                        const wiresNeeded =
+                            requiredArea /
+                            oneWireArea;
+
+
+                        if (result2) {
+
+                            result2.textContent =
+                                `Number of SWG ${wireG} wires to replace 1 SWG ${effectiveG}: ${Math.ceil(wiresNeeded)}.`;
+
+                        }
+
+                    }
+
+                }
+                else if (result2) {
+
+                    result2.textContent = "";
+
+                }
+
+            }
+
+
+            function calcMultiGaugeEffective() {
+
+                const rows =
+                    document.querySelectorAll(
+                        "#multi_table_body tr"
+                    );
+
+
+                let totalArea = 0;
+
+
+                rows.forEach(
+                    (row) => {
+
+                        const numberInput =
+                            row.querySelector(
+                                ".multi_num"
+                            );
+
+                        const gaugeInput =
+                            row.querySelector(
+                                ".multi_gauge"
+                            );
+
+
+                        const num =
+                            Number(
+                                numberInput?.value
+                            );
+
+
+                        const gauge =
+                            Number(
+                                gaugeInput?.value
+                            );
+
+
+                        if (
+                            num > 0
+                        ) {
+
+                            const diameter =
+                                gaugeToDiameter(
+                                    gauge
+                                );
+
+
+                            if (diameter) {
+
+                                totalArea +=
+                                    num *
+                                    diameterToArea(
+                                        diameter
+                                    );
+
+                            }
+
+                        }
+
+                    }
+                );
+
+
+                const effective =
+                    totalArea
+                        ? areaToGauge(totalArea)
+                        : 0;
+
+
+                const output =
+                    document.getElementById(
+                        "multi_effective_gauge"
+                    );
+
+
+                if (output) {
+
+                    output.textContent =
+                        effective;
+
+                }
+
+            }
+
+
+            if (wireGauge) {
+
+                wireGauge.addEventListener(
+                    "change",
+                    updateResults
+                );
+
+            }
+
+
+            if (effectiveGauge) {
+
+                effectiveGauge.addEventListener(
+                    "change",
+                    updateResults
+                );
+
+            }
+
+
+            const numWires =
+                document.getElementById(
+                    "num_wires"
+                );
+
+
+            if (numWires) {
+
+                numWires.addEventListener(
+                    "input",
+                    updateResults
+                );
+
+            }
+
+
+            document
+                .querySelectorAll(
+                    ".multi_num, .multi_gauge"
+                )
+                .forEach(
+                    (element) => {
+
+                        element.addEventListener(
+                            "input",
+                            calcMultiGaugeEffective
+                        );
+
+                        element.addEventListener(
+                            "change",
+                            calcMultiGaugeEffective
+                        );
+
+                    }
+                );
+
+
+            updateResults();
+
+            calcMultiGaugeEffective();
+
+
+
+
+            console.log(
+                "Moto Master winding calculator loaded."
+            );
+        
+        
+            console.log(
+                "Use checkMotoMaster() to inspect all fields."
+            );
+        
+        
+            console.log(
+                "Use checkLeakageInputs() to inspect angle dependencies."
+            );
+        
+        
+            console.log(
+                "Use recalculateMotoMaster() to manually recalculate."
+            );
+        
+        
+        })();
+        </script>
+    

@@ -1,0 +1,108 @@
+<div class="design-module profile-page">
+
+    <div class="design-page-header">
+        <div>
+            <h1>Profile</h1>
+            <p>Your account details and password.</p>
+        </div>
+    </div>
+
+    {% if error %}
+
+        <div class="winding-calc-status is-error">{{ error }}</div>
+
+    {% else %}
+
+        <!-- Summary -->
+        <section class="design-section profile-summary">
+            <div class="profile-avatar" id="profileAvatar">{{ user.name[0] | upper }}</div>
+            <div class="profile-summary-text">
+                <strong id="profileSummaryName">{{ user.name }}</strong>
+                <span id="profileSummaryUser">@{{ user.username }} · {{ user.email }}</span>
+                <span class="profile-summary-meta">
+                    Member since {{ user.created_at.strftime('%d %b %Y') }}
+                    · {{ user.design_count }} design{{ '' if user.design_count == 1 else 's' }}
+                    · {{ user.report_count }} report{{ '' if user.report_count == 1 else 's' }}
+                    {% if user.role == 'admin' %}· Admin{% endif %}
+                </span>
+            </div>
+        </section>
+
+        <!-- Details -->
+        <section class="design-section">
+            <div class="design-section-header">
+                <h2>Account details</h2>
+                <p>Your name appears on the dashboard. You can log in with your username or email.</p>
+            </div>
+
+            <form id="profileForm" novalidate>
+                <div class="design-form-grid">
+
+                    <div class="design-input-group">
+                        <label for="profileName">Full name</label>
+                        <input type="text" id="profileName" name="name" value="{{ user.name }}" maxlength="100" autocomplete="name" required>
+                    </div>
+
+                    <div class="design-input-group">
+                        <label for="profileUsername">Username</label>
+                        <input type="text" id="profileUsername" name="username" value="{{ user.username }}" maxlength="50" autocomplete="username" required>
+                    </div>
+
+                    <div class="design-input-group">
+                        <label for="profileEmail">Email</label>
+                        <input type="email" id="profileEmail" name="email" value="{{ user.email }}" maxlength="150" autocomplete="email" required>
+                    </div>
+
+                    <div class="design-input-group">
+                        <label for="profilePhone">Phone number</label>
+                        <input type="tel" id="profilePhone" name="phone" value="{{ user.phone or '' }}" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="e.g. +91 98765 43210" required>
+                    </div>
+
+                </div>
+
+                <p class="profile-message" id="profileMessage" role="status" aria-live="polite"></p>
+
+                <div class="design-action">
+                    <button type="submit" class="design-next-button">Save details</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Password -->
+        <section class="design-section">
+            <div class="design-section-header">
+                <h2>Change password</h2>
+                <p>At least 8 characters.</p>
+            </div>
+
+            <form id="passwordForm" novalidate>
+                <div class="design-form-grid">
+
+                    <div class="design-input-group">
+                        <label for="currentPassword">Current password</label>
+                        <input type="password" id="currentPassword" name="current_password" autocomplete="current-password" required>
+                    </div>
+
+                    <div class="design-input-group">
+                        <label for="newPassword">New password</label>
+                        <input type="password" id="newPassword" name="new_password" minlength="8" autocomplete="new-password" required>
+                    </div>
+
+                    <div class="design-input-group">
+                        <label for="confirmPassword">Confirm new password</label>
+                        <input type="password" id="confirmPassword" name="confirm_password" minlength="8" autocomplete="new-password" required>
+                    </div>
+
+                </div>
+
+                <p class="profile-message" id="passwordMessage" role="status" aria-live="polite"></p>
+
+                <div class="design-action">
+                    <button type="submit" class="design-next-button">Change password</button>
+                </div>
+            </form>
+        </section>
+
+    {% endif %}
+
+</div>

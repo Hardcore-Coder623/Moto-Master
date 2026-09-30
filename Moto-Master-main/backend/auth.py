@@ -7,7 +7,8 @@ from flask import Blueprint, request, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 
-from backend import single_session, account
+from backend import single_session
+from backend import demo
 
 load_dotenv()
 
@@ -74,6 +75,10 @@ def register():
     email = data.get("email", "").strip().lower()
     phone_raw = str(data.get("phone", "")).strip()
     password = data.get("password", "")
+
+    # True when the account is created from "Try Free Demo":
+    # only these accounts get the 4-report demo limit.
+    is_demo = data.get("demo") is True
     confirm_password = data.get("confirm_password", "")
 
     # -----------------------------------------------------
@@ -125,7 +130,7 @@ def register():
         cursor = conn.cursor()
 
         ensure_phone_column(cursor)
-        account.ensure_is_demo_column(cursor)
+        demo.ensure_demo_column(cursor)
 
         # Check username/email
         cursor.execute(
@@ -169,7 +174,7 @@ def register():
                 role,
                 is_demo
             )
-            VALUES (%s, %s, %s, %s, %s, %s, TRUE)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """,
             (
@@ -178,7 +183,8 @@ def register():
                 email,
                 phone,
                 password_hash,
-                "user"
+                "user",
+                is_demo
             )
         )
 
@@ -196,14 +202,12 @@ def register():
         session["username"] = username
         session["email"] = email
         session["role"] = "user"
-        session["account_type"] = "demo"
 
         return jsonify({
             "success": True,
             "message": "Account created successfully.",
             "user_id": user_id,
-            "logged_in": True,
-            "account_type": "demo"
+            "logged_in": True
         }), 201
 
     except Exception as e:
@@ -317,9 +321,6 @@ def login():
         # New login token: any other device using this
         # account is logged out on its next request.
         single_session.start_session(cursor, user_id)
-
-        # Demo or full access (backend/account.py).
-        acc = account.get_account(cursor, user_id)
         conn.commit()
 
         session["user_id"] = user_id
@@ -327,8 +328,6 @@ def login():
         session["username"] = username
         session["email"] = email
         session["role"] = role
-        # For display only - limits are always re-checked from the database.
-        session["account_type"] = acc["type"] if acc else "demo"
 
         return jsonify({
             "success": True,
@@ -338,9 +337,7 @@ def login():
                 "name": name,
                 "username": username,
                 "email": email,
-                "role": role,
-                "account_type": session["account_type"],
-                "full_access": bool(acc and acc["full_access"])
+                "role": role
             }
         }), 200
 

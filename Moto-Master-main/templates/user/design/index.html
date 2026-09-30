@@ -1,0 +1,492 @@
+<div class="design-module">
+<!-- =========================================
+     DESIGN HEADER
+========================================== -->
+
+<div class="design-page-header">
+
+    <div>
+        <h1>New Design</h1>
+        <p>Create a new motor winding design.</p>
+    </div>
+
+</div>
+
+
+<!-- =========================================
+     DEMO LIMIT (no active subscription)
+     4 design reports in total, all phases together
+========================================== -->
+
+{% if access and access.demo %}
+<div class="design-demo-banner{% if access.left <= 0 %} is-used-up{% endif %}"
+     id="designDemoBanner"
+     data-limit="{{ access.limit }}"
+     data-left="{{ access.left }}"
+     role="status">
+    <strong>Demo mode</strong>
+    <span id="designDemoText">
+        {% if access.left > 0 %}
+            {{ access.left }} of {{ access.limit }} design reports left (total for Single, Two and Three Phase).
+        {% else %}
+            You have used all {{ access.limit }} demo design reports. Choose a plan to keep creating designs.
+        {% endif %}
+    </span>
+</div>
+{% endif %}
+
+
+<!-- =========================================
+     STEP 1 — PHASE SELECTION
+========================================== -->
+
+<section class="design-section" id="sectionPhase">
+
+    <div class="design-section-header">
+        <h2>1. Select Phase</h2>
+        <p>Select the phase type for your motor design.</p>
+    </div>
+
+
+    <div class="phase-selection">
+
+        <button
+            type="button"
+            class="phase-button"
+            data-phase="1_phase"
+            id="phase1Button">
+
+            <span class="phase-number">1</span>
+
+            <span class="phase-name">
+                Single Phase
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="phase-button"
+            data-phase="2_phase"
+            id="phase2Button">
+
+            <span class="phase-number">2</span>
+
+            <span class="phase-name">
+                Two Phase
+            </span>
+
+        </button>
+
+
+        <button
+            type="button"
+            class="phase-button"
+            data-phase="3_phase"
+            id="phase3Button">
+
+            <span class="phase-number">3</span>
+
+            <span class="phase-name">
+                Three Phase
+            </span>
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     STEP 2 — BASIC COMPONENTS
+========================================== -->
+
+<section
+    class="design-section hidden"
+    id="sectionComponents">
+
+    <div class="design-section-header">
+
+        <h2>2. Basic Components</h2>
+
+        <p>
+            Select the wire type and mechanical component.
+        </p>
+
+    </div>
+
+
+    <div class="design-components-row">
+
+        <!-- Wire Type -->
+
+        <div class="design-field">
+
+            <label for="wireType">
+                Wire Type
+            </label>
+
+            <select id="wireType">
+
+                <option value="">
+                    Select Wire Type
+                </option>
+
+                <option value="copper_pvc_pp">
+                    Copper PVC/PP Wire
+                </option>
+
+                <option value="copper_enamel">
+                    Copper Enamel Wire
+                </option>
+
+                <option value="aluminium_pvc_pp">
+                    Aluminium PVC/PP Wire
+                </option>
+
+                <option value="aluminium_enamel">
+                    Aluminium Enamel
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- Mechanical Component -->
+
+        <div class="design-field">
+
+            <label for="mechanicalComponent">
+                Mechanical Component
+            </label>
+
+            <select id="mechanicalComponent">
+
+                <option value="">
+                    Select Mechanical Component
+                </option>
+
+                <option value="bush">
+                    Bush
+                </option>
+
+                <option value="ball_bearing">
+                    Ball Bearing
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- Auto-fill: start from a previous design -->
+
+    <div class="design-field design-start-from">
+
+        <label for="startFrom">
+            Start from
+        </label>
+
+        <select id="startFrom">
+            <option value="blank">Blank form</option>
+        </select>
+
+        <p class="design-start-hint" id="startFromHint">
+            Pick a previous design to fill every form with its values. You can change anything before saving.
+        </p>
+
+    </div>
+
+
+    <div class="design-action">
+
+        <button
+            type="button"
+            class="design-next-button"
+            id="componentsNextButton"
+            disabled>
+
+            Continue
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     STEP 3 — DESIGN PARAMETERS
+========================================== -->
+
+<section
+    class="design-section hidden"
+    id="sectionForms">
+
+    <div class="design-section-header">
+
+        <h2>3. Design Parameters</h2>
+
+        <p>
+            Enter the required parameters step by step.
+        </p>
+
+        <div class="selected-phase-display">
+
+            Selected Phase:
+
+            <strong id="selectedPhaseText">
+                -
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         MAIN DATA
+    ====================================== -->
+
+    <div
+        class="design-form-step"
+        id="formMainData">
+
+        <div class="design-step-title">
+
+            <span>1</span>
+
+            <div>
+                <h3>Main Data</h3>
+                <p>Enter the main motor design data.</p>
+            </div>
+
+        </div>
+
+
+        <div class="design-placeholder">
+
+            Main Data fields will be added here.
+
+        </div>
+
+
+        <div class="design-action">
+
+            <button
+                type="button"
+                class="design-next-button"
+                id="mainDataNext">
+
+                Next
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         STAMPING PARAMETERS
+    ====================================== -->
+
+    <div
+        class="design-form-step hidden"
+        id="formStamping">
+
+        <div class="design-step-title">
+
+            <span>2</span>
+
+            <div>
+                <h3>Stamping Parameters</h3>
+                <p>Enter the stamping parameters.</p>
+            </div>
+
+        </div>
+
+
+        <div class="design-placeholder">
+
+            Stamping Parameter fields will be added here.
+
+        </div>
+
+
+        <div class="design-action">
+
+            <button
+                type="button"
+                class="design-back-button"
+                id="stampingBack">
+
+                Back
+
+            </button>
+
+            <button
+                type="button"
+                class="design-next-button"
+                id="stampingNext">
+
+                Next
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         ROTOR PARAMETERS
+    ====================================== -->
+
+    <div
+        class="design-form-step hidden"
+        id="formRotor">
+
+        <div class="design-step-title">
+
+            <span>3</span>
+
+            <div>
+                <h3>Rotor Parameters</h3>
+                <p>Enter the rotor parameters.</p>
+            </div>
+
+        </div>
+
+
+        <div class="design-placeholder">
+
+            Rotor Parameter fields will be added here.
+
+        </div>
+
+
+        <div class="design-action">
+
+            <button
+                type="button"
+                class="design-back-button"
+                id="rotorBack">
+
+                Back
+
+            </button>
+
+            <button
+                type="button"
+                class="design-next-button"
+                id="rotorNext">
+
+                Next
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         WINDING PARAMETERS
+    ====================================== -->
+
+    <div
+        class="design-form-step hidden"
+        id="formWinding">
+
+        <div class="design-step-title">
+
+            <span>4</span>
+
+            <div>
+                <h3>Winding Parameters</h3>
+                <p>Enter the winding parameters.</p>
+            </div>
+
+        </div>
+
+
+        <div class="design-placeholder">
+
+            Winding Parameter fields will be added here.
+
+        </div>
+
+
+        <div class="design-action">
+
+            <button
+                type="button"
+                class="design-back-button"
+                id="windingBack">
+
+                Back
+
+            </button>
+
+            <button
+                type="button"
+                class="design-submit-button"
+                id="submitDesign">
+
+                Continue
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+</div>
+<script>
+(function () {
+    const wireType = document.getElementById("wireType");
+const mechanicalComponent = document.getElementById("mechanicalComponent");
+const componentsNextButton = document.getElementById("componentsNextButton");
+
+function validateComponents() {
+    const wireSelected = wireType.value !== "";
+    const mechanicalSelected = mechanicalComponent.value !== "";
+
+    componentsNextButton.disabled = !(wireSelected && mechanicalSelected);
+}
+
+wireType.addEventListener("change", validateComponents);
+mechanicalComponent.addEventListener("change", validateComponents);
+
+componentsNextButton.addEventListener("click", function () {
+
+    // Save selections
+    sessionStorage.setItem("wire_type", wireType.value);
+    sessionStorage.setItem(
+        "mechanical_component",
+        mechanicalComponent.value
+    );
+
+    console.log(
+        "[DESIGN] Mechanical Component:",
+        mechanicalComponent.value
+    );
+
+    console.log(
+        "[DESIGN] Wire Type:",
+        wireType.value
+    );
+
+    // Continue to design parameters
+    document.getElementById("sectionComponents").classList.add("hidden");
+    document.getElementById("sectionForms").classList.remove("hidden");
+});
+})();
+</script>

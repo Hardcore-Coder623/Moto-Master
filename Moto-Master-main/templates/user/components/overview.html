@@ -136,22 +136,18 @@
                 {% else %}
 
                     <strong class="stat-plan">
-                        {% if demo_access %}{{ demo_access.label }}{% else %}No Plan{% endif %}
+                        {% if demo_access and demo_access.demo %}Demo{% elif demo_access %}Full Access{% else %}No Plan{% endif %}
                     </strong>
 
-                    {% if demo_access and demo_access.demo %}
                     <small class="status-inactive">
+                        {% if demo_access and demo_access.demo %}
                             {{ demo_access.left }} / {{ demo_access.limit }} reports left
-                    </small>
-                    {% elif demo_access and demo_access.full_access %}
-                    <small class="status-active">
-                            Unlimited reports
-                    </small>
-                    {% else %}
-                    <small class="status-inactive">
+                        {% elif demo_access %}
+                            Unlimited designs
+                        {% else %}
                             Inactive
+                        {% endif %}
                     </small>
-                    {% endif %}
 
                 {% endif %}
 
@@ -402,7 +398,7 @@
                     </div>
 
                     <h4>
-                        {% if demo_access and demo_access.full_access %}Full access{% else %}No active subscription{% endif %}
+                        No active subscription
                     </h4>
 
                     {% if demo_access and demo_access.demo %}
@@ -411,9 +407,9 @@
                         (total for all phases).
                         {% if demo_access.left <= 0 %}Choose a plan to keep creating designs.{% endif %}
                     </p>
-                    {% elif demo_access and demo_access.full_access %}
+                    {% elif demo_access %}
                     <p>
-                        {{ demo_access.label }} account: unlimited design reports.
+                        Your account has unlimited designs.
                     </p>
                     {% else %}
                     <p>
