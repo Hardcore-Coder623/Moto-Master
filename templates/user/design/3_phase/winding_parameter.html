@@ -5,30 +5,30 @@
     <h2>Winding Parameters</h2>
 
     <aside class="winding-constants" id="windingConstants" aria-label="Calculation constants">
-                <div class="wc-head">
-                    <strong>Calculation constants</strong>
-                    <button type="button" class="wc-reset" id="wcReset" title="Use default values">Reset</button>
-                </div>
-                <div class="wc-grid">
-                    <label class="wc-field" for="wc_fill_factor">
-                        <span>Slot fill factor</span>
-                        <input type="number" id="wc_fill_factor" step="0.01" min="0.05" max="1" inputmode="decimal">
-                    </label>
-                    <label class="wc-field" for="wc_flux_density">
-                        <span>B (flux density)</span>
-                        <input type="number" id="wc_flux_density" step="0.01" min="0.05" max="3" inputmode="decimal">
-                    </label>
-                    <label class="wc-field" for="wc_lf">
-                        <span>LF (tooth loss)</span>
-                        <input type="number" id="wc_lf" step="0.1" min="0" max="100" inputmode="decimal">
-                    </label>
-                    <label class="wc-field" for="wc_ly">
-                        <span>LY (yoke loss)</span>
-                        <input type="number" id="wc_ly" step="0.1" min="0" max="100" inputmode="decimal">
-                    </label>
-                </div>
-                <p class="wc-status" id="wcStatus">Empty = default value</p>
-            </aside>
+        <div class="wc-head">
+            <strong>Calculation constants</strong>
+            <button type="button" class="wc-reset" id="wcReset" title="Use default values">Reset</button>
+        </div>
+        <div class="wc-grid">
+            <label class="wc-field" for="wc_fill_factor">
+                <span>Slot fill factor</span>
+                <input type="number" id="wc_fill_factor" step="0.01" min="0.05" max="1" inputmode="decimal">
+            </label>
+            <label class="wc-field" for="wc_flux_density">
+                <span>B (flux density)</span>
+                <input type="number" id="wc_flux_density" step="0.01" min="0.05" max="3" inputmode="decimal">
+            </label>
+            <label class="wc-field" for="wc_lf">
+                <span>LF (tooth loss)</span>
+                <input type="number" id="wc_lf" step="0.1" min="0" max="100" inputmode="decimal">
+            </label>
+            <label class="wc-field" for="wc_ly">
+                <span>LY (yoke loss)</span>
+                <input type="number" id="wc_ly" step="0.1" min="0" max="100" inputmode="decimal">
+            </label>
+        </div>
+        <p class="wc-status" id="wcStatus">Empty = default value</p>
+    </aside>
 
 </div>
 
@@ -43,250 +43,98 @@
         <div class="design-form-grid">
 
             <div class="design-input-group">
-                <label for="current_density">
-                    Current Density (A/mm²)
-                </label>
-                <input
-                    type="number"
-                    id="current_density"
-                    name="current_density"
-                    step="0.01"
-                    required
-                >
+                <label for="current_density">Current Density (A/mm²)</label>
+                <input type="number" id="current_density" name="current_density" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="efficiency">
-                    Recommended Efficiency (%)
-                </label>
-                <input
-                    type="number"
-                    id="efficiency"
-                    name="efficiency"
-                    step="0.1"
-                    required
-                >
+                <label for="efficiency">Recommended Efficiency (%)</label>
+                <input type="number" id="efficiency" name="efficiency" step="0.1" required>
             </div>
 
             <div class="design-input-group">
-                <label for="I_ph">
-                    I PH (mm)
-                </label>
-                <input
-                    type="number"
-                    id="I_ph"
-                    name="I_ph"
-                    step="0.01"
-                    required
-                >
+                <label for="I_ph">I PH (mm)</label>
+                <input type="number" id="I_ph" name="I_ph" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="insulation_dia">
-                    Insulation Diameter (mm)
-                </label>
-                <input
-                    type="number"
-                    id="insulation_dia"
-                    name="insulation_dia"
-                    step="0.01"
-                    required
-                >
+                <label for="insulation_dia">Insulation Diameter (mm)</label>
+                <input type="number" id="insulation_dia" name="insulation_dia" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="recommended_dia">
-                    Recommended Diameter (mm)
-                </label>
-                <input
-                    type="number"
-                    id="recommended_dia"
-                    name="recommended_dia"
-                    step="0.01"
-                    required
-                >
+                <label for="recommended_dia">Recommended Diameter (mm)</label>
+                <input type="number" id="recommended_dia" name="recommended_dia" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="actual_use_dia">
-                    Actual Use Diameter (mm)
-                </label>
-                <input
-                    type="number"
-                    id="actual_use_dia"
-                    name="actual_use_dia"
-                    step="0.01"
-                    required
-                >
+                <label for="actual_use_dia">Actual Use Diameter (mm)</label>
+                <input type="number" id="actual_use_dia" name="actual_use_dia" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="recommended_turns">
-                    Recommended Turns
-                </label>
-                <input
-                    type="number"
-                    id="recommended_turns"
-                    name="recommended_turns"
-                    step="0.01"
-                    required
-                >
+                <label for="recommended_turns">Recommended Turns</label>
+                <input type="number" id="recommended_turns" name="recommended_turns" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="final_turns">
-                    Final Turns
-                </label>
-                <input
-                    type="number"
-                    id="final_turns"
-                    name="final_turns"
-                    step="1"
-                    required
-                >
+                <label for="final_turns">Final Turns</label>
+                <input type="number" id="final_turns" name="final_turns" step="1" required>
             </div>
 
             <div class="design-input-group">
-                <label for="recommended_stack_length">
-                    Recommended Stack Length (mm)
-                </label>
-                <input
-                    type="number"
-                    id="recommended_stack_length"
-                    name="recommended_stack_length"
-                    step="0.01"
-                    required
-                >
+                <label for="recommended_stack_length">Recommended Stack Length (mm)</label>
+                <input type="number" id="recommended_stack_length" name="recommended_stack_length" step="0.01" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="final_stack_length">
-                    Final Stack Length (mm)
-                </label>
-                <input
-                    type="number"
-                    id="final_stack_length"
-                    name="final_stack_length"
-                    step="0.01"
-                    required
-                >
+                <label for="final_stack_length">Final Stack Length (mm)</label>
+                <input type="number" id="final_stack_length" name="final_stack_length" step="0.01" required>
             </div>
 
             <div class="design-input-group">
-                <label for="slip">
-                    Slip (%)
-                </label>
-                <input
-                    type="number"
-                    id="slip"
-                    name="slip"
-                    step="0.001"
-                    readonly
-                >
+                <label for="slip">Slip (%)</label>
+                <input type="number" id="slip" name="slip" step="0.001" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="temp">
-                    Temperature (°C)
-                </label>
-                <input
-                    type="number"
-                    id="temp"
-                    name="temp"
-                    step="0.001"
-                    readonly
-                >
+                <label for="temp">Temperature (°C)</label>
+                <input type="number" id="temp" name="temp" step="0.001" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="statorwt">
-                    Stator Weight (kg)
-                </label>
-                <input
-                    type="number"
-                    id="statorwt"
-                    name="statorwt"
-                    step="0.001"
-                    readonly
-                >
+                <label for="statorwt">Stator Weight (kg)</label>
+                <input type="number" id="statorwt" name="statorwt" step="0.001" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="rotorwt">
-                    Rotor Weight (kg)
-                </label>
-                <input
-                    type="number"
-                    id="rotorwt"
-                    name="rotorwt"
-                    step="0.001"
-                    readonly
-                >
+                <label for="rotorwt">Rotor Weight (kg)</label>
+                <input type="number" id="rotorwt" name="rotorwt" step="0.001" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="cu_length">
-                    Copper Length (mm)
-                </label>
-                <input
-                    type="number"
-                    id="cu_length"
-                    name="cu_length"
-                    step="0.00000001"
-                    readonly
-                >
+                <label for="cu_length">Copper Length (mm)</label>
+                <input type="number" id="cu_length" name="cu_length" step="0.00000001" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="air_gap">
-                    Air Gap
-                </label>
-                <input
-                    type="number"
-                    id="air_gap"
-                    name="air_gap"
-                    step="0.000001"
-                    readonly
-                >
+                <label for="air_gap">Air Gap</label>
+                <input type="number" id="air_gap" name="air_gap" step="0.000001" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="final_efficiency">
-                    Final Efficiency (%)
-                </label>
-                <input
-                    type="number"
-                    id="final_efficiency"
-                    name="final_efficiency"
-                    step="0.01"
-                    readonly
-                >
+                <label for="final_efficiency">Final Efficiency (%)</label>
+                <input type="number" id="final_efficiency" name="final_efficiency" step="0.01" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="angle">
-                    Angle (°)
-                </label>
-                <input
-                    type="number"
-                    id="angle"
-                    name="angle"
-                    step="0.01"
-                    readonly
-                >
+                <label for="angle">Angle (°)</label>
+                <input type="number" id="angle" name="angle" step="0.01" readonly>
             </div>
 
             <div class="design-input-group">
-                <label for="torque">
-                    Torque
-                </label>
-                <input
-                    type="number"
-                    id="torque"
-                    name="torque"
-                    step="0.01"
-                    readonly
-                >
+                <label for="torque">Torque</label>
+                <input type="number" id="torque" name="torque" step="0.01" readonly>
             </div>
 
         </div>
@@ -306,48 +154,29 @@
                 <span>1</span>
                 <div>
                     <h3>Single-Gauge SWG Calculator</h3>
-                    <p>
-                        Calculate effective gauge for multiple wires.
-                    </p>
+                    <p>Calculate effective gauge for multiple wires.</p>
                 </div>
             </div>
 
             <div class="design-input-group">
-                <label for="num_wires">
-                    Number of Wires
-                </label>
-                <input
-                    type="number"
-                    id="num_wires"
-                    min="1"
-                    value="2"
-                >
+                <label for="num_wires">Number of Wires</label>
+                <input type="number" id="num_wires" min="1" value="2">
             </div>
 
             <div class="design-input-group">
-                <label for="wire_gauge">
-                    Wire Gauge (SWG)
-                </label>
+                <label for="wire_gauge">Wire Gauge (SWG)</label>
                 <select id="wire_gauge"></select>
             </div>
 
             <div class="design-input-group">
-                <label for="effective_gauge">
-                    Effective Gauge (SWG)
-                </label>
+                <label for="effective_gauge">Effective Gauge (SWG)</label>
                 <select id="effective_gauge"></select>
             </div>
 
             <div class="swg-results">
-
-                <p>
-                    <strong>Results</strong>
-                </p>
-
+                <p><strong>Results</strong></p>
                 <p id="result1"></p>
-
                 <p id="result2"></p>
-
             </div>
 
         </div>
@@ -359,85 +188,35 @@
                 <span>2</span>
                 <div>
                     <h3>Multi-Gauge SWG Calculator</h3>
-                    <p>
-                        Calculate effective gauge from different wire combinations.
-                    </p>
+                    <p>Calculate effective gauge from different wire combinations.</p>
                 </div>
             </div>
 
             <table class="swg-table">
-
                 <thead>
                     <tr>
                         <th>Number of Wires</th>
                         <th>Wire Gauge (SWG)</th>
                     </tr>
                 </thead>
-
                 <tbody id="multi_table_body">
-
                     <tr>
-                        <td>
-                            <input
-                                type="number"
-                                class="small-input multi_num"
-                                value="0"
-                                min="0"
-                            >
-                        </td>
-
-                        <td>
-                            <select class="multi_gauge"></select>
-                        </td>
+                        <td><input type="number" class="small-input multi_num" value="0" min="0"></td>
+                        <td><select class="multi_gauge"></select></td>
                     </tr>
-
                     <tr>
-                        <td>
-                            <input
-                                type="number"
-                                class="small-input multi_num"
-                                value="0"
-                                min="0"
-                            >
-                        </td>
-
-                        <td>
-                            <select class="multi_gauge"></select>
-                        </td>
+                        <td><input type="number" class="small-input multi_num" value="0" min="0"></td>
+                        <td><select class="multi_gauge"></select></td>
                     </tr>
-
                     <tr>
-                        <td>
-                            <input
-                                type="number"
-                                class="small-input multi_num"
-                                value="0"
-                                min="0"
-                            >
-                        </td>
-
-                        <td>
-                            <select class="multi_gauge"></select>
-                        </td>
+                        <td><input type="number" class="small-input multi_num" value="0" min="0"></td>
+                        <td><select class="multi_gauge"></select></td>
                     </tr>
-
                     <tr>
-                        <td>
-                            <input
-                                type="number"
-                                class="small-input multi_num"
-                                value="0"
-                                min="0"
-                            >
-                        </td>
-
-                        <td>
-                            <select class="multi_gauge"></select>
-                        </td>
+                        <td><input type="number" class="small-input multi_num" value="0" min="0"></td>
+                        <td><select class="multi_gauge"></select></td>
                     </tr>
-
                 </tbody>
-
             </table>
 
             <p class="multi-effective-result">
@@ -449,19 +228,9 @@
 
 
         <div class="swg-note">
-
             <h3>Uses</h3>
-
-            <p>
-                To determine the effective SWG gauge of multiple
-                small wires of a particular gauge.
-            </p>
-
-            <p>
-                To find how many smaller wires are needed to
-                replace a single larger wire.
-            </p>
-
+            <p>To determine the effective SWG gauge of multiple small wires of a particular gauge.</p>
+            <p>To find how many smaller wires are needed to replace a single larger wire.</p>
         </div>
 
     </div>
@@ -471,12 +240,8 @@
 </div>
 
 <div class="design-action">
-    <button type="button" class="design-back-button" id="windingBack">
-        Back
-    </button>
-    <button type="button" class="design-submit-button" id="submitDesign">
-        Continue
-    </button>
+    <button type="button" class="design-back-button" id="windingBack">Back</button>
+    <button type="button" class="design-submit-button" id="submitDesign">Continue</button>
 </div>
 
 <script>
@@ -484,14 +249,35 @@ window.initializeWindingForm = function () {
 
     /* Calculation constants box (Slot fill factor, B, LF, LY). */
     function windingConstants() {
-        if (window.MotoMasterConstants) {
-            return window.MotoMasterConstants.values();
-        }
-        return {
+
+        const defaults = {
             fill: 0.47,
             b: 0.47,
             lf: Number(sessionStorage.getItem("stamping_lf_t")) || 0,
             ly: Number(sessionStorage.getItem("stamping_lf_y")) || 0
+        };
+
+        let box = {};
+
+        if (window.MotoMasterConstants) {
+            try {
+                box = window.MotoMasterConstants.values() || {};
+            } catch (err) {
+                box = {};
+            }
+        }
+
+        /* Empty / invalid box value -> default, so the formulas never get NaN */
+        const pick = (key) => {
+            const v = Number(box[key]);
+            return Number.isFinite(v) && v > 0 ? v : defaults[key];
+        };
+
+        return {
+            fill: pick("fill"),
+            b: pick("b"),
+            lf: Number.isFinite(Number(box.lf)) && box.lf !== "" && box.lf !== null && box.lf !== undefined ? Number(box.lf) : defaults.lf,
+            ly: Number.isFinite(Number(box.ly)) && box.ly !== "" && box.ly !== null && box.ly !== undefined ? Number(box.ly) : defaults.ly
         };
     }
 
@@ -512,10 +298,6 @@ window.initializeWindingForm = function () {
         }
         return JSON.stringify(value);
     }
-
-    /* All log output uses console.log, so nothing is hidden by the
-       console's level filter. CALC_VALUES collects every value of the
-       current calculation and is printed as one object at the end. */
 
     let CALC_VALUES = {};
 
@@ -561,24 +343,18 @@ window.initializeWindingForm = function () {
      */
 
     function getNumber(key, fallback) {
-
-        const value =
-            parseFloat(
-                sessionStorage.getItem(key)
-            );
-
+        const value = parseFloat(sessionStorage.getItem(key));
         if (Number.isFinite(value)) {
             return value;
         }
-
         return fallback || 0;
     }
 
 
+    /* Sets a field AND saves it, so a reload shows the latest result. */
     function setValue(id, value, decimals) {
 
-        const element =
-            document.getElementById(id);
+        const element = document.getElementById(id);
 
         if (!element) {
             return;
@@ -592,16 +368,30 @@ window.initializeWindingForm = function () {
             return;
         }
 
-        if (decimals !== undefined) {
+        element.value =
+            decimals !== undefined
+                ? Number(value).toFixed(decimals)
+                : value;
 
-            element.value =
-                Number(value).toFixed(decimals);
+        element.dataset.lastValue = element.value;
 
-        } else {
+        sessionStorage.setItem("winding_" + id, element.value);
+    }
 
-            element.value = value;
+
+    /* Clears a field AND its saved value. */
+    function clearValue(id) {
+
+        const element = document.getElementById(id);
+
+        if (!element) {
+            return;
         }
 
+        element.value = "";
+        element.dataset.lastValue = "";
+
+        sessionStorage.setItem("winding_" + id, "");
     }
 
 
@@ -609,144 +399,66 @@ window.initializeWindingForm = function () {
      * Main Data values.
      */
 
-    const hp =
-        getNumber("hp", 0);
-
-    const uph =
-        getNumber("uph", 0);
-
-    const pole =
-        getNumber("pole", 0);
-
-    const power =
-        getNumber("power", 0);
-
-    const frequency =
-        getNumber("frequency", 50);
-
-    const connection =
-        sessionStorage.getItem("connection") || "";
+    const hp = getNumber("hp", 0);
+    const uph = getNumber("uph", 0);
+    const pole = getNumber("pole", 0);
+    const power = getNumber("power", 0);
+    const frequency = getNumber("frequency", 50);
+    const connection = sessionStorage.getItem("connection") || "";
 
 
     /*
      * Stamping values.
      */
 
-    const A1 =
-        getNumber("A1", 0);
-
-    const N =
-        getNumber("N", 0);
-
-    const Y =
-        getNumber("Y", 0);
-
-    const W =
-        getNumber("W", 0);
-
-    const W2 =
-        getNumber("W2", 0);
-
-    const a =
-        getNumber("a", 0);
-
-    const b =
-        getNumber("b", 0);
-
-    const c =
-        getNumber("c", 0);
-
-    const d =
-        getNumber("d", 0);
-
-    const e =
-        getNumber("e", 0);
-
-    const dw =
-        getNumber("dw", 0);
-
-    const d0 =
-        getNumber("d0", 0);
-
-    const dia =
-        getNumber("dia", 0);
+    const A1 = getNumber("A1", 0);
+    const N = getNumber("N", 0);
+    const Y = getNumber("Y", 0);
+    const W = getNumber("W", 0);
+    const W2 = getNumber("W2", 0);
+    const a = getNumber("a", 0);
+    const b = getNumber("b", 0);
+    const c = getNumber("c", 0);
+    const d = getNumber("d", 0);
+    const e = getNumber("e", 0);
+    const dw = getNumber("dw", 0);
+    const d0 = getNumber("d0", 0);
+    const dia = getNumber("dia", 0);
 
 
     /*
      * Rotor values.
      */
 
-    const M =
-        getNumber("M", 0);
-
-    const V =
-        getNumber("V", 0);
-
-    const V2 =
-        getNumber("V2", 0);
-
-    const X =
-        getNumber("X", 0);
-
-    const A2 =
-        getNumber("A2", 0);
-
-    const shaft_diameter =
-        getNumber("shaft_diameter", 0);
-
-    const rng_ht =
-        getNumber("rng_ht", 0);
-
-    const rng_wt =
-        getNumber("rng_wt", 0);
-
-    const ra =
-        getNumber("ra", 0);
-
-    const rb =
-        getNumber("rb", 0);
-
-    const rc =
-        getNumber("rc", 0);
-
-    const rd =
-        getNumber("rd", 0);
-
-    const re =
-        getNumber("re", 0);
-
-    const rw =
-        getNumber("rw", 0);
+    const M = getNumber("M", 0);
+    const V = getNumber("V", 0);
+    const V2 = getNumber("V2", 0);
+    const X = getNumber("X", 0);
+    const A2 = getNumber("A2", 0);
+    const shaft_diameter = getNumber("shaft_diameter", 0);
+    const rng_ht = getNumber("rng_ht", 0);
+    const rng_wt = getNumber("rng_wt", 0);
+    const ra = getNumber("ra", 0);
+    const rb = getNumber("rb", 0);
+    const rc = getNumber("rc", 0);
+    const rd = getNumber("rd", 0);
+    const re = getNumber("re", 0);
+    const rw = getNumber("rw", 0);
 
 
     /*
-     * Existing constants.
-     *
-     * These values are preserved from the
-     * original Three Phase winding code.
+     * Existing constants (preserved from the original
+     * Three Phase winding code).
      */
 
     const bConstant = 0.47;
-
     const rps = 50;
-
     const pf = 0.82;
-
     const ks = 0.9245;
+    const ds = dia / 1000;
 
-    const ds =
-        dia / 1000;
-
-
-    sessionStorage.setItem(
-        "pf",
-        pf.toString()
-    );
-
-    sessionStorage.setItem(
-        "ks",
-        ks.toString()
-    );
+    sessionStorage.setItem("pf", pf.toString());
+    sessionStorage.setItem("ks", ks.toString());
 
 
     logGroup("Inputs from previous steps");
@@ -784,55 +496,26 @@ window.initializeWindingForm = function () {
      * Input references.
      */
 
-    const currentDensityInput =
-        document.getElementById(
-            "current_density"
-        );
+    let currentDensityInput, efficiencyInput, iphInput, recommendedDiaInput,
+        insulationDiaInput, recommendedTurnsInput, finalTurnsInput,
+        recommendedStackInput, finalStackLengthInput, actualUseDiaInput;
 
-    const efficiencyInput =
-        document.getElementById(
-            "efficiency"
-        );
+    /* Re-read the fields every time, so the calculation still works if
+       the form HTML is inserted or re-rendered after this function runs. */
+    function refreshInputs() {
+        currentDensityInput = document.getElementById("current_density");
+        efficiencyInput = document.getElementById("efficiency");
+        iphInput = document.getElementById("I_ph");
+        recommendedDiaInput = document.getElementById("recommended_dia");
+        insulationDiaInput = document.getElementById("insulation_dia");
+        recommendedTurnsInput = document.getElementById("recommended_turns");
+        finalTurnsInput = document.getElementById("final_turns");
+        recommendedStackInput = document.getElementById("recommended_stack_length");
+        finalStackLengthInput = document.getElementById("final_stack_length");
+        actualUseDiaInput = document.getElementById("actual_use_dia");
+    }
 
-    const iphInput =
-        document.getElementById(
-            "I_ph"
-        );
-
-    const recommendedDiaInput =
-        document.getElementById(
-            "recommended_dia"
-        );
-
-    const insulationDiaInput =
-        document.getElementById(
-            "insulation_dia"
-        );
-
-    const recommendedTurnsInput =
-        document.getElementById(
-            "recommended_turns"
-        );
-
-    const finalTurnsInput =
-        document.getElementById(
-            "final_turns"
-        );
-
-    const recommendedStackInput =
-        document.getElementById(
-            "recommended_stack_length"
-        );
-
-    const finalStackLengthInput =
-        document.getElementById(
-            "final_stack_length"
-        );
-
-    const actualUseDiaInput =
-        document.getElementById(
-            "actual_use_dia"
-        );
+    refreshInputs();
 
 
     /*
@@ -861,20 +544,15 @@ window.initializeWindingForm = function () {
         "torque"
     ];
 
-
     windingFields.forEach((field) => {
 
-        const input =
-            document.getElementById(field);
+        const input = document.getElementById(field);
 
         if (!input) {
             return;
         }
 
-        const saved =
-            sessionStorage.getItem(
-                "winding_" + field
-            );
+        const saved = sessionStorage.getItem("winding_" + field);
 
         if (saved !== null) {
             input.value = saved;
@@ -885,22 +563,15 @@ window.initializeWindingForm = function () {
 
     /*
      * Efficiency conversion.
-     *
      * The form stores efficiency as percentage.
      * Calculation uses decimal efficiency.
      */
 
     function getEfficiency() {
 
-        const efficiency =
-            parseFloat(
-                efficiencyInput?.value
-            );
+        const efficiency = parseFloat(efficiencyInput?.value);
 
-        if (
-            !Number.isFinite(efficiency) ||
-            efficiency <= 0
-        ) {
+        if (!Number.isFinite(efficiency) || efficiency <= 0) {
             return 0;
         }
 
@@ -909,26 +580,17 @@ window.initializeWindingForm = function () {
 
 
     /*
-     * Calculate I PH and recommended diameter.
+     * STEP 1 — Calculate I PH and recommended diameter.
      */
 
     function calculateCurrentDensity() {
 
-        if (
-            !currentDensityInput ||
-            !iphInput ||
-            !recommendedDiaInput
-        ) {
+        if (!currentDensityInput || !iphInput || !recommendedDiaInput) {
             return;
         }
 
-        const currentDensity =
-            parseFloat(
-                currentDensityInput.value
-            );
-
-        const ef =
-            getEfficiency();
+        const currentDensity = parseFloat(currentDensityInput.value);
+        const ef = getEfficiency();
 
         logGroup("I PH & recommended diameter");
         logVal("currentDensity", currentDensity, "input (A/mm²)");
@@ -950,42 +612,20 @@ window.initializeWindingForm = function () {
 
         let I_ph;
 
-
-        /*
-         * Existing connection formulas.
-         */
-
         if (connection === "Star") {
 
-            I_ph =
-                (hp * 736) /
-                (
-                    1.73 *
-                    uph *
-                    ef *
-                    pf
-                );
+            I_ph = (hp * 736) / (1.73 * uph * ef * pf);
 
-        }
-        else if (connection === "Delta") {
+        } else if (connection === "Delta") {
 
-            I_ph =
-                (hp * 736) /
-                (
-                    3 *
-                    uph *
-                    ef *
-                    pf
-                );
+            I_ph = (hp * 736) / (3 * uph * ef * pf);
 
-        }
-        else {
+        } else {
 
             logStop("connection is '" + connection + "' (only Star / Delta have a formula)");
             logEnd();
             return;
         }
-
 
         logVal(
             "I_ph",
@@ -995,268 +635,159 @@ window.initializeWindingForm = function () {
                 : "(hp*736) / (3*uph*ef*pf)"
         );
 
-        if (
-            !Number.isFinite(I_ph)
-        ) {
+        if (!Number.isFinite(I_ph)) {
             logStop("I_ph is not a number (check efficiency)");
             logEnd();
             return;
         }
 
+        sessionStorage.setItem("I_ph", I_ph.toString());
 
-        sessionStorage.setItem(
-            "I_ph",
-            I_ph.toString()
-        );
-
-
-        const QG =
-            I_ph /
-            currentDensity;
-
-
-        const recommendedDia =
-            Math.sqrt(
-                QG / 0.75
-            );
+        const QG = I_ph / currentDensity;
+        const recommendedDia = Math.sqrt(QG / 0.75);
 
         logVal("QG", QG, "I_ph / currentDensity");
         logVal("recommendedDia", recommendedDia, "sqrt(QG / 0.75)");
         logAll("I PH & recommended diameter");
         logEnd();
 
-
-        setValue(
-            "I_ph",
-            I_ph,
-            2
-        );
-
-        setValue(
-            "recommended_dia",
-            recommendedDia,
-            2
-        );
-
-
-        calculateRecommendedTurns();
+        setValue("I_ph", I_ph, 2);
+        setValue("recommended_dia", recommendedDia, 2);
     }
 
 
     /*
-     * Calculate recommended turns.
+     * Recommended diameter when I PH is typed by hand.
+     */
+
+    function updateRecommendedDiaFromIph() {
+
+        const iPh = parseFloat(iphInput?.value);
+        const cd = parseFloat(currentDensityInput?.value);
+
+        if (
+            Number.isFinite(iPh) && iPh > 0 &&
+            Number.isFinite(cd) && cd > 0
+        ) {
+            sessionStorage.setItem("I_ph", iPh.toString());
+            setValue("recommended_dia", Math.sqrt((iPh / cd) / 0.75), 2);
+        }
+    }
+
+
+    /*
+     * STEP 2 — Calculate recommended turns.
      */
 
     function calculateRecommendedTurns() {
 
-        if (
-            !insulationDiaInput ||
-            !recommendedTurnsInput
-        ) {
+        if (!insulationDiaInput || !recommendedTurnsInput) {
             return;
         }
 
-        const insulationDia =
-            parseFloat(
-                insulationDiaInput.value
-            );
+        const insulationDia = parseFloat(insulationDiaInput.value);
 
-
-        if (
-            !Number.isFinite(insulationDia) ||
-            insulationDia === 0
-        ) {
+        if (!Number.isFinite(insulationDia) || insulationDia === 0) {
             logGroup("Recommended turns");
             logStop("Insulation Diameter is empty");
             logEnd();
             return;
         }
 
-
         const recommendedTurns =
-            (
-                windingConstants().fill *
-                A1
-            ) /
-            (
-                0.786 *
-                insulationDia *
-                insulationDia
-            );
+            (windingConstants().fill * A1) /
+            (0.786 * insulationDia * insulationDia);
 
-
-        setValue(
-            "recommended_turns",
-            recommendedTurns,
-            2
-        );
+        setValue("recommended_turns", recommendedTurns, 2);
 
         logGroup("Recommended turns");
         logVal("slot fill factor", windingConstants().fill, "constants box (default 0.47)");
+        
         logVal("A1", A1);
         logVal("insulationDia", insulationDia);
         logVal("recommendedTurns", recommendedTurns, "(fill*A1) / (0.786*insDia²)");
         logEnd();
-
-
-        calculateRecommendedStackLength();
     }
 
 
     /*
-     * Calculate recommended stack length.
+     * STEP 3 — Calculate recommended stack length.
      */
 
     function calculateRecommendedStackLength() {
 
-        if (
-            !iphInput ||
-            !recommendedTurnsInput ||
-            !recommendedStackInput
-        ) {
+        if (!iphInput || !finalTurnsInput || !recommendedStackInput) {
             return;
         }
 
-        const iPh =
-            parseFloat(
-                iphInput.value
-            );
-
-        const recommendedTurns =
-            parseFloat(
-                recommendedTurnsInput.value
-            );
-
-        const ef =
-            getEfficiency();
-
+        const iPh = parseFloat(iphInput.value);
+        const finalTurns = parseFloat(finalTurnsInput.value);
+        const ef = getEfficiency();
+        const B = windingConstants().b;
 
         logGroup("Recommended stack length");
         logVal("iPh", iPh);
-        logVal("recommendedTurns", recommendedTurns);
+        logVal("finalTurns", finalTurns);
         logVal("ef", ef);
+        logVal("B (flux density)", B, "constants box (default 0.47)");
 
-        if (
-            !Number.isFinite(iPh) ||
-            !Number.isFinite(recommendedTurns) ||
-            !Number.isFinite(ef) ||
-            ef === 0 ||
-            dia === 0 ||
-            power === 0 ||
-            ds === 0
-        ) {
-            logStop("need I PH, recommended turns, efficiency, dia and power");
+        /* Show on the form exactly what is missing */
+        const missing = [];
+        if (!Number.isFinite(iPh) || iPh <= 0)               missing.push("I PH");
+        if (!Number.isFinite(finalTurns) || finalTurns <= 0) missing.push("Final Turns");
+        if (!Number.isFinite(ef) || ef === 0)                missing.push("Recommended Efficiency");
+        if (!dia)                                            missing.push("Stator dia (Stamping)");
+        if (!power)                                          missing.push("Power (Main Data)");
+        if (!N)                                              missing.push("Stator slots N (Stamping)");
+
+        if (missing.length) {
+            logStop("need " + missing.join(", "));
             logEnd();
+            clearValue("recommended_stack_length");
+            recommendedStackInput.placeholder = "Enter " + missing.join(", ");
             return;
         }
 
+        const q = power / (ef * pf * 1000);
 
-        const q =
-            power /
-            (
-                ef *
-                pf *
-                1000
-            );
+        const ac = (iPh * finalTurns * N) / (3.14 * ds);
 
-
-        const ac =
-            (
-                iPh *
-                recommendedTurns *
-                N
-            ) /
-            (
-                3.14 *
-                ds
-            );
-
-
-        const q1 =
-            (
-                11 *
-                windingConstants().b *
-                ac
-            ) /
-            1000;
-
+        const q1 = (11 * B * ac) / 1000;
 
         logVal("q", q, "power / (ef*pf*1000)");
-        logVal("ac", ac, "(iPh*recTurns*N) / (3.14*ds)");
-        logVal("B (flux density)", windingConstants().b, "constants box (default 0.47)");
+        logVal("ac", ac, "(iPh*finalTurns*N) / (3.14*ds)");
         logVal("q1", q1, "(11*B*ac) / 1000");
 
-        if (
-            q1 === 0 ||
-            rps === 0
-        ) {
-            logStop("q1 is 0");
+        const recommendedStackLength = (q / (q1 * rps * ds * ds)) * 1000;
+
+        if (!Number.isFinite(recommendedStackLength)) {
+            logStop("result is not a number");
             logEnd();
+            clearValue("recommended_stack_length");
+            recommendedStackInput.placeholder = "Check inputs";
             return;
         }
 
-
-        const recommendedStackLength =
-            (
-                q /
-                (
-                    q1 *
-                    rps *
-                    ds *
-                    ds
-                )
-            ) *
-            1000;
-
-
-        setValue(
-            "recommended_stack_length",
-            recommendedStackLength,
-            2
-        );
+        recommendedStackInput.placeholder = "";
+        setValue("recommended_stack_length", recommendedStackLength, 2);
 
         logVal("recommendedStackLength", recommendedStackLength, "(q / (q1*rps*ds²)) * 1000");
         logAll("Recommended stack length");
         logEnd();
-
-
-        updateAllCalculations();
     }
 
 
     /*
-     * Main three-phase calculation.
-     *
+     * STEP 4 — Main three-phase calculation.
      * Existing formulas are preserved.
      */
 
     function updateAllCalculations() {
 
-        const zs =
-            parseFloat(
-                finalTurnsInput?.value
-            ) || 0;
-
-        const finalStackLength =
-            parseFloat(
-                finalStackLengthInput?.value
-            ) || 0;
-
-        const actualDia =
-            parseFloat(
-                actualUseDiaInput?.value
-            ) || 0;
-
-        const i_ph =
-            parseFloat(
-                iphInput?.value
-            ) || 0;
-
-
-        /*
-         * Only show results once every required
-         * winding input has been entered.
-         */
+        const zs = parseFloat(finalTurnsInput?.value) || 0;
+        const finalStackLength = parseFloat(finalStackLengthInput?.value) || 0;
+        const actualDia = parseFloat(actualUseDiaInput?.value) || 0;
+        const i_ph = parseFloat(iphInput?.value) || 0;
 
         const outputFields = [
             "slip", "temp", "statorwt", "rotorwt", "cu_length",
@@ -1275,184 +806,66 @@ window.initializeWindingForm = function () {
             actualDia <= 0 ||
             i_ph <= 0
         ) {
-
             logStop("need Final Turns, Final Stack Length, Actual Use Diameter and I PH");
             logEnd();
 
-            outputFields.forEach((id) => {
-
-                const el = document.getElementById(id);
-
-                if (el) {
-                    el.value = "";
-                }
-
-            });
+            /* Never leave an old result showing */
+            outputFields.forEach(clearValue);
 
             return;
         }
 
 
-        const t_ph =
-            (
-                N *
-                zs
-            ) /
-            (
-                2 *
-                3
-            );
-
+        const t_ph = (N * zs) / (2 * 3);
 
         let phi = 0;
 
-
-        if (
-            t_ph > 0 &&
-            ks > 0 &&
-            frequency > 0
-        ) {
-
-            phi =
-                uph /
-                (
-                    4.44 *
-                    frequency *
-                    ks *
-                    t_ph
-                );
-
+        if (t_ph > 0 && ks > 0 && frequency > 0) {
+            phi = uph / (4.44 * frequency * ks * t_ph);
         }
 
+        const ysVal = (Y / 1000) || 0;
+        const dsLocal = dia / 1000;
+        const ry = X / 1000;
+        const tau = pole > 0 ? (3.14 * dsLocal / pole) : 0;
 
-        const ysVal =
-            (
-                Y / 1000
-            ) || 0;
-
-
-        const dsLocal =
-            dia / 1000;
-
-
-        const ry =
-            X / 1000;
-
-
-        const tau =
-            pole > 0
-                ? (
-                    3.14 *
-                    dsLocal /
-                    pole
-                )
-                : 0;
-
-
-        sessionStorage.setItem(
-            "finalStackLength",
-            finalStackLength.toString()
-        );
-
-        sessionStorage.setItem(
-            "t_ph",
-            t_ph.toString()
-        );
-
-        sessionStorage.setItem(
-            "final_turns",
-            zs.toString()
-        );
-
-        sessionStorage.setItem(
-            "ysVal",
-            ysVal.toString()
-        );
-
-        sessionStorage.setItem(
-            "ry",
-            ry.toString()
-        );
-
-        sessionStorage.setItem(
-            "w_ht",
-            (
-                W2 / 1000
-            ).toString()
-        );
-
-        sessionStorage.setItem(
-            "r_tht",
-            (
-                (V2 + 0.8 * X) /
-                1000
-            ).toString()
-        );
+        sessionStorage.setItem("finalStackLength", finalStackLength.toString());
+        sessionStorage.setItem("t_ph", t_ph.toString());
+        sessionStorage.setItem("final_turns", zs.toString());
+        sessionStorage.setItem("ysVal", ysVal.toString());
+        sessionStorage.setItem("ry", ry.toString());
+        sessionStorage.setItem("w_ht", (W2 / 1000).toString());
+        sessionStorage.setItem("r_tht", ((V2 + 0.8 * X) / 1000).toString());
 
 
         /*
          * Material loss factors.
          */
 
-        const lf_y =
-            windingConstants().ly;
-
-        const lf_t =
-            windingConstants().lf;
+        const lf_y = windingConstants().ly;
+        const lf_t = windingConstants().lf;
 
 
         /*
          * Existing constants.
          */
 
-        const xc_85 =
-            (
-                0.0239 *
-                320
-            ) /
-            360;
-
-
-        const w_ht =
-            W2 / 1000;
-
-
-        const m_tn =
-            2 *
-            (
-                finalStackLength /
-                1000
-            ) +
-            0.48;
-
-
-        const area =
-            6 *
-            actualDia *
-            actualDia *
-            0.785;
+        const xc_85 = (0.0239 * 320) / 360;
+        const w_ht = W2 / 1000;
+        const m_tn = 2 * (finalStackLength / 1000) + 0.48;
+        const area = 6 * actualDia * actualDia * 0.785;
 
 
         /*
-         * Calculate rp_85.
+         * rp_85.
          */
 
         const rp_85 =
             area !== 0
-                ? (
-                    xc_85 *
-                    zs *
-                    N *
-                    m_tn /
-                    area
-                )
+                ? (xc_85 * zs * N * m_tn / area)
                 : 0;
 
-
-        sessionStorage.setItem(
-            "rp_85",
-            rp_85.toString()
-        );
+        sessionStorage.setItem("rp_85", rp_85.toString());
 
 
         /*
@@ -1461,22 +874,10 @@ window.initializeWindingForm = function () {
 
         const t_los =
             7220 *
-            (
-                N *
-                (W / 1000) *
-                (finalStackLength / 1000) *
-                w_ht
-            ) *
-            (
-                2 *
-                lf_t
-            );
+            (N * (W / 1000) * (finalStackLength / 1000) * w_ht) *
+            (2 * lf_t);
 
-
-        sessionStorage.setItem(
-            "t_los",
-            t_los.toString()
-        );
+        sessionStorage.setItem("t_los", t_los.toString());
 
 
         /*
@@ -1485,25 +886,10 @@ window.initializeWindingForm = function () {
 
         const sy_los =
             22671 *
-            (
-                (finalStackLength / 1000) *
-                ysVal *
-                (
-                    dsLocal +
-                    ysVal +
-                    (2 * w_ht)
-                )
-            ) *
-            (
-                lf_y *
-                2
-            );
+            ((finalStackLength / 1000) * ysVal * (dsLocal + ysVal + (2 * w_ht))) *
+            (lf_y * 2);
 
-
-        sessionStorage.setItem(
-            "sy_los",
-            sy_los.toString()
-        );
+        sessionStorage.setItem("sy_los", sy_los.toString());
 
 
         /*
@@ -1512,13 +898,7 @@ window.initializeWindingForm = function () {
 
         const j_bar =
             M !== 0
-                ? (
-                    ks *
-                    N *
-                    zs *
-                    i_ph /
-                    M
-                )
+                ? (ks * N * zs * i_ph / M)
                 : 0;
 
 
@@ -1526,264 +906,96 @@ window.initializeWindingForm = function () {
          * Material-dependent rotor/bar loss.
          */
 
-        const material =
-            sessionStorage.getItem(
-                "material"
-            );
-
+        const material = sessionStorage.getItem("material");
 
         let b_los = 0;
 
-
         if (A2 !== 0) {
 
-            if (
-                material === "aluminium"
-            ) {
+            if (material === "aluminium") {
 
                 b_los =
-                    (
-                        0.031 *
-                        (
-                            (finalStackLength / 1000) +
-                            0.005
-                        ) /
-                        A2
-                    ) *
-                    M *
-                    j_bar *
-                    j_bar;
+                    (0.031 * ((finalStackLength / 1000) + 0.005) / A2) *
+                    M * j_bar * j_bar;
 
-            }
-            else if (
-                material === "copper"
-            ) {
+            } else if (material === "copper") {
 
                 b_los =
-                    (
-                        0.021 *
-                        (
-                            (finalStackLength / 1000) +
-                            0.005
-                        ) /
-                        A2
-                    ) *
-                    M *
-                    j_bar *
-                    j_bar;
-
+                    (0.021 * ((finalStackLength / 1000) + 0.005) / A2) *
+                    M * j_bar * j_bar;
             }
-
         }
 
-
-        sessionStorage.setItem(
-            "b_los",
-            b_los.toString()
-        );
+        sessionStorage.setItem("b_los", b_los.toString());
 
 
         /*
          * Additional calculations.
          */
 
-        const r_tht =
-            (
-                V2 +
-                0.8 * X
-            ) /
-            1000;
-
+        const r_tht = (V2 + 0.8 * X) / 1000;
 
         const sy_s =
-            (
-                1.9 *
-                ysVal *
-                (finalStackLength / 1000)
-            ) !== 0
-                ? (
-                    phi /
-                    (
-                        1.9 *
-                        ysVal *
-                        (finalStackLength / 1000)
-                    )
-                )
+            (1.9 * ysVal * (finalStackLength / 1000)) !== 0
+                ? (phi / (1.9 * ysVal * (finalStackLength / 1000)))
                 : 0;
-
 
         const st_s =
-            (
-                9.5 *
-                (finalStackLength / 1000) *
-                N *
-                (W / 1000) *
-                rps
-            ) !== 0
-                ? (
-                    1360 *
-                    phi /
-                    (
-                        9.5 *
-                        (finalStackLength / 1000) *
-                        N *
-                        (W / 1000) *
-                        rps
-                    )
-                )
+            (9.5 * (finalStackLength / 1000) * N * (W / 1000) * rps) !== 0
+                ? (1360 * phi / (9.5 * (finalStackLength / 1000) * N * (W / 1000) * rps))
                 : 0;
-
 
         const rt_s =
-            (
-                9.5 *
-                (finalStackLength / 1000) *
-                M *
-                (V / 1000) *
-                rps
-            ) !== 0
-                ? (
-                    1360 *
-                    phi /
-                    (
-                        9.5 *
-                        (finalStackLength / 1000) *
-                        M *
-                        (V / 1000) *
-                        rps
-                    )
-                )
+            (9.5 * (finalStackLength / 1000) * M * (V / 1000) * rps) !== 0
+                ? (1360 * phi / (9.5 * (finalStackLength / 1000) * M * (V / 1000) * rps))
                 : 0;
-
 
         const ry_s =
             ry !== 0
-                ? (
-                    sy_s *
-                    ysVal /
-                    ry
-                )
+                ? (sy_s * ysVal / ry)
                 : 0;
-
 
         const i_rng =
             pole !== 0
-                ? (
-                    3.1847 *
-                    M *
-                    j_bar /
-                    (10 * pole)
-                )
+                ? (3.1847 * M * j_bar / (10 * pole))
                 : 0;
-
 
         const B_av =
-            (
-                4.44 *
-                frequency *
-                ks *
-                t_ph *
-                (finalStackLength / 1000) *
-                0.95 *
-                tau
-            ) !== 0
-                ? (
-                    uph /
-                    (
-                        4.44 *
-                        frequency *
-                        ks *
-                        t_ph *
-                        (finalStackLength / 1000) *
-                        0.95 *
-                        tau
-                    )
-                )
+            (4.44 * frequency * ks * t_ph * (finalStackLength / 1000) * 0.95 * tau) !== 0
+                ? (uph / (4.44 * frequency * ks * t_ph * (finalStackLength / 1000) * 0.95 * tau))
                 : 0;
 
-
-        sessionStorage.setItem(
-            "sy_s",
-            sy_s.toString()
-        );
-
-        sessionStorage.setItem(
-            "rt_s",
-            rt_s.toString()
-        );
-
-        sessionStorage.setItem(
-            "st_s",
-            st_s.toString()
-        );
-
-        sessionStorage.setItem(
-            "ry_s",
-            ry_s.toString()
-        );
-
-        sessionStorage.setItem(
-            "B_av",
-            B_av.toString()
-        );
+        sessionStorage.setItem("sy_s", sy_s.toString());
+        sessionStorage.setItem("rt_s", rt_s.toString());
+        sessionStorage.setItem("st_s", st_s.toString());
+        sessionStorage.setItem("ry_s", ry_s.toString());
+        sessionStorage.setItem("B_av", B_av.toString());
 
 
         /*
-         * Range resistor calculations.
+         * Ring resistor calculations.
          */
 
         const l_rng =
             pole !== 0
-                ? (
-                    (
-                        dsLocal -
-                        (2 * 0.0016) -
-                        (rng_wt / 1000)
-                    ) *
-                    3.14 /
-                    pole
-                )
+                ? ((dsLocal - (2 * 0.0016) - (rng_wt / 1000)) * 3.14 / pole)
                 : 0;
-
 
         const rng_r =
-            (
-                rng_ht *
-                rng_wt
-            ) !== 0
-                ? (
-                    0.021 *
-                    l_rng /
-                    (
-                        rng_ht *
-                        rng_wt
-                    )
-                )
+            (rng_ht * rng_wt) !== 0
+                ? (0.021 * l_rng / (rng_ht * rng_wt))
                 : 0;
 
+        const rmg_los = 2 * i_rng * i_rng * rng_r;
 
-        const rmg_los =
-            2 *
-            i_rng *
-            i_rng *
-            rng_r;
-
-
-        sessionStorage.setItem(
-            "rmg_los",
-            rmg_los.toString()
-        );
+        sessionStorage.setItem("rmg_los", rmg_los.toString());
 
 
         /*
          * Loss calculations.
          */
 
-        const cu_los =
-            3 *
-            i_ph *
-            i_ph *
-            rp_85;
+        const cu_los = 3 * i_ph * i_ph * rp_85;
 
 
         // =====================================================
@@ -1799,61 +1011,30 @@ window.initializeWindingForm = function () {
         if (mechanicalComponent === "bush") {
 
             // Bush bearing
-            fr_los =
-                hp *
-                746 *
-                0.06;
+            fr_los = hp * 746 * 0.06;
 
         } else if (mechanicalComponent === "ball_bearing") {
 
             // Ball bearing
-            fr_los =
-                hp *
-                746 *
-                -0.025;
+            fr_los = hp * 746 * -0.025;
 
         } else {
 
-            console.log(
-                "[FRICTION LOSS] Mechanical component not selected:",
-                mechanicalComponent
-            );
-
+            console.log("[FRICTION LOSS] Mechanical component not selected:", mechanicalComponent);
             fr_los = 0;
         }
 
-        console.log(
-            "[FRICTION LOSS] Mechanical Component:",
-            mechanicalComponent
-        );
-
-        console.log(
-            "[FRICTION LOSS] HP:",
-            hp
-        );
-
-        console.log(
-            "[FRICTION LOSS] fr_los:",
-            fr_los
-        );
+        console.log("[FRICTION LOSS] Mechanical Component:", mechanicalComponent);
+        console.log("[FRICTION LOSS] HP:", hp);
+        console.log("[FRICTION LOSS] fr_los:", fr_los);
 
 
         const wl =
-            t_los +
-            sy_los +
-            b_los +
-            rmg_los +
-            cu_los +
-            fr_los;
+            t_los + sy_los + b_los + rmg_los + cu_los + fr_los;
 
+        const nenlstg = power;
 
-        const nenlstg =
-            power;
-
-
-        const zusatzlos =
-            nenlstg *
-            0.007;
+        const zusatzlos = nenlstg * 0.007;
 
 
         /*
@@ -1861,18 +1042,8 @@ window.initializeWindingForm = function () {
          */
 
         const efficiency =
-            (
-                nenlstg +
-                wl
-            ) !== 0
-                ? (
-                    100 *
-                    nenlstg /
-                    (
-                        nenlstg +
-                        wl
-                    )
-                )
+            (nenlstg + wl) !== 0
+                ? (100 * nenlstg / (nenlstg + wl))
                 : 0;
 
 
@@ -1882,38 +1053,13 @@ window.initializeWindingForm = function () {
 
         const kl =
             nenlstg !== 0
-                ? (
-                    (
-                        b_los +
-                        rmg_los
-                    ) /
-                    nenlstg
-                )
+                ? ((b_los + rmg_los) / nenlstg)
                 : 0;
 
+        const slip = (100 * kl) / (1 + kl);
 
-        const slip =
-            (
-                100 *
-                kl
-            ) /
-            (
-                1 +
-                kl
-            );
-
-
-        setValue(
-            "final_efficiency",
-            efficiency,
-            2
-        );
-
-        setValue(
-            "slip",
-            slip,
-            3
-        );
+        setValue("final_efficiency", efficiency, 2);
+        setValue("slip", slip, 3);
 
 
         /*
@@ -1922,91 +1068,35 @@ window.initializeWindingForm = function () {
 
         const l1 =
             (
-                2 *
-                (
-                    (finalStackLength / 1000) +
-                    0.06
-                ) +
-                (
-                    11 / 12
-                ) *
-                (
-                    dsLocal +
-                    W2 / 1000
-                ) *
-                3.142
-            ) *
-            zs *
-            6;
-
+                2 * ((finalStackLength / 1000) + 0.06) +
+                (11 / 12) * (dsLocal + W2 / 1000) * 3.142
+            ) * zs * 6;
 
         const l2 =
             (
-                2 *
-                (
-                    (finalStackLength / 1000) +
-                    0.06
-                ) +
-                2 *
-                (
-                    9 / 12
-                ) *
-                (
-                    dsLocal +
-                    W2 / 1000
-                ) *
-                3.142
-            ) *
-            zs *
-            6;
+                2 * ((finalStackLength / 1000) + 0.06) +
+                2 * (9 / 12) * (dsLocal + W2 / 1000) * 3.142
+            ) * zs * 6;
 
+        const culength = l1 + l2;
 
-        const culength =
-            l1 +
-            l2;
-
-
-        setValue(
-            "cu_length",
-            culength,
-            4
-        );
+        setValue("cu_length", culength, 4);
 
 
         /*
          * Stator weight.
          */
 
-        const dsh =
-            shaft_diameter /
-            1000;
-
+        const dsh = shaft_diameter / 1000;
 
         const Q =
             7850 *
-            (
-                (d0 / 1000) +
-                dsLocal
-            ) *
-            (
-                (d0 / 1000) -
-                dsLocal
-            ) -
-            (
-                N *
-                A1 /
-                100
-            );
-
+            ((d0 / 1000) + dsLocal) *
+            ((d0 / 1000) - dsLocal) -
+            (N * A1 / 100);
 
         const statorwt =
-            (
-                780 *
-                Q *
-                (finalStackLength / 1000) /
-                1000
-            ) *
-            0.95;
+            (780 * Q * (finalStackLength / 1000) / 1000) * 0.95;
 
 
         /*
@@ -2015,42 +1105,15 @@ window.initializeWindingForm = function () {
 
         const QR =
             7850 *
-            (
-                dsLocal +
-                dsh
-            ) *
-            (
-                dsLocal -
-                dsh
-            ) -
-            (
-                M *
-                A2 /
-                100
-            );
-
+            (dsLocal + dsh) *
+            (dsLocal - dsh) -
+            (M * A2 / 100);
 
         const rotorwt =
-            (
-                780 *
-                QR *
-                (finalStackLength / 1000) /
-                1000
-            ) *
-            0.95;
+            (780 * QR * (finalStackLength / 1000) / 1000) * 0.95;
 
-
-        setValue(
-            "statorwt",
-            statorwt,
-            2
-        );
-
-        setValue(
-            "rotorwt",
-            rotorwt,
-            2
-        );
+        setValue("statorwt", statorwt, 2);
+        setValue("rotorwt", rotorwt, 2);
 
 
         /*
@@ -2058,119 +1121,43 @@ window.initializeWindingForm = function () {
          */
 
         const airgap =
-            0.4 +
-            2 *
-            Math.sqrt(
-                (
-                    finalStackLength / 1000
-                ) *
-                dsLocal
-            );
+            0.4 + 2 * Math.sqrt((finalStackLength / 1000) * dsLocal);
 
-
-        setValue(
-            "air_gap",
-            airgap,
-            2
-        );
+        setValue("air_gap", airgap, 2);
 
 
         /*
          * Temperature.
          */
 
-        const ovrhng =
-            (
-                3.14 *
-                dia
-            ) /
-            (
-                2000 *
-                pole
-            );
+        const ovrhng = (3.14 * dia) / (2000 * pole);
 
+        const X_T = 0.175;
 
-        const X_T =
-            0.175;
-
-
-        const VEL =
-            3.14 *
-            dsLocal *
-            rps;
-
+        const VEL = 3.14 * dsLocal * rps;
 
         const IA =
             (
                 0.785 *
-                (
-                    (d0 / 1000) +
-                    dsLocal +
-                    0.01
-                ) *
-                (
-                    (d0 / 1000) -
-                    dsLocal -
-                    0.01
-                )
+                ((d0 / 1000) + dsLocal + 0.01) *
+                ((d0 / 1000) - dsLocal - 0.01)
             ) +
             (
-                3.14 *
-                dsLocal *
-                (
-                    (finalStackLength / 1000) +
-                    ovrhng
-                )
+                3.14 * dsLocal * ((finalStackLength / 1000) + ovrhng)
             );
 
+        const EX = IA * (1 + 0.1 * VEL);
 
-        const EX =
-            IA *
-            (
-                1 +
-                0.1 * VEL
-            );
+        const BX = 3.14 * (d0 / 1000) * (finalStackLength / 1000);
 
-
-        const BX =
-            3.14 *
-            (
-                d0 / 1000
-            ) *
-            (
-                finalStackLength / 1000
-            );
-
-
-        const wlt =
-            cu_los +
-            t_los +
-            sy_los +
-            zusatzlos;
-
+        const wlt = cu_los + t_los + sy_los + zusatzlos;
 
         const temp =
-            (
-                EX +
-                BX
-            ) !== 0
-                ? (
-                    0.03 *
-                    X_T *
-                    wlt /
-                    (
-                        EX +
-                        BX
-                    )
-                )
+            (EX + BX) !== 0
+                ? (0.03 * X_T * wlt / (EX + BX))
                 : 0;
 
-
-        setValue(
-            "temp",
-            temp,
-            2
-        );
+        setValue("temp", temp, 2);
 
 
         /*
@@ -2180,9 +1167,6 @@ window.initializeWindingForm = function () {
          * calculation): slot + overhang + zigzag reactance, using the slot
          * dimensions a, b, c, d, e, dw (stamping), rc, re (rotor) and the
          * magnetising current. Q1 = N / (3*pole) = slots per pole per phase.
-         *
-         * (The previous "simplified" XL gave ~0.004 Ω, which pushed
-         *  FK = RR/Z1 above 1, so acos() was impossible and Angle stayed 0.)
          */
 
         const PI = Math.PI;
@@ -2192,45 +1176,34 @@ window.initializeWindingForm = function () {
         const A_mag = 0.68;
         const K_car = 0.61;
 
-        const Y1 =
-            N !== 0 ? 3140 * dsLocal / N : 0;
+        const Y1 = N !== 0 ? 3140 * dsLocal / N : 0;
 
-        const S_car =
-            (Y1 - e * K_car) !== 0 ? Y1 / (Y1 - e * K_car) : 0;
+        const S_car = (Y1 - e * K_car) !== 0 ? Y1 / (Y1 - e * K_car) : 0;
 
         const F_car = 0.365;
 
-        const X1 =
-            M !== 0 ? 3140 * dsLocal / M : 0;
+        const X1 = M !== 0 ? 3140 * dsLocal / M : 0;
 
-        const R_car =
-            (X1 - re - F_car) !== 0 ? Math.round(X1 / (X1 - re - F_car)) : 0;
+        const R_car = (X1 - re - F_car) !== 0 ? Math.round(X1 / (X1 - re - F_car)) : 0;
 
-        const C1 =
-            R_car * S_car;
+        const C1 = R_car * S_car;
 
         const r_y1 = 101;
         const r_t1 = 7050;
         const s_y1 = 2200;
         const s_t1 = 6140;
 
-        const G_gap =
-            800 * A_mag * B_av * C1 / 1.23;
+        const G_gap = 800 * A_mag * B_av * C1 / 1.23;
 
-        const E_sy =
-            pole !== 0 ? s_y1 * 1.047 * (dsLocal + ysVal + 2 * w_ht) / pole : 0;
+        const E_sy = pole !== 0 ? s_y1 * 1.047 * (dsLocal + ysVal + 2 * w_ht) / pole : 0;
 
-        const F_ry =
-            pole !== 0 ? r_y1 * 1.047 * (dsLocal - ry - 2 * r_tht) / pole : 0;
+        const F_ry = pole !== 0 ? r_y1 * 1.047 * (dsLocal - ry - 2 * r_tht) / pole : 0;
 
-        const H_st =
-            s_t1 * w_ht;
+        const H_st = s_t1 * w_ht;
 
-        const J_rt =
-            r_t1 * r_tht;
+        const J_rt = r_t1 * r_tht;
 
-        const magspg =
-            G_gap + E_sy + F_ry + H_st + J_rt;
+        const magspg = G_gap + E_sy + F_ry + H_st + J_rt;
 
         const I_MAG =
             (ks * N * zs) !== 0
@@ -2246,28 +1219,21 @@ window.initializeWindingForm = function () {
             ((a + e) !== 0 ? 2 * c / (a + e) : 0) +
             (e !== 0 ? d / e : 0);
 
-        const C2 =
-            M !== 0 ? ks * ks * N / M : 0;
+        const C2 = M !== 0 ? ks * ks * N / M : 0;
 
         const F3 = 0.748;
 
-        const acosArg =
-            rc !== 0 ? re / (2 * rc) : NaN;
+        const acosArg = rc !== 0 ? re / (2 * rc) : NaN;
 
-        const G1 =
-            (acosArg >= -1 && acosArg <= 1) ? 0.5 * Math.acos(acosArg) : 0;
+        const G1 = (acosArg >= -1 && acosArg <= 1) ? 0.5 * Math.acos(acosArg) : 0;
 
-        const v2 =
-            F3 + G1;
+        const v2 = F3 + G1;
 
-        const Q1 =
-            pole !== 0 ? N / (3 * pole) : 0;
+        const Q1 = pole !== 0 ? N / (3 * pole) : 0;
 
-        const lambda =
-            (v1 + C2 * v2) * mu_o;
+        const lambda = (v1 + C2 * v2) * mu_o;
 
-        const pift =
-            8 * PI * frequency * t_ph * t_ph;
+        const pift = 8 * PI * frequency * t_ph * t_ph;
 
         const XS =
             (pole * Q1) !== 0
@@ -2278,25 +1244,19 @@ window.initializeWindingForm = function () {
 
         const K1 = 0.88;
 
-        const T_pole =
-            pole !== 0 ? PI * dsLocal / pole : 0;
+        const T_pole = pole !== 0 ? PI * dsLocal / pole : 0;
 
-        const Y2 =
-            N !== 0 ? PI * dsLocal / N : 0;
+        const Y2 = N !== 0 ? PI * dsLocal / N : 0;
 
-        const ovhg_o =
-            Y2 !== 0 ? (K1 * T_pole * T_pole / Y2) * 1.256e-6 : 0;
+        const ovhg_o = Y2 !== 0 ? (K1 * T_pole * T_pole / Y2) * 1.256e-6 : 0;
 
-        const X0 =
-            (pole * Q1) !== 0 ? pift * ovhg_o / (pole * Q1) : 0;
+        const X0 = (pole * Q1) !== 0 ? pift * ovhg_o / (pole * Q1) : 0;
 
         /* ---- zigzag leakage (XZ) ---- */
 
-        const qr =
-            pole !== 0 ? M / (3 * pole) : 0;
+        const qr = pole !== 0 ? M / (3 * pole) : 0;
 
-        const X_m =
-            I_MAG !== 0 ? uph / I_MAG : 0;
+        const X_m = I_MAG !== 0 ? uph / I_MAG : 0;
 
         const mop = 3;
 
@@ -2305,166 +1265,63 @@ window.initializeWindingForm = function () {
                 ? (5 / 6) * (X_m / (mop * mop)) * ((1 / (Q1 * Q1)) + (1 / (qr * qr)))
                 : 0;
 
-        const XL =
-            XS + X0 + XZ;
+        const XL = XS + X0 + XZ;
 
         sessionStorage.setItem("XL", XL.toString());
         sessionStorage.setItem("I_MAG", I_MAG.toString());
 
 
-        const denominator =
-            Math.pow(
-                pf * i_ph,
-                2
-            );
-
+        const denominator = Math.pow(pf * i_ph, 2);
 
         const R3 =
             denominator !== 0
-                ? (
-                    0.33 *
-                    (
-                        b_los +
-                        rmg_los
-                    ) /
-                    denominator
-                )
+                ? (0.33 * (b_los + rmg_los) / denominator)
                 : 0;
 
+        const RR = rp_85 + R3;
 
-        const RR =
-            rp_85 +
-            R3;
+        const Z1 = Math.sqrt(Math.pow(rp_85, 2) + Math.pow(XL, 2));
 
-
-        const Z1 =
-            Math.sqrt(
-                Math.pow(
-                    rp_85,
-                    2
-                ) +
-                Math.pow(
-                    XL,
-                    2
-                )
-            );
-
-
-        const FK =
-            Z1 !== 0
-                ? RR / Z1
-                : 0;
-
+        const FK = Z1 !== 0 ? RR / Z1 : 0;
 
         let angle = 0;
 
+        if (FK >= -1 && FK <= 1) {
 
-        if (
-            FK >= -1 &&
-            FK <= 1
-        ) {
+            angle = Math.acos(FK) * (180 / Math.PI);
 
-            angle =
-                Math.acos(FK) *
-                (
-                    180 /
-                    Math.PI
-                );
-
-        }
-        else if (Z1 !== 0) {
+        } else if (Z1 !== 0) {
 
             /* only a rounding overshoot is clamped; a real overshoot is reported */
             if (Math.abs(FK) <= 1.000001) {
                 angle = Math.acos(Math.max(-1, Math.min(1, FK))) * (180 / Math.PI);
-            }
-            else {
+            } else {
                 logStop("Angle: FK = RR/Z1 = " + FK.toFixed(4) + " is outside -1..1, acos() impossible — check slot / rotor dimensions (a–e, dw, rc, re)");
             }
-
         }
 
-
         const torque =
-            (
-                rp_85 +
-                R3
-            ) !== 0
-                ? (
-                    (
-                        38.95 *
-                        rp_85 /
-                        (
-                            rp_85 +
-                            R3
-                        )
-                    ) /
-                    16.54
-                )
+            (rp_85 + R3) !== 0
+                ? ((38.95 * rp_85 / (rp_85 + R3)) / 16.54)
                 : 0;
 
-
-        setValue(
-            "angle",
-            angle,
-            2
-        );
-
-        setValue(
-            "torque",
-            torque,
-            2
-        );
+        setValue("angle", angle, 2);
+        setValue("torque", torque, 2);
 
 
         /*
          * Save calculated values.
          */
 
-        sessionStorage.setItem(
-            "angle",
-            angle.toString()
-        );
-
-        sessionStorage.setItem(
-            "torque",
-            torque.toString()
-        );
-
-        sessionStorage.setItem(
-            "efficiency1",
-            efficiency.toString()
-        );
-
-        sessionStorage.setItem(
-            "slip",
-            slip.toString()
-        );
-
-        sessionStorage.setItem(
-            "temp",
-            temp.toString()
-        );
-
-        sessionStorage.setItem(
-            "culength",
-            culength.toString()
-        );
-
-        sessionStorage.setItem(
-            "statorwt",
-            statorwt.toString()
-        );
-
-        sessionStorage.setItem(
-            "rotorwt",
-            rotorwt.toString()
-        );
-
-        sessionStorage.setItem(
-            "airgap",
-            airgap.toString()
-        );
+        sessionStorage.setItem("angle", angle.toString());
+        sessionStorage.setItem("torque", torque.toString());
+        sessionStorage.setItem("efficiency1", efficiency.toString());
+        sessionStorage.setItem("slip", slip.toString());
+        sessionStorage.setItem("temp", temp.toString());
+        sessionStorage.setItem("culength", culength.toString());
+        sessionStorage.setItem("statorwt", statorwt.toString());
+        sessionStorage.setItem("rotorwt", rotorwt.toString());
+        sessionStorage.setItem("airgap", airgap.toString());
 
 
         /* ---- log every intermediate value ---- */
@@ -2560,112 +1417,91 @@ window.initializeWindingForm = function () {
 
 
     /*
-     * Save winding input values.
+     * =========================================================
+     * AUTO-RECALCULATION
+     * Any input change re-runs every step after it, so the
+     * outputs always match the current inputs.
+     * =========================================================
      */
 
-    windingFields.forEach((field) => {
+    const STAGE = { IPH: 1, TURNS: 2, STACK: 3, PERFORMANCE: 4 };
 
-        const input =
-            document.getElementById(field);
+    /* Which step each input starts the recalculation from */
+    const triggerStage = {
+        current_density:          STAGE.IPH,
+        efficiency:               STAGE.IPH,
+        insulation_dia:           STAGE.TURNS,
+        I_ph:                     STAGE.STACK,        // manual I PH edit
+        recommended_turns:        STAGE.PERFORMANCE,  // manual turns edit
+        final_turns:              STAGE.STACK,        // stack length uses final turns
+        final_stack_length:       STAGE.PERFORMANCE,
+        actual_use_dia:           STAGE.PERFORMANCE,
+        recommended_dia:          STAGE.PERFORMANCE
+    };
 
-        if (!input) {
+    function recalculateFrom(stage) {
+        refreshInputs();
+        if (stage <= STAGE.IPH)   calculateCurrentDensity();
+        if (stage <= STAGE.TURNS) calculateRecommendedTurns();
+        if (stage <= STAGE.STACK) calculateRecommendedStackLength();
+        updateAllCalculations();
+    }
+
+    /* Remove listeners from an earlier initialisation (avoids
+       duplicate handlers that still hold old Main Data values) */
+    if (window.windingCalcAbort) {
+        window.windingCalcAbort.abort();
+    }
+    window.windingCalcAbort = new AbortController();
+    const listenerOptions = { signal: window.windingCalcAbort.signal };
+
+    /* One listener on the whole page. It works even if the form
+       fields did not exist yet when this function ran, or were
+       replaced later (e.g. Back -> Continue). */
+    function onWindingInput(event) {
+
+        const input = event.target;
+
+        if (!input || !input.id || !(input.id in triggerStage) || input.readOnly) {
             return;
         }
 
-        input.addEventListener(
-            "input",
-            () => {
+        /* "input" and "change" both fire; run once per real change */
+        if (input.dataset.lastValue === input.value) {
+            return;
+        }
+        input.dataset.lastValue = input.value;
 
-                sessionStorage.setItem(
-                    "winding_" + field,
-                    input.value
-                );
+        sessionStorage.setItem("winding_" + input.id, input.value);
 
-            }
-        );
+        if (input.id === "I_ph") {
+            refreshInputs();
+            updateRecommendedDiaFromIph();
+        }
 
-    });
+        recalculateFrom(triggerStage[input.id]);
+    }
+
+    document.addEventListener("input", onWindingInput, listenerOptions);
+    document.addEventListener("change", onWindingInput, listenerOptions);
 
 
     /*
-     * Calculation listeners.
-     */
-
-    if (currentDensityInput) {
-
-        currentDensityInput.addEventListener(
-            "input",
-            calculateCurrentDensity
-        );
-
-    }
-
-
-    if (efficiencyInput) {
-
-        efficiencyInput.addEventListener(
-            "input",
-            calculateCurrentDensity
-        );
-
-    }
-
-
-    if (insulationDiaInput) {
-
-        insulationDiaInput.addEventListener(
-            "input",
-            calculateRecommendedTurns
-        );
-
-    }
-
-
-    if (finalTurnsInput) {
-
-        finalTurnsInput.addEventListener(
-            "input",
-            updateAllCalculations
-        );
-
-    }
-
-
-    if (finalStackLengthInput) {
-
-        finalStackLengthInput.addEventListener(
-            "input",
-            updateAllCalculations
-        );
-
-    }
-
-
-    if (actualUseDiaInput) {
-
-        actualUseDiaInput.addEventListener(
-            "input",
-            updateAllCalculations
-        );
-
-    }
-
-
-    /*
-     * Initial calculations.
+     * Constants box (fill factor, B, LF, LY) → full recalculation.
      */
 
     if (window.MotoMasterConstants) {
         window.MotoMasterConstants.bind(function () {
-            calculateCurrentDensity();
-            calculateRecommendedTurns();
-            updateAllCalculations();
+            recalculateFrom(STAGE.IPH);
         });
     }
 
-    calculateCurrentDensity();
 
-    updateAllCalculations();
+    /*
+     * Initial calculation with the restored values.
+     */
+
+    recalculateFrom(STAGE.IPH);
 
 
     /*
@@ -2675,7 +1511,6 @@ window.initializeWindingForm = function () {
      */
 
     const swgData = [
-
         { gauge: 7, diameter: 4.064 },
         { gauge: 8, diameter: 3.658 },
         { gauge: 9, diameter: 3.264 },
@@ -2720,15 +1555,9 @@ window.initializeWindingForm = function () {
         { gauge: 48, diameter: 0.01 },
         { gauge: 49, diameter: 0.008 },
         { gauge: 50, diameter: 0.006 }
-
     ];
 
-
-    const swgGauges =
-        swgData.map(
-            item => item.gauge
-        );
-
+    const swgGauges = swgData.map(item => item.gauge);
 
     function fillSelect(selectElement) {
 
@@ -2738,419 +1567,155 @@ window.initializeWindingForm = function () {
 
         selectElement.innerHTML = "";
 
-        swgGauges.forEach(
-            (gauge) => {
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value =
-                    gauge;
-
-                option.textContent =
-                    gauge;
-
-                selectElement.appendChild(
-                    option
-                );
-
-            }
-        );
-
+        swgGauges.forEach((gauge) => {
+            const option = document.createElement("option");
+            option.value = gauge;
+            option.textContent = gauge;
+            selectElement.appendChild(option);
+        });
     }
 
-
-    const wireGauge =
-        document.getElementById(
-            "wire_gauge"
-        );
-
-    const effectiveGauge =
-        document.getElementById(
-            "effective_gauge"
-        );
-
+    const wireGauge = document.getElementById("wire_gauge");
+    const effectiveGauge = document.getElementById("effective_gauge");
 
     fillSelect(wireGauge);
-
     fillSelect(effectiveGauge);
 
-
-    const multiGaugeSelects =
-        document.querySelectorAll(
-            ".multi_gauge"
-        );
-
-
-    multiGaugeSelects.forEach(
-        (select) => {
-
-            fillSelect(select);
-
-        }
-    );
-
+    document.querySelectorAll(".multi_gauge").forEach((select) => {
+        fillSelect(select);
+    });
 
     function gaugeToDiameter(gauge) {
-
-        const entry =
-            swgData.find(
-                item =>
-                    item.gauge == gauge
-            );
-
-        return entry
-            ? entry.diameter
-            : null;
-
+        const entry = swgData.find(item => item.gauge == gauge);
+        return entry ? entry.diameter : null;
     }
-
 
     function diameterToArea(diameter) {
-
-        return (
-            Math.PI *
-            Math.pow(
-                diameter / 2,
-                2
-            )
-        );
-
+        return Math.PI * Math.pow(diameter / 2, 2);
     }
-
 
     function areaToGauge(area) {
 
         let closest = null;
+        let minDiff = Infinity;
 
-        let minDiff =
-            Infinity;
+        swgData.forEach((item) => {
 
+            const itemArea = diameterToArea(item.diameter);
+            const diff = Math.abs(itemArea - area);
 
-        swgData.forEach(
-            (item) => {
-
-                const itemArea =
-                    diameterToArea(
-                        item.diameter
-                    );
-
-                const diff =
-                    Math.abs(
-                        itemArea -
-                        area
-                    );
-
-
-                if (
-                    diff <
-                    minDiff
-                ) {
-
-                    minDiff =
-                        diff;
-
-                    closest =
-                        item.gauge;
-
-                }
-
+            if (diff < minDiff) {
+                minDiff = diff;
+                closest = item.gauge;
             }
-        );
-
+        });
 
         return closest;
-
     }
-
 
     function updateResults() {
 
-        const numWires =
-            Number(
-                document.getElementById(
-                    "num_wires"
-                )?.value
-            );
+        const numWires = Number(document.getElementById("num_wires")?.value);
+        const wireG = Number(wireGauge?.value);
+        const effectiveG = Number(effectiveGauge?.value);
 
+        const result1 = document.getElementById("result1");
+        const result2 = document.getElementById("result2");
 
-        const wireG =
-            Number(
-                wireGauge?.value
-            );
+        if (numWires > 0 && wireG) {
 
+            const diameter = gaugeToDiameter(wireG);
 
-        const effectiveG =
-            Number(
-                effectiveGauge?.value
-            );
+            if (diameter !== null) {
 
-
-        const result1 =
-            document.getElementById(
-                "result1"
-            );
-
-        const result2 =
-            document.getElementById(
-                "result2"
-            );
-
-
-        if (
-            numWires > 0 &&
-            wireG
-        ) {
-
-            const diameter =
-                gaugeToDiameter(
-                    wireG
-                );
-
-
-            if (
-                diameter !== null
-            ) {
-
-                const areaOne =
-                    diameterToArea(
-                        diameter
-                    );
-
-
-                const totalArea =
-                    areaOne *
-                    numWires;
-
-
-                const effGauge =
-                    areaToGauge(
-                        totalArea
-                    );
-
+                const areaOne = diameterToArea(diameter);
+                const totalArea = areaOne * numWires;
+                const effGauge = areaToGauge(totalArea);
 
                 if (result1) {
-
                     result1.textContent =
                         `Effective gauge of ${numWires} wires of SWG ${wireG} is approximately SWG ${effGauge}.`;
-
                 }
-
             }
 
-        }
-        else if (result1) {
+        } else if (result1) {
 
             result1.textContent = "";
-
         }
 
+        if (effectiveG && wireG && effectiveG < wireG) {
 
-        if (
-            effectiveG &&
-            wireG &&
-            effectiveG < wireG
-        ) {
+            const requiredDiameter = gaugeToDiameter(effectiveG);
+            const oneWireDiameter = gaugeToDiameter(wireG);
 
-            const requiredDiameter =
-                gaugeToDiameter(
-                    effectiveG
-                );
+            if (requiredDiameter && oneWireDiameter) {
 
-
-            const oneWireDiameter =
-                gaugeToDiameter(
-                    wireG
-                );
-
-
-            if (
-                requiredDiameter &&
-                oneWireDiameter
-            ) {
-
-                const requiredArea =
-                    diameterToArea(
-                        requiredDiameter
-                    );
-
-
-                const oneWireArea =
-                    diameterToArea(
-                        oneWireDiameter
-                    );
-
-
-                const wiresNeeded =
-                    requiredArea /
-                    oneWireArea;
-
+                const requiredArea = diameterToArea(requiredDiameter);
+                const oneWireArea = diameterToArea(oneWireDiameter);
+                const wiresNeeded = requiredArea / oneWireArea;
 
                 if (result2) {
-
                     result2.textContent =
                         `Number of SWG ${wireG} wires to replace 1 SWG ${effectiveG}: ${Math.ceil(wiresNeeded)}.`;
-
                 }
-
             }
 
-        }
-        else if (result2) {
+        } else if (result2) {
 
             result2.textContent = "";
-
         }
-
     }
-
 
     function calcMultiGaugeEffective() {
 
-        const rows =
-            document.querySelectorAll(
-                "#multi_table_body tr"
-            );
-
+        const rows = document.querySelectorAll("#multi_table_body tr");
 
         let totalArea = 0;
 
+        rows.forEach((row) => {
 
-        rows.forEach(
-            (row) => {
+            const num = Number(row.querySelector(".multi_num")?.value);
+            const gauge = Number(row.querySelector(".multi_gauge")?.value);
 
-                const numberInput =
-                    row.querySelector(
-                        ".multi_num"
-                    );
+            if (num > 0) {
 
-                const gaugeInput =
-                    row.querySelector(
-                        ".multi_gauge"
-                    );
+                const diameter = gaugeToDiameter(gauge);
 
-
-                const num =
-                    Number(
-                        numberInput?.value
-                    );
-
-
-                const gauge =
-                    Number(
-                        gaugeInput?.value
-                    );
-
-
-                if (
-                    num > 0
-                ) {
-
-                    const diameter =
-                        gaugeToDiameter(
-                            gauge
-                        );
-
-
-                    if (diameter) {
-
-                        totalArea +=
-                            num *
-                            diameterToArea(
-                                diameter
-                            );
-
-                    }
-
+                if (diameter) {
+                    totalArea += num * diameterToArea(diameter);
                 }
-
             }
-        );
+        });
 
+        const effective = totalArea ? areaToGauge(totalArea) : 0;
 
-        const effective =
-            totalArea
-                ? areaToGauge(totalArea)
-                : 0;
-
-
-        const output =
-            document.getElementById(
-                "multi_effective_gauge"
-            );
-
+        const output = document.getElementById("multi_effective_gauge");
 
         if (output) {
-
-            output.textContent =
-                effective;
-
+            output.textContent = effective;
         }
-
     }
-
 
     if (wireGauge) {
-
-        wireGauge.addEventListener(
-            "change",
-            updateResults
-        );
-
+        wireGauge.addEventListener("change", updateResults, listenerOptions);
     }
-
 
     if (effectiveGauge) {
-
-        effectiveGauge.addEventListener(
-            "change",
-            updateResults
-        );
-
+        effectiveGauge.addEventListener("change", updateResults, listenerOptions);
     }
 
+    const numWiresInput = document.getElementById("num_wires");
 
-    const numWires =
-        document.getElementById(
-            "num_wires"
-        );
-
-
-    if (numWires) {
-
-        numWires.addEventListener(
-            "input",
-            updateResults
-        );
-
+    if (numWiresInput) {
+        numWiresInput.addEventListener("input", updateResults, listenerOptions);
     }
 
-
-    document
-        .querySelectorAll(
-            ".multi_num, .multi_gauge"
-        )
-        .forEach(
-            (element) => {
-
-                element.addEventListener(
-                    "input",
-                    calcMultiGaugeEffective
-                );
-
-                element.addEventListener(
-                    "change",
-                    calcMultiGaugeEffective
-                );
-
-            }
-        );
-
+    document.querySelectorAll(".multi_num, .multi_gauge").forEach((element) => {
+        element.addEventListener("input", calcMultiGaugeEffective, listenerOptions);
+        element.addEventListener("change", calcMultiGaugeEffective, listenerOptions);
+    });
 
     updateResults();
-
     calcMultiGaugeEffective();
 
 
@@ -3160,29 +1725,21 @@ window.initializeWindingForm = function () {
 
     if (!window.motoMasterNumberWheelHandler) {
 
-        window.motoMasterNumberWheelHandler =
-            function (event) {
+        window.motoMasterNumberWheelHandler = function () {
 
-                if (
-                    document.activeElement &&
-                    document.activeElement.type === "number"
-                ) {
-
-                    document.activeElement.blur();
-
-                }
-
-            };
-
+            if (
+                document.activeElement &&
+                document.activeElement.type === "number"
+            ) {
+                document.activeElement.blur();
+            }
+        };
 
         document.addEventListener(
             "wheel",
             window.motoMasterNumberWheelHandler,
-            {
-                passive: true
-            }
+            { passive: true }
         );
-
     }
 
 };
